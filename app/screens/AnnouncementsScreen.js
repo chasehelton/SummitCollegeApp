@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-export default function SettingsScreen() {
+export default function AnnouncementsScreen() {
   return (
     <View style={styles.container}>
-      <Text>Settings</Text>
+      <Text>Announcements</Text>
     </View>
   );
 }

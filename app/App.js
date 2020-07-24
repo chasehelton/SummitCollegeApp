@@ -1,12 +1,13 @@
-/* eslint-disable react-native/no-inline-styles */
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text, View} from 'react-native';
 import React from 'react';
 
+import AnnouncementsScreen from './screens/AnnouncementsScreen';
+import EventsScreen from './screens/EventsScreen';
 import HomeScreen from './screens/HomeScreen';
-import SettingsScreen from './screens/SettingsScreen';
+import CommunityScreen from './screens/CommunityScreen';
+// import SettingsScreen from './screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,11 +30,15 @@ export default function App() {
           // },
         })}
         tabBarOptions={{
-          activeTintColor: '#3bb4e4',
+          labelStyle: {fontSize: 13},
+          activeTintColor: '#00a8ff',
           inactiveTintColor: 'gray',
         }}>
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Announcements" component={AnnouncementsScreen} />
+        <Tab.Screen name="Events" component={EventsScreen} />
+        <Tab.Screen name="Community" component={CommunityScreen} />
+        {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
       </Tab.Navigator>
     </NavigationContainer>
   );
