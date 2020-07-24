@@ -25,6 +25,8 @@ export default function App() {
   //   });
   // }, []);
   return (
+    // if (isLoading) --> display splash screen
+    // else --> display the navigation container
     <NavigationContainer>
       {user && (
         <Tab.Navigator
