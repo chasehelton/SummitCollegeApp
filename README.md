@@ -13,4 +13,4 @@ You ***must*** have Node.js installed to be able to use React and the npx comman
 
 To run this in an iOS simulator with XCode, run the command: `npx react-native run-ios --simulator`
 
-To run this in an Android simulator with Android Studio, run the command: `npx react-native run-android --simulator`
+To run this in an Android simulator with Android Studio, run the command: `npx react-native run-android`
