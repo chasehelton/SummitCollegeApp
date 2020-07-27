@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "36881920751",
+    "firebase_url": "https://summit-college-app.firebaseio.com",
+    "project_id": "summit-college-app",
+    "storage_bucket": "summit-college-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36881920751:android:a4fe582cff073f3884611a",
+        "android_client_info": {
+          "package_name": "com.summitcollegeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "36881920751-arqpeo3rrmqn5pl9b6vegi2nb177ku52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJjlhYPjwqaYr9VPEkcIbjikw8IUokDO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36881920751-arqpeo3rrmqn5pl9b6vegi2nb177ku52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
