@@ -8,6 +8,8 @@ Before trying to work on the app, set up your development environment using http
 
 You ***must*** have Node.js installed to be able to use React and the npx command-line interface.
 
+## Getting Up and Running
+
 ### 1) Clone the Repo to local IDE
 
 ### 2) Run in the command line in the root folder of the app "npm install"
