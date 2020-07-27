@@ -8,8 +8,11 @@ Before trying to work on the app, set up your development environment using http
 
 You ***must*** have Node.js installed to be able to use React and the npx command-line interface.
 
+### 1) Clone the Repo to local IDE
 
-### Running the App in a Simulator
+### 2) Run in the command line in the root folder of the app "npm install"
+
+### 3) Run the App in a Simulator
 
 To run this in an iOS simulator with XCode, run the command: `npx react-native run-ios --simulator`
 
