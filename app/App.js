@@ -4,12 +4,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
-import AnnouncementsScreen from './screens/AnnouncementsScreen';
-import EventsScreen from './screens/EventsScreen';
+//import AnnouncementsScreen from './screens/AnnouncementsScreen';
+//import EventsScreen from './screens/EventsScreen';
 import HomeScreen from './screens/HomeScreen';
-import CommunityScreen from './screens/CommunityScreen';
+//import CommunityScreen from './screens/CommunityScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
