@@ -57,3 +57,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# Firebase Connection
+/ios/GoogleService-Info.plist
