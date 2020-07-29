@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 
+import AdminScreen from './screens/AdminScreen';
 import AnnouncementsScreen from './screens/AnnouncementsScreen';
 import EventsScreen from './screens/EventsScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -53,6 +54,7 @@ export default function App() {
                 inactiveTintColor: 'gray',
               }}>
               <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Admin" component={AdminScreen} />
               {/* <Tab.Screen name="Announcements" component={AnnouncementsScreen} />
               <Tab.Screen name="Events" component={EventsScreen} />
               <Tab.Screen name="Community" component={CommunityScreen} />
