@@ -5,10 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 
-//import AnnouncementsScreen from './screens/AnnouncementsScreen';
-//import EventsScreen from './screens/EventsScreen';
 import HomeScreen from './screens/HomeScreen';
-//import CommunityScreen from './screens/CommunityScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -56,9 +53,6 @@ export default function App() {
                 inactiveTintColor: 'gray',
               }}>
               <Tab.Screen name="Home" component={HomeScreen} />
-              {/* <Tab.Screen name="Announcements" component={AnnouncementsScreen} />
-              <Tab.Screen name="Events" component={EventsScreen} />
-              <Tab.Screen name="Community" component={CommunityScreen} /> */}
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
           )}
