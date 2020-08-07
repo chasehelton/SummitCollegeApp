@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -8,10 +10,22 @@ import {
   View,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import logo from '../assets/logo.png';
+import {summitBlue} from '../assets/colors';
 
 export default function SignUpScreen({navigation}) {
+  const [first, setFirst] = useState('');
+  const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+
+  useEffect(() => {
+    if (first && last && email && password) {
+      setIsReadyToSubmit(true);
+    }
+  }, [first, last, email, password]);
 
   const handleSignUp = () => {
     auth()
@@ -33,9 +47,25 @@ export default function SignUpScreen({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Summit College</Text>
+        <Image source={logo} style={styles.logo} />
+      </View>
+      <Text style={styles.createText}>Create your account</Text>
       <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="First Name"
+          onChangeText={(val) => setFirst(val)}
+          autoCapitalize="none"
+          style={styles.textInput}
+        />
+        <TextInput
+          placeholder="Last Name"
+          onChangeText={(val) => setLast(val)}
+          autoCapitalize="none"
+          style={styles.textInput}
+        />
         <TextInput
           placeholder="Email"
           onChangeText={(val) => setEmail(val)}
@@ -49,17 +79,26 @@ export default function SignUpScreen({navigation}) {
           secureTextEntry
           style={styles.textInput}
         />
-        <TouchableOpacity onPress={() => handleSignUp()}>
-          <Text style={styles.button}>Sign Up</Text>
-        </TouchableOpacity>
       </View>
-      <View style={styles.loginContainer}>
-        <Text>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.button}>Login Here</Text>
+      {/* Conditionally render a gray button when the text fields aren't entered and a blue button once they are all met */}
+      {!isReadyToSubmit && (
+        <TouchableOpacity style={styles.createAccountButton}>
+          <Text style={styles.createAccountButtonText}>CREATE ACCOUNT</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      )}
+      {isReadyToSubmit && (
+        <TouchableOpacity
+          style={styles.createAccountButtonActive}
+          onPress={() => handleSignUp()}>
+          <Text style={styles.createAccountButtonTextActive}>
+            CREATE ACCOUNT
+          </Text>
+        </TouchableOpacity>
+      )}
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginButton}>LOGIN</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -67,8 +106,15 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flex: 1,
-    justifyContent: 'space-evenly',
     alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  headerContainer: {
+    display: 'flex',
+  },
+  createText: {
+    fontSize: 24,
+    color: summitBlue,
   },
   inputContainer: {
     display: 'flex',
@@ -81,15 +127,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 48,
+    fontSize: 44,
+    fontWeight: '300',
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
   },
   textInput: {
-    width: 200,
+    width: 350,
     height: 40,
-    backgroundColor: '#ddd',
-    padding: 12,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
   },
-  button: {
-    color: 'blue',
+  createAccountButton: {
+    backgroundColor: 'gray',
+    paddingVertical: 10,
+    paddingHorizontal: 70,
+    borderRadius: 8,
+  },
+  createAccountButtonText: {
+    color: 'white',
+    fontWeight: '800',
+  },
+  createAccountButtonActive: {
+    backgroundColor: summitBlue,
+    paddingVertical: 10,
+    paddingHorizontal: 70,
+    borderRadius: 8,
+  },
+  createAccountButtonTextActive: {
+    color: 'white',
+    fontWeight: '800',
+  },
+  loginButton: {
+    color: 'black',
+    fontWeight: '700',
   },
 });
