@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-community/picker';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import logo from '../assets/logo.png';
 import {summitBlue} from '../assets/colors';
 
@@ -35,7 +36,11 @@ export default function SignUpScreen({navigation}) {
   const handleSignUp = () => {
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => console.log('User account created & signed in!'))
+      .then(async () => {
+        await createUserData().then(
+          console.log('User account created & signed in!'),
+        );
+      })
       .catch((error) => {
         if (error.code === 'auth/email-already-in-use') {
           Alert.alert('Sorry, this email address is already in use.');
@@ -47,6 +52,20 @@ export default function SignUpScreen({navigation}) {
         }
         console.error(error);
       });
+  };
+
+  const createUserData = async () => {
+    await firestore()
+      .collection('users')
+      .add({
+        first,
+        last,
+        email,
+        school,
+        gradYear,
+      })
+      .then(console.log('Success'))
+      .catch((error) => console.log(error));
   };
 
   // HANDLE ERRORS
