@@ -81,13 +81,13 @@ export default function SignUpScreen({navigation}) {
         <TextInput
           placeholder="First Name"
           onChangeText={(val) => setFirst(val)}
-          autoCapitalize="none"
+          autoCapitalize="words"
           style={styles.textInput}
         />
         <TextInput
           placeholder="Last Name"
           onChangeText={(val) => setLast(val)}
-          autoCapitalize="none"
+          autoCapitalize="words"
           style={styles.textInput}
         />
         <TextInput
