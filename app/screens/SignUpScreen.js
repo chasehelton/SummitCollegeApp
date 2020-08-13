@@ -112,6 +112,7 @@ export default function SignUpScreen({navigation}) {
             />
             <View style={styles.pickerContainer}>
               <Picker
+                mode="dropdown"
                 style={styles.schoolPicker}
                 selectedValue={school}
                 onValueChange={(itemValue) => setSchool(itemValue)}>
@@ -122,6 +123,7 @@ export default function SignUpScreen({navigation}) {
                 <Picker.Item label="Meredith" value="Meredith" />
               </Picker>
               <Picker
+                mode="dropdown"
                 style={styles.gradPicker}
                 selectedValue={gradYear}
                 onValueChange={(itemValue) => setGradYear(itemValue)}>
