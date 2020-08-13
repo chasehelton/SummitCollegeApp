@@ -1,185 +1,99 @@
 import React from 'react';
-import {Alert, Button, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Alert, Button, StyleSheet, Text, TextInput, View, ScrollView} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 // define constants for actions
-//const action_ban_staff = 0;
-//const action_promote_student_staff = 1;
-//const action_
+const ACTION_BAN = 0;
+const ACTION_CHANGE_TYPE = 1;
+const ACTION_MAKE_LEADER = 2;
+const ACTION_MAKE_STAFF = 3;
+const ACTION_MAKE_DIRECTOR = 4;
 
-// Admin can update the type status of a student user to be a staff.
-const promoteStudentToStaffByEmail = (email) => {
-  firestore()
-    .collection('users')
-    .where('email', '==', email)
-    .get()
-    .then(function(querySnapshot) {
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found with the email: ' + email);
-      }
-      else if (querySnapshot.size != 1) {
-        Alert.alert('More than 1 user found with the email: ' + email);
-      }
-      else {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          doc.ref.update({
-            type: "staff"
-          })
-          .then(function() {
-            Alert.alert('User successfully updated to staff!');
-          })
-          .catch(function(error) {
-            Alert.alert("Error updating document: ", error);
-          });
-        });
-      }
-    })
-    .catch(function(error) {
-      Alert.alert("Error with query: " + error);
-    });
+const getUsersByEmail = async (email) => {
+  const querySnapshot = await firestore().collection('users').where('email', '==', email).get();
+  if (querySnapshot.empty) {
+    Alert.alert('Some error here for empty snapshot');
+    return null;
+  }
+
+  console.log("Result size: " + querySnapshot.size);
+
+  if (querySnapshot.size == 0) {
+    Alert.alert('No users found with the email: ' + email);
+    return null;
+  }
+  else if (querySnapshot.size != 1) {
+    Alert.alert('More than 1 user found with the email: ' + email);
+    return null;
+  }
+  if (querySnapshot == null) console.log("Snapshot is null");
+
+  return querySnapshot;
 };
 
-// Admin can update the banned status of a staff.
-const banStaffMemberByEmail = (email, banFlag) => {
-  firestore()
-    .collection('users')
-    .where('email', '==', email)
-    .get()
-    .then(function(querySnapshot) {
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found with the email: ' + email);
-      }
-      else if (querySnapshot.size != 1) {
-        Alert.alert('More than 1 user found with the email: ' + email);
-      }
-      else {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
+const updateUser = async (email, action, value) => {
+  try {
+    console.log("Email: " + email);
+    const querySnapshot = await getUsersByEmail(email.trim());
 
-          // check if this is a staff member
-          if (doc.data().type != "staff") {
-            Alert.alert("This user is not a staff member.");
-          }
-          else {
+    if (querySnapshot != null) {
+      querySnapshot.forEach(function(doc) {
+
+        switch (action) {
+          case ACTION_BAN:
             doc.ref.update({
-              banned: banFlag
+              banned: value
             })
             .then(function() {
-              if (banFlag)
+              if (value)
                 Alert.alert('User successfully banned.');
-              else Alert.alert('User successfully unbanned');
+              else Alert.alert('User successfully unbanned.');
             })
             .catch(function(error) {
               Alert.alert("Error updating document: ", error);
             });
-          }
-        });
-      }
-    })
-    .catch(function(error) {
-      Alert.alert("Error with query: " + error);
-    });
-};
-
-// Admin can update the type status of a staff to be a director
-const promoteStaffToDirector = (email) => {
-  firestore()
-    .collection('users')
-    .where('email', '==', email)
-    .get()
-    .then(function(querySnapshot) {
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found with the email: ' + email);
-      }
-      else if (querySnapshot.size != 1) {
-        Alert.alert('More than 1 user found with the email: ' + email);
-      }
-      else {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          doc.ref.update({
-            type: "director"
-          })
-          .then(function() {
-            Alert.alert('User successfully updated to director!');
-          })
-          .catch(function(error) {
-            Alert.alert("Error updating document: ", error);
-          });
-        });
-      }
-    })
-    .catch(function(error) {
-      Alert.alert("Error with query: " + error);
-    });
-};
-
-// Admin can update the banned status of a director
-const banDirectorByEmail = (email, banFlag) => {
-  firestore()
-    .collection('users')
-    .where('email', '==', email)
-    .get()
-    .then(function(querySnapshot) {
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found with the email: ' + email);
-      }
-      else if (querySnapshot.size != 1) {
-        Alert.alert('More than 1 user found with the email: ' + email);
-      }
-      else {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-
-          // check if this is a staff member
-          if (doc.data().type != "director") {
-            Alert.alert("This user is not a director.");
-          }
-          else {
+            break;
+          case ACTION_CHANGE_TYPE:
             doc.ref.update({
-              banned: banFlag
+              type: value
             })
             .then(function() {
-              if (banFlag)
-                Alert.alert('User successfully banned.');
-              else Alert.alert('User successfully unbanned');
+              Alert.alert('User successfully updated to ' + value + '!');
             })
             .catch(function(error) {
+              console.log("Error: " + error);
               Alert.alert("Error updating document: ", error);
             });
-          }
-        });
-      }
-    })
-    .catch(function(error) {
-      Alert.alert("Error with query: " + error);
-    });
+            break;
+          default:
+            console.log("Invalid action provided: " + action);
+            // what error to display to the user? probably none
+        }
+      });
+    }
+  } catch (error) {
+    Alert.alert('Error', 'Some bad error here: ' + error);
+  }
 };
-
 
 export default function AdminScreen() {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text>Admin Page!{"\n"}</Text>
 
       <TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
-      <Text>{"\n\n\n"}</Text>
+      <Text>{"\n"}</Text>
 
-      <Button title="Add staff by email" onPress={() => promoteStudentToStaffByEmail(email)} />
-      <Text>{"\n\n\n"}</Text>
+      <Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
+      <Text>{"\n"}</Text>
 
-      <Button title="Ban staff by email" onPress={() => banStaffMemberByEmail(email, true)} />
-      <Text>{"\n\n\n"}</Text>
+      <Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
+      <Text>{"\n"}</Text>
 
-      <Button title="Add director by email" onPress={() => promoteStaffToDirectorByEmail(email)} />
-      <Text>{"\n\n\n"}</Text>
-
-      <Button title="Ban staff by email" onPress={() => banDirectorByEmail(email, true)} />
-      <Text>{"\n\n\n"}</Text>
-    </View>
+      <Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />
+    </ScrollView>
   );
 }
 
