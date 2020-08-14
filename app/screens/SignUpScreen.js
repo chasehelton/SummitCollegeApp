@@ -28,18 +28,17 @@ export default function SignUpScreen({navigation}) {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   const [years, setYears] = useState([]);
 
-  const upcomingYears = () => {
-    let date = new Date().getFullYear();
-    let theseYears = [];
-    for (let i = 0; i < 7; i++) {
-      let year = date + i;
-      let stringYear = year.toString();
-      theseYears[i] = stringYear;
-    }
-    return theseYears;
-  };
-
   useLayoutEffect(() => {
+    const upcomingYears = () => {
+      let date = new Date().getFullYear();
+      let theseYears = [];
+      for (let i = 0; i < 7; i++) {
+        let year = date + i;
+        let stringYear = year.toString();
+        theseYears[i] = stringYear;
+      }
+      return theseYears;
+    };
     setYears(upcomingYears);
   }, []);
 
