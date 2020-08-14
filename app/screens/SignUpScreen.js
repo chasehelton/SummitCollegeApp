@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {
   Alert,
   Image,
@@ -26,6 +26,22 @@ export default function SignUpScreen({navigation}) {
   const [school, setSchool] = useState('');
   const [gradYear, setGradYear] = useState('');
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+  const [years, setYears] = useState([]);
+
+  const upcomingYears = () => {
+    let date = new Date().getFullYear();
+    let theseYears = [];
+    for (let i = 0; i < 7; i++) {
+      let year = date + i;
+      let stringYear = year.toString();
+      theseYears[i] = stringYear;
+    }
+    return theseYears;
+  };
+
+  useLayoutEffect(() => {
+    setYears(upcomingYears);
+  }, []);
 
   useEffect(() => {
     if (first && last && email && password && school && gradYear) {
@@ -127,11 +143,14 @@ export default function SignUpScreen({navigation}) {
                 selectedValue={gradYear}
                 onValueChange={(itemValue) => setGradYear(itemValue)}>
                 <Picker.Item label="Graduation Year" value="" />
-                <Picker.Item label="2020" value="2020" />
+                {years.map((year, index) => (
+                  <Picker.Item key={index} label={year} value={year} />
+                ))}
+                {/* <Picker.Item label="2020" value="2020" />
                 <Picker.Item label="2021" value="2021" />
                 <Picker.Item label="2022" value="2022" />
                 <Picker.Item label="2023" value="2023" />
-                <Picker.Item label="2024" value="2024" />
+                <Picker.Item label="2024" value="2024" /> */}
                 {/* Eventually we should add a function that calculates the next 5 years from the current year */}
               </Picker>
             </View>
