@@ -25,7 +25,6 @@ export default function SignUpScreen({navigation}) {
   const [password, setPassword] = useState('');
   const [school, setSchool] = useState('');
   const [gradYear, setGradYear] = useState('');
-
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
 
   useEffect(() => {
@@ -137,7 +136,7 @@ export default function SignUpScreen({navigation}) {
               </Picker>
             </View>
           </View>
-          <View style={styles.loginContainer}>
+          <View style={styles.buttonContainer}>
             {/* Conditionally render a gray button when the text fields aren't entered and a blue button once they are all met */}
             {!isReadyToSubmit && (
               <TouchableOpacity style={styles.createAccountButton}>
@@ -183,6 +182,7 @@ const styles = StyleSheet.create({
     color: summitBlue,
     alignSelf: 'center',
     marginTop: 25,
+    fontWeight: '600',
   },
   inputContainer: {
     marginTop: 0,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     transform: [{scaleX: 0.8}, {scaleY: 0.8}],
   },
-  loginContainer: {
+  buttonContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
