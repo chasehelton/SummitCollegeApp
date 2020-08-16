@@ -61,11 +61,14 @@ export default function SignUpScreen({navigation}) {
     await firestore()
       .collection('users')
       .add({
-        first,
-        last,
-        email,
-        school,
-        gradYear,
+        firstName: first,
+        lastName: last,
+        email: email,
+        school: school,
+        gradYear: gradYear,
+        type: 'student',
+        banned: false,
+        displayName: first + ' ' + last
       })
       .then(console.log('Success'))
       .catch((error) => console.log(error));
