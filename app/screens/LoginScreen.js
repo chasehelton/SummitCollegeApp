@@ -63,6 +63,11 @@ export default function LoginScreen({navigation}) {
               secureTextEntry
               style={styles.textInput}
             />
+            <TouchableOpacity
+              style={styles.loginButtonTouchable}
+              onPress={() => navigation.navigate('Forgot Password')}>
+              <Text style={styles.loginButton}>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
             {!isReadyToSubmit && (

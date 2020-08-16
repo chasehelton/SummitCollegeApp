@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 0,
     display: 'flex',
-    // flex: 7,
     justifyContent: 'center',
     alignItems: 'center',
   },
