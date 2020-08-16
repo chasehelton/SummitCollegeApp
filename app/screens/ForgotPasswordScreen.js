@@ -4,6 +4,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Keyboard,
   Text,
   StyleSheet,
@@ -34,32 +35,34 @@ export default function ForgotPasswordScreen({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Reset Password</Text>
-      <Text style={styles.subText}>
-        Enter your email below, and we will send you a link to reset your
-        password.
-      </Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          onChangeText={(val) => setEmail(val)}
-          autoCapitalize="none"
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="Confirm Email"
-          onChangeText={(val) => setEmail2(val)}
-          autoCapitalize="none"
-          style={styles.textInput}
-        />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Text style={styles.header}>Reset Password</Text>
+        <Text style={styles.subText}>
+          Enter your email below, and we will send you a link to reset your
+          password.
+        </Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            onChangeText={(val) => setEmail(val)}
+            autoCapitalize="none"
+            style={styles.textInput}
+          />
+          <TextInput
+            placeholder="Confirm Email"
+            onChangeText={(val) => setEmail2(val)}
+            autoCapitalize="none"
+            style={styles.textInput}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => handleSubmit()}>
+          <Text style={styles.submitButtonText}>LOGIN</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => handleSubmit()}>
-        <Text style={styles.submitButtonText}>LOGIN</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
