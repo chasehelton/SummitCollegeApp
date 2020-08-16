@@ -9,6 +9,7 @@ import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import SplashScreen from './screens/SplashScreen';
 
 const Tab = createBottomTabNavigator();
@@ -56,10 +57,15 @@ export default function App() {
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
           )}
+          {/* Add ForgotPasswordScreen */}
           {!currentUser && (
             <Auth.Navigator screenOptions={{headerShown: false}}>
               <Auth.Screen name="Sign Up" component={SignUpScreen} />
               <Auth.Screen name="Login" component={LoginScreen} />
+              <Auth.Screen
+                name="Forgot Password"
+                component={ForgotPasswordScreen}
+              />
             </Auth.Navigator>
           )}
         </NavigationContainer>
