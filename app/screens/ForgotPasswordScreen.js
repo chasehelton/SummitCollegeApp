@@ -37,30 +37,39 @@ export default function ForgotPasswordScreen({navigation}) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={styles.header}>Reset Password</Text>
-        <Text style={styles.subText}>
-          Enter your email below, and we will send you a link to reset your
-          password.
-        </Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Email"
-            onChangeText={(val) => setEmail(val)}
-            autoCapitalize="none"
-            style={styles.textInput}
-          />
-          <TextInput
-            placeholder="Confirm Email"
-            onChangeText={(val) => setEmail2(val)}
-            autoCapitalize="none"
-            style={styles.textInput}
-          />
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Reset Password</Text>
+          <Text style={styles.subText}>
+            Enter your email below, and we will send you a link to reset your
+            password.
+          </Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Email"
+              onChangeText={(val) => setEmail(val)}
+              autoCapitalize="none"
+              style={styles.textInput}
+            />
+            <TextInput
+              placeholder="Confirm Email"
+              onChangeText={(val) => setEmail2(val)}
+              autoCapitalize="none"
+              style={styles.textInput}
+            />
+          </View>
         </View>
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => handleSubmit()}>
-          <Text style={styles.submitButtonText}>CONFIRM</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => handleSubmit()}>
+            <Text style={styles.submitButtonText}>CONFIRM</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.backButton}>BACK</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -71,7 +80,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   header: {
     fontSize: 44,
@@ -96,12 +105,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 5,
   },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 50,
+  },
   submitButton: {
     marginVertical: 25,
     backgroundColor: summitBlue,
     paddingVertical: 10,
     paddingHorizontal: 70,
     borderRadius: 8,
+  },
+  backButton: {
+    color: 'black',
+    fontWeight: '700',
   },
   submitButtonText: {
     color: 'white',
