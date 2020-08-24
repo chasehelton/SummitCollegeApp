@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
+//import Icon from 'react-native-ionicons';
 
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -39,13 +40,13 @@ export default function App() {
                 //   let iconName;
                 //   if (route.name === 'Home') {
                 //     iconName = focused
-                //       ? 'ios-information-circle'
+                //       ? 'ios-add'
                 //       : 'ios-information-circle-outline';
                 //   } else if (route.name === 'Settings') {
                 //     iconName = focused ? 'ios-list-box' : 'ios-list';
                 //   }
                 //   // You can return any component that you like here!
-                //   return <Ionicons name={iconName} size={size} color={color} />;
+                //   return <Icon name={iconName} size={size} color={color} />;
                 // },
               })}
               tabBarOptions={{
@@ -57,7 +58,6 @@ export default function App() {
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
           )}
-          {/* Add ForgotPasswordScreen */}
           {!currentUser && (
             <Auth.Navigator screenOptions={{headerShown: false}}>
               <Auth.Screen name="Sign Up" component={SignUpScreen} />

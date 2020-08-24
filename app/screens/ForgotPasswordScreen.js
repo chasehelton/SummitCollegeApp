@@ -59,7 +59,7 @@ export default function ForgotPasswordScreen({navigation}) {
         <TouchableOpacity
           style={styles.submitButton}
           onPress={() => handleSubmit()}>
-          <Text style={styles.submitButtonText}>LOGIN</Text>
+          <Text style={styles.submitButtonText}>CONFIRM</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
