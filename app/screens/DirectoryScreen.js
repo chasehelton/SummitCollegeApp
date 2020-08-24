@@ -7,11 +7,13 @@ import {
   TextInput,
   View,
   ScrollView,
-  TouchableOpacity} from 'react-native';
+  TouchableOpacity,
+  FlatList
+  } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-//import { NavigationContainer } from '@react-navigation/native';
-//import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 
 // define constants for actions
@@ -94,45 +96,35 @@ const updateUser = async (email, action, value) => {
   }
 };
 
-const searchUsers = (userType) => {
-  if (userType == TYPE_STUDENT) {
-    navigate('DirectoryScreen');
-  }
-};
+const FAKE_STUDENTS = [
+  {name: 'Richard Marshall', id: 'a'},
+  {name: 'Chase Helton', id: 'b'},
+  {name: 'Patrick Girard', id: 'c'},
+  {name: 'Natacha Bomparte', id: 'd'},
+  {name: 'Tanner Rogers', id: 'e'},
+];
 
-export default function AdminScreen( { navigation }) {
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
+const Item = ({ title }) => (
+  <View style={styles.item}>
+    <Text style={styles.itemText}>{title}</Text>
+  </View>
+);
+
+export default function DirectoryScreen() {
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Who are you looking for?{"\n"}</Text>
+    <View contentContainerStyle={styles.container}>
+      <Text style={styles.header}>DIRECTORY{"\n"}</Text>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Directory')}
-        style={styles.blueButton}>
-        <Text style={styles.buttonText}>Students</Text>
-      </TouchableOpacity>
+        <FlatList
+          data={FAKE_STUDENTS}
+          renderItem = { ({ item }) => (
+            <Item title={item.name} />
+            )}
+          keyExtractor={(item) => item.id}
+        />
 
-      <TouchableOpacity
-        onPress={() => searchUsers(TYPE_LEADER)}
-        style={styles.blueButton}>
-        <Text style={styles.buttonText}>Student Leaders</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => searchUsers(TYPE_STAFF)}
-        style={styles.blueButton}>
-        <Text style={styles.buttonText}>Staff</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => searchUsers(TYPE_DIRECTOR)}
-        style={styles.blueButton}>
-        <Text style={styles.buttonText}>Directors</Text>
-      </TouchableOpacity>
-
-
-    </ScrollView>
+    </View>
   );
 }
 
@@ -153,21 +145,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  input: {
-    height: 40,
-    backgroundColor: 'white',
-    width: 200,
-  },
   header: {
-    flex: 1
+    //flex: 1
   },
-  blueButton: {
-    backgroundColor: '#3ab5e6',
-    flex: 1,
-    marginBottom: 50
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center'
-  }
+  item: {
+      backgroundColor: '#e6e6e6',
+      padding: 20,
+      marginVertical: 4,
+      marginHorizontal: 16,
+    },
+    itemText: {
+      fontSize: 12,
+      color: 'black',
+      fontWeight: 'bold'
+    },
 });
