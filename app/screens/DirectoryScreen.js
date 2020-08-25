@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -8,7 +8,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  FlatList
+  FlatList,
   } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -29,77 +29,69 @@ const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
-const Item = ({ title }) => (
+const Item = ({title}) => (
   <View style={styles.item}>
     <Text style={styles.itemText}>{title}</Text>
   </View>
 );
 
-export default function DirectoryScreen({ route, navigation }) {
+export default function DirectoryScreen({route, navigation}) {
   const [users, setUsers] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const { userType } = route.params;
+  const {userType} = route.params;
 
-  React.useEffect(() => {
-    async function getUsers () {
+  useEffect(() => {
+    async function getUsers() {
+      var searchType = '';
+      if (userType === TYPE_STUDENT) searchType = 'student';
+      else if (userType === TYPE_LEADER) searchType = 'studentLeader';
+      else if (userType === TYPE_STAFF) searchType = 'staff';
+      else if (userType === TYPE_LEADER) searchType = 'director';
 
-      var searchType = "";
-      if (userType == TYPE_STUDENT)
-        searchType = "student";
-      else if (userType == TYPE_LEADER)
-        searchType = "studentLeader";
-      else if (userType == TYPE_STAFF)
-        searchType = "staff";
-      else if (userType == TYPE_LEADER)
-        searchType = "director";
-
-      console.log("Search type: " + searchType);
-      const querySnapshot = await firestore().collection('users').where('type', '==', searchType).get();
+      console.log('Search type: ' + searchType);
+      const querySnapshot = await firestore()
+        .collection('users')
+        .where('type', '==', searchType)
+        .get();
       if (querySnapshot.empty) {
         Alert.alert('Some error here for empty snapshot');
         return null;
       }
 
-      console.log("Result size: " + querySnapshot.size);
+      console.log('Result size: ' + querySnapshot.size);
 
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found');// with the email: ' + email);
+      if (querySnapshot.size === 0) {
+        Alert.alert('No users found'); // with the email: ' + email);
         return null;
       }
-      if (querySnapshot == null) console.log("Snapshot is null");
+      if (querySnapshot == null) console.log('Snapshot is null');
 
       try {
         const tempUsers = [];
-        querySnapshot.forEach(function(doc) {
-          tempUsers.push(
-            {name: doc.data().displayName, id: doc.data().email}
-          );
+        querySnapshot.forEach((doc) => {
+          tempUsers.push({name: doc.data().displayName, id: doc.data().email});
         });
-        console.log("Actual-set user length: " + tempUsers.length);
+        console.log('Actual-set user length: ' + tempUsers.length);
         setUsers(tempUsers);
       } catch (error) {
-          Alert.alert('Error', 'Some bad error here: ' + error);
-        }
+        Alert.alert('Error', 'Some bad error here: ' + error);
+      }
     }
 
     if (!isLoaded) {
       getUsers();
       setIsLoaded(true);
     }
-  });
+  }, [users, isLoaded, userType]);
 
   return (
     <View contentContainerStyle={styles.container}>
-      <Text style={styles.header}>DIRECTORY{"\n"}</Text>
-
-        <FlatList
-          data={users}
-          renderItem = { ({ item }) => (
-            <Item title={item.name} />
-            )}
-          keyExtractor={(item) => item.id}
-        />
-
+      <Text style={styles.header}>DIRECTORY{'\n'}</Text>
+      <FlatList
+        data={users}
+        renderItem={({item}) => <Item title={item.name} />}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
@@ -125,14 +117,14 @@ const styles = StyleSheet.create({
     //flex: 1
   },
   item: {
-      backgroundColor: '#e6e6e6',
-      padding: 20,
-      marginVertical: 4,
-      marginHorizontal: 16,
-    },
-    itemText: {
-      fontSize: 12,
-      color: 'black',
-      fontWeight: 'bold'
-    },
+    backgroundColor: '#e6e6e6',
+    padding: 20,
+    marginVertical: 4,
+    marginHorizontal: 16,
+  },
+  itemText: {
+    fontSize: 12,
+    color: 'black',
+    fontWeight: 'bold',
+  },
 });
