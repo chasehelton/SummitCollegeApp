@@ -24,85 +24,10 @@ const ACTION_MAKE_STAFF = 3;
 const ACTION_MAKE_DIRECTOR = 4;
 
 // define constants for users
-const TYPE_STUDENT = 0;
-const TYPE_LEADER = 1;
-const TYPE_STAFF = 2;
-const TYPE_DIRECTOR = 3;
-
-const getUsersByEmail = async (email) => {
-  const querySnapshot = await firestore().collection('users').where('email', '==', email).get();
-  if (querySnapshot.empty) {
-    Alert.alert('Some error here for empty snapshot');
-    return null;
-  }
-
-  console.log("Result size: " + querySnapshot.size);
-
-  if (querySnapshot.size == 0) {
-    Alert.alert('No users found with the email: ' + email);
-    return null;
-  }
-  else if (querySnapshot.size != 1) {
-    Alert.alert('More than 1 user found with the email: ' + email);
-    return null;
-  }
-  if (querySnapshot == null) console.log("Snapshot is null");
-
-  return querySnapshot;
-};
-
-const updateUser = async (email, action, value) => {
-  try {
-    console.log("Email: " + email);
-    const querySnapshot = await getUsersByEmail(email.trim());
-
-    if (querySnapshot != null) {
-      querySnapshot.forEach(function(doc) {
-
-        switch (action) {
-          case ACTION_BAN:
-            doc.ref.update({
-              banned: value
-            })
-            .then(function() {
-              if (value)
-                Alert.alert('User successfully banned.');
-              else Alert.alert('User successfully unbanned.');
-            })
-            .catch(function(error) {
-              Alert.alert("Error updating document: ", error);
-            });
-            break;
-          case ACTION_CHANGE_TYPE:
-            doc.ref.update({
-              type: value
-            })
-            .then(function() {
-              Alert.alert('User successfully updated to ' + value + '!');
-            })
-            .catch(function(error) {
-              console.log("Error: " + error);
-              Alert.alert("Error updating document: ", error);
-            });
-            break;
-          default:
-            console.log("Invalid action provided: " + action);
-            // what error to display to the user? probably none
-        }
-      });
-    }
-  } catch (error) {
-    Alert.alert('Error', 'Some bad error here: ' + error);
-  }
-};
-
-const FAKE_STUDENTS = [
-  {name: 'Richard Marshall', id: 'a'},
-  {name: 'Chase Helton', id: 'b'},
-  {name: 'Patrick Girard', id: 'c'},
-  {name: 'Natacha Bomparte', id: 'd'},
-  {name: 'Tanner Rogers', id: 'e'},
-];
+const TYPE_STUDENT = 1;
+const TYPE_LEADER = 2;
+const TYPE_STAFF = 3;
+const TYPE_DIRECTOR = 4;
 
 const Item = ({ title }) => (
   <View style={styles.item}>
@@ -110,14 +35,65 @@ const Item = ({ title }) => (
   </View>
 );
 
-export default function DirectoryScreen() {
+export default function DirectoryScreen({ route, navigation }) {
+  const [users, setUsers] = React.useState([]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const { userType } = route.params;
+
+  React.useEffect(() => {
+    async function getUsers () {
+
+      var searchType = "";
+      if (userType == TYPE_STUDENT)
+        searchType = "student";
+      else if (userType == TYPE_LEADER)
+        searchType = "studentLeader";
+      else if (userType == TYPE_STAFF)
+        searchType = "staff";
+      else if (userType == TYPE_LEADER)
+        searchType = "director";
+
+      console.log("Search type: " + searchType);
+      const querySnapshot = await firestore().collection('users').where('type', '==', searchType).get();
+      if (querySnapshot.empty) {
+        Alert.alert('Some error here for empty snapshot');
+        return null;
+      }
+
+      console.log("Result size: " + querySnapshot.size);
+
+      if (querySnapshot.size == 0) {
+        Alert.alert('No users found');// with the email: ' + email);
+        return null;
+      }
+      if (querySnapshot == null) console.log("Snapshot is null");
+
+      try {
+        const tempUsers = [];
+        querySnapshot.forEach(function(doc) {
+          tempUsers.push(
+            {name: doc.data().displayName, id: doc.data().email}
+          );
+        });
+        console.log("Actual-set user length: " + tempUsers.length);
+        setUsers(tempUsers);
+      } catch (error) {
+          Alert.alert('Error', 'Some bad error here: ' + error);
+        }
+    }
+
+    if (!isLoaded) {
+      getUsers();
+      setIsLoaded(true);
+    }
+  });
 
   return (
     <View contentContainerStyle={styles.container}>
       <Text style={styles.header}>DIRECTORY{"\n"}</Text>
 
         <FlatList
-          data={FAKE_STUDENTS}
+          data={users}
           renderItem = { ({ item }) => (
             <Item title={item.name} />
             )}

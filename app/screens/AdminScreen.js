@@ -22,10 +22,10 @@ const ACTION_MAKE_STAFF = 3;
 const ACTION_MAKE_DIRECTOR = 4;
 
 // define constants for users
-const TYPE_STUDENT = 0;
-const TYPE_LEADER = 1;
-const TYPE_STAFF = 2;
-const TYPE_DIRECTOR = 3;
+const TYPE_STUDENT = 1;
+const TYPE_LEADER = 2;
+const TYPE_STAFF = 3;
+const TYPE_DIRECTOR = 4;
 
 const getUsersByEmail = async (email) => {
   const querySnapshot = await firestore().collection('users').where('email', '==', email).get();
@@ -94,12 +94,6 @@ const updateUser = async (email, action, value) => {
   }
 };
 
-const searchUsers = (userType) => {
-  if (userType == TYPE_STUDENT) {
-    navigate('DirectoryScreen');
-  }
-};
-
 export default function AdminScreen( { navigation }) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -108,25 +102,33 @@ export default function AdminScreen( { navigation }) {
       <Text style={styles.header}>Who are you looking for?{"\n"}</Text>
 
       <TouchableOpacity
-        onPress={() => navigation.navigate('Directory')}
+        onPress={() => navigation.navigate('Directory', {
+                                            userType: TYPE_STUDENT,
+                                          })}
         style={styles.blueButton}>
         <Text style={styles.buttonText}>Students</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => searchUsers(TYPE_LEADER)}
+        onPress={() => navigation.navigate('Directory', {
+                                            userType: TYPE_LEADER,
+                                          })}
         style={styles.blueButton}>
         <Text style={styles.buttonText}>Student Leaders</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => searchUsers(TYPE_STAFF)}
+        onPress={() => navigation.navigate('Directory', {
+                                            userType: TYPE_STAFF,
+                                          })}
         style={styles.blueButton}>
         <Text style={styles.buttonText}>Staff</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => searchUsers(TYPE_DIRECTOR)}
+        onPress={() => navigation.navigate('Directory', {
+                                            userType: TYPE_DIRECTOR,
+                                          })}
         style={styles.blueButton}>
         <Text style={styles.buttonText}>Directors</Text>
       </TouchableOpacity>
