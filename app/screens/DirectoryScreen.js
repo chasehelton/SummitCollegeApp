@@ -9,7 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  } from 'react-native';
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -30,9 +30,9 @@ const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
 const Item = ({title}) => (
-  <View style={styles.item}>
+  <TouchableOpacity style={styles.item}>
     <Text style={styles.itemText}>{title}</Text>
-  </View>
+  </TouchableOpacity>
 );
 
 export default function DirectoryScreen({route, navigation}) {
@@ -86,7 +86,7 @@ export default function DirectoryScreen({route, navigation}) {
 
   return (
     <View contentContainerStyle={styles.container}>
-      <Text style={styles.header}>DIRECTORY{'\n'}</Text>
+      <Text style={styles.header}>Directory{'\n'}</Text>
       <FlatList
         data={users}
         renderItem={({item}) => <Item title={item.name} />}
@@ -96,16 +96,16 @@ export default function DirectoryScreen({route, navigation}) {
   );
 }
 
-      /*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
-      <Text>{"\n"}</Text>
+/*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
+<Text>{"\n"}</Text>
 
-      <Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
-      <Text>{"\n"}</Text>
+<Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
+<Text>{"\n"}</Text>
 
-      <Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
-      <Text>{"\n"}</Text>
+<Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
+<Text>{"\n"}</Text>
 
-      <Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
+<Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
 
 const styles = StyleSheet.create({
   container: {
@@ -114,16 +114,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
+    marginTop: 50,
     //flex: 1
+    alignSelf: 'center',
+    fontWeight: '700',
+    fontSize: 24,
   },
   item: {
     backgroundColor: '#e6e6e6',
     padding: 20,
     marginVertical: 4,
     marginHorizontal: 16,
+    borderRadius: 8,
+    width: '80%',
   },
   itemText: {
-    fontSize: 12,
+    fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
   },
