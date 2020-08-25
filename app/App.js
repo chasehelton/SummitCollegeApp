@@ -7,6 +7,7 @@ import auth from '@react-native-firebase/auth';
 //import Icon from 'react-native-ionicons';
 
 import HomeScreen from './screens/HomeScreen';
+import DemoStudentsScreen from './screens/DemoStudentsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -55,6 +56,7 @@ export default function App() {
                 inactiveTintColor: 'gray',
               }}>
               <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Students" component={DemoStudentsScreen} />
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
           )}
