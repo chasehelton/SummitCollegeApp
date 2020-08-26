@@ -11,6 +11,7 @@ import HomeScreen from './screens/HomeScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import DirectoryScreen from './screens/DirectoryScreen';
+import PersonScreen from './screens/PersonScreen';
 
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -57,6 +58,7 @@ export default function App() {
               <Tab.Screen name="Home" component={HomeScreen} />
               <Tab.Screen name="Admin" component={AdminScreen} />
               <Tab.Screen name="Directory" component={DirectoryScreen} />
+              <Tab.Screen name="Person" component={PersonScreen} />
               {/* <Tab.Screen name="Announcements" component={AnnouncementsScreen} />
               <Tab.Screen name="Events" component={EventsScreen} />
               <Tab.Screen name="Community" component={CommunityScreen} />

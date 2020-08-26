@@ -8,6 +8,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   FlatList
   } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
@@ -30,9 +31,7 @@ const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
 const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.itemText}>{title}</Text>
-  </View>
+      <Text style={styles.itemText}>{title}</Text>
 );
 
 export default function DirectoryScreen({ route, navigation }) {
@@ -72,7 +71,7 @@ export default function DirectoryScreen({ route, navigation }) {
         const tempUsers = [];
         querySnapshot.forEach(function(doc) {
           tempUsers.push(
-            {name: doc.data().displayName, id: doc.data().email}
+            {data: doc.data(), id: doc.data().email, ref: doc.ref}
           );
         });
         console.log("Actual-set user length: " + tempUsers.length);
@@ -88,14 +87,25 @@ export default function DirectoryScreen({ route, navigation }) {
     }
   });
 
+  const selectPerson = (index) => {
+    console.log("Person is selected, with index " + index.toString());
+    navigation.navigate('Person', {
+      person: users[index]
+    });
+  };
+
   return (
     <View contentContainerStyle={styles.container}>
       <Text style={styles.header}>DIRECTORY{"\n"}</Text>
 
         <FlatList
           data={users}
-          renderItem = { ({ item }) => (
-            <Item title={item.name} />
+          renderItem = { ({ item, index }) => (
+            <TouchableWithoutFeedback onPress={() => selectPerson(index)}>
+            <View style={styles.item} >
+              <Item title={item.data.displayName}  />
+              </View>
+            </TouchableWithoutFeedback>
             )}
           keyExtractor={(item) => item.id}
         />

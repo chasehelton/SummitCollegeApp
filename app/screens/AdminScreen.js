@@ -49,50 +49,7 @@ const getUsersByEmail = async (email) => {
   return querySnapshot;
 };
 
-const updateUser = async (email, action, value) => {
-  try {
-    console.log("Email: " + email);
-    const querySnapshot = await getUsersByEmail(email.trim());
 
-    if (querySnapshot != null) {
-      querySnapshot.forEach(function(doc) {
-
-        switch (action) {
-          case ACTION_BAN:
-            doc.ref.update({
-              banned: value
-            })
-            .then(function() {
-              if (value)
-                Alert.alert('User successfully banned.');
-              else Alert.alert('User successfully unbanned.');
-            })
-            .catch(function(error) {
-              Alert.alert("Error updating document: ", error);
-            });
-            break;
-          case ACTION_CHANGE_TYPE:
-            doc.ref.update({
-              type: value
-            })
-            .then(function() {
-              Alert.alert('User successfully updated to ' + value + '!');
-            })
-            .catch(function(error) {
-              console.log("Error: " + error);
-              Alert.alert("Error updating document: ", error);
-            });
-            break;
-          default:
-            console.log("Invalid action provided: " + action);
-            // what error to display to the user? probably none
-        }
-      });
-    }
-  } catch (error) {
-    Alert.alert('Error', 'Some bad error here: ' + error);
-  }
-};
 
 export default function AdminScreen( { navigation }) {
   const [name, setName] = React.useState('');
