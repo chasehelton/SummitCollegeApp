@@ -23,16 +23,25 @@ const Auth = createStackNavigator();
 export default function App() {
   const [currentUser, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
+    let isMounted = true; // note this flag denote mount status
     auth().onAuthStateChanged((user) => {
-      if (user) {
-        setIsLoading(true);
-        setUser(user);
-        setIsLoading(false);
-      } else {
-        setUser(null);
+      if (isMounted) {
+        if (user) {
+          setIsLoading(true);
+          setUser(user);
+          setIsLoading(false);
+
+          if (user.email == 'scappadmin@summitrdu.com') {
+            setIsAdmin(true);
+          }
+        } else {
+          setUser(null);
+        }
       }
     });
+    return () => { isMounted = false }; // use effect cleanup to set flag false, if unmounted
   }, []);
   return (
     <>
@@ -61,9 +70,12 @@ export default function App() {
                 inactiveTintColor: 'gray',
               }}>
               <Tab.Screen name="Home" component={HomeScreen} />
-              <Tab.Screen name="Admin" component={AdminScreen} />
-              <Tab.Screen name="Directory" component={DirectoryScreen} />
-              <Tab.Screen name="Person" component={PersonScreen} />
+              {isAdmin && (<>
+                <Tab.Screen name="Admin" component={AdminScreen} />
+                <Tab.Screen name="Directory" component={DirectoryScreen} />
+                <Tab.Screen name="Person" component={PersonScreen} />
+                </>
+              )}
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
           )}
