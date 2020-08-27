@@ -13,8 +13,6 @@ import {
   } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import DropDownPicker from 'react-native-dropdown-picker';
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
