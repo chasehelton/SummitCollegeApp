@@ -42,7 +42,23 @@ const TYPE_DIRECTOR = 4;
 export default function PersonScreen({ route, navigation }) {
   const [users, setUsers] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const { person } = route.params;
+  var { person } = route.params;
+
+
+  const [userType, setUserType] = React.useState('');
+  //setUserType(person.data.type);
+
+  React.useEffect(() => {
+    async function setInitialType() {
+      setUserType(person.data.type);
+    }
+
+    if (!isLoaded) {
+      setInitialType();
+      setIsLoaded(true);
+    }
+   }, [person, userType]);
+
   const [manageAccountVisible, setManageAccountVisible] = React.useState(false);
   const [manageArrow, setManageArrow] = React.useState('\u25BF'); // down is default
 
@@ -58,8 +74,9 @@ export default function PersonScreen({ route, navigation }) {
     else setManageArrow(downArrow);
   }
 
-  const capitalize = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  const writeUserType = (str) => {
+    if (str == 'studentLeader') return 'Student Leader';
+    else return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   const getUserByEmail = async (email) => {
@@ -92,6 +109,7 @@ export default function PersonScreen({ route, navigation }) {
 
       switch (action) {
         case ACTION_BAN:
+          // this doesn't work but we don't have the functionality in the UI anyway
           user.ref.update({
             banned: value
           })
@@ -105,7 +123,7 @@ export default function PersonScreen({ route, navigation }) {
           });
           break;
         case ACTION_CHANGE_TYPE:
-          Alert.alert('', 'Are you sure you want to make this user a ' + value + '?',
+          Alert.alert('', 'Are you sure you want to make this user a ' + writeUserType(value) + '?',
             [
               {
                 text: "Cancel",
@@ -113,18 +131,24 @@ export default function PersonScreen({ route, navigation }) {
                 style: "cancel"
               },
               { text: "OK", onPress: () => user.ref.update({
-                                                       type: value
-                                                     })
-                                                     .then(function() {
-                                                       Alert.alert('User successfully updated to ' + value + '!');
-                                                     })
-                                                     .catch(function(error) {
-                                                       console.log("Error: " + error);
-                                                       Alert.alert("Error updating document: ", error);
-                                                     }),
+                                   type: value
+                                 })
+                                 .then(function() {
+                                   Alert.alert('User successfully updated to ' + writeUserType(value) + '!');
+                                   setUserType(value);
+                                 })
+                                 .catch(function(error) {
+                                   console.log("Error: " + error);
+                                   Alert.alert("Error updating document: ", error);
+                                 }),
               }
             ],
-            { cancelable: false });
+            { cancelable: false }
+          );
+
+          //person.data.type = value;
+          //var tempPerson = person;
+
 
           break;
         default:
@@ -146,7 +170,7 @@ export default function PersonScreen({ route, navigation }) {
 
       <Text style={styles.personName}>{person.data.displayName}</Text>
 
-      <Text style={styles.personInfo}>{capitalize(person.data.type)}</Text>
+      <Text style={styles.personInfo}>{writeUserType(userType)}</Text>
       <Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>
 
       <TouchableOpacity
@@ -154,8 +178,6 @@ export default function PersonScreen({ route, navigation }) {
         style={styles.blueButton}>
         <Text style={styles.buttonText}>Manage Account {manageArrow}</Text>
       </TouchableOpacity>
-
-
 
       {manageAccountVisible && (<View>
       <TouchableOpacity
@@ -186,10 +208,7 @@ export default function PersonScreen({ route, navigation }) {
 
       </View>
 
-      )
-      }
-
-
+      )}
 
     </View>
   );
