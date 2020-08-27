@@ -29,6 +29,7 @@ export default function SignUpScreen({navigation}) {
   const [years, setYears] = useState([]);
 
   useLayoutEffect(() => {
+    // For-loop saving the next X amount of years for the graduation year picker
     const upcomingYears = () => {
       let date = new Date().getFullYear();
       let theseYears = [];
@@ -82,7 +83,7 @@ export default function SignUpScreen({navigation}) {
         gradYear: gradYear,
         type: 'student',
         banned: false,
-        displayName: first + ' ' + last
+        displayName: first + ' ' + last,
       })
       .then(console.log('Success'))
       .catch((error) => console.log(error));
@@ -148,12 +149,6 @@ export default function SignUpScreen({navigation}) {
                 {years.map((year, index) => (
                   <Picker.Item key={index} label={year} value={year} />
                 ))}
-                {/* <Picker.Item label="2020" value="2020" />
-                <Picker.Item label="2021" value="2021" />
-                <Picker.Item label="2022" value="2022" />
-                <Picker.Item label="2023" value="2023" />
-                <Picker.Item label="2024" value="2024" /> */}
-                {/* Eventually we should add a function that calculates the next 5 years from the current year */}
               </Picker>
             </View>
           </View>
