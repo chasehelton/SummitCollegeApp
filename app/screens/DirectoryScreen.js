@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -30,42 +30,41 @@ const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
-const Item = ({ title }) => (
-      <Text style={styles.itemText}>{title}</Text>
+const Item = ({title}) => (
+
+    <Text style={styles.itemText}>{title}</Text>
 );
 
-export default function DirectoryScreen({ route, navigation }) {
+export default function DirectoryScreen({route, navigation}) {
   const [users, setUsers] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const { userType } = route.params;
+  const {userType} = route.params;
 
-  React.useEffect(() => {
-    async function getUsers () {
+  useEffect(() => {
+    async function getUsers() {
+      var searchType = '';
+      if (userType === TYPE_STUDENT) searchType = 'student';
+      else if (userType === TYPE_LEADER) searchType = 'studentLeader';
+      else if (userType === TYPE_STAFF) searchType = 'staff';
+      else if (userType === TYPE_LEADER) searchType = 'director';
 
-      var searchType = "";
-      if (userType == TYPE_STUDENT)
-        searchType = "student";
-      else if (userType == TYPE_LEADER)
-        searchType = "studentLeader";
-      else if (userType == TYPE_STAFF)
-        searchType = "staff";
-      else if (userType == TYPE_LEADER)
-        searchType = "director";
-
-      console.log("Search type: " + searchType);
-      const querySnapshot = await firestore().collection('users').where('type', '==', searchType).get();
+      console.log('Search type: ' + searchType);
+      const querySnapshot = await firestore()
+        .collection('users')
+        .where('type', '==', searchType)
+        .get();
       if (querySnapshot.empty) {
         Alert.alert('Some error here for empty snapshot');
         return null;
       }
 
-      console.log("Result size: " + querySnapshot.size);
+      console.log('Result size: ' + querySnapshot.size);
 
-      if (querySnapshot.size == 0) {
-        Alert.alert('No users found');// with the email: ' + email);
+      if (querySnapshot.size === 0) {
+        Alert.alert('No users found'); // with the email: ' + email);
         return null;
       }
-      if (querySnapshot == null) console.log("Snapshot is null");
+      if (querySnapshot == null) console.log('Snapshot is null');
 
       try {
         const tempUsers = [];
@@ -74,18 +73,18 @@ export default function DirectoryScreen({ route, navigation }) {
             {data: doc.data(), id: doc.data().email, ref: doc.ref}
           );
         });
-        console.log("Actual-set user length: " + tempUsers.length);
+        console.log('Actual-set user length: ' + tempUsers.length);
         setUsers(tempUsers);
       } catch (error) {
-          Alert.alert('Error', 'Some bad error here: ' + error);
-        }
+        Alert.alert('Error', 'Some bad error here: ' + error);
+      }
     }
 
     if (!isLoaded) {
       getUsers();
       setIsLoaded(true);
     }
-  });
+  }, [users, isLoaded, userType]);
 
   const selectPerson = (index) => {
     console.log("Person is selected, with index " + index.toString());
@@ -96,34 +95,32 @@ export default function DirectoryScreen({ route, navigation }) {
 
   return (
     <View contentContainerStyle={styles.container}>
-      <Text style={styles.header}>DIRECTORY{"\n"}</Text>
 
         <FlatList
           data={users}
           renderItem = { ({ item, index }) => (
-            <TouchableWithoutFeedback onPress={() => selectPerson(index)}>
-            <View style={styles.item} >
-              <Item title={item.data.displayName}  />
-              </View>
-            </TouchableWithoutFeedback>
+            <TouchableOpacity style={styles.item} onPress={() => selectPerson(index)}>
+                <Item title={item.data.displayName}  />
+            </TouchableOpacity>
             )}
           keyExtractor={(item) => item.id}
         />
+
 
     </View>
   );
 }
 
-      /*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
-      <Text>{"\n"}</Text>
+/*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
+<Text>{"\n"}</Text>
 
-      <Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
-      <Text>{"\n"}</Text>
+<Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
+<Text>{"\n"}</Text>
 
-      <Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
-      <Text>{"\n"}</Text>
+<Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
+<Text>{"\n"}</Text>
 
-      <Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
+<Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
 
 const styles = StyleSheet.create({
   container: {
@@ -132,17 +129,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
+    marginTop: 50,
     //flex: 1
+    alignSelf: 'center',
+    fontWeight: '700',
+    fontSize: 24,
   },
   item: {
-      backgroundColor: '#e6e6e6',
-      padding: 20,
-      marginVertical: 4,
-      marginHorizontal: 16,
-    },
-    itemText: {
-      fontSize: 12,
-      color: 'black',
-      fontWeight: 'bold'
-    },
+    backgroundColor: '#e6e6e6',
+    padding: 20,
+    marginVertical: 4,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    width: '80%',
+  },
+  itemText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: 'bold',
+  },
 });
