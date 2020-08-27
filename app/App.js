@@ -72,8 +72,7 @@ export default function App() {
               <Tab.Screen name="Home" component={HomeScreen} />
               {isAdmin && (<>
                 <Tab.Screen name="Admin" component={AdminScreen} />
-                <Tab.Screen name="Directory" component={DirectoryScreen} />
-                <Tab.Screen name="Person" component={PersonScreen} />
+
                 </>
               )}
               <Tab.Screen name="Settings" component={SettingsScreen} />

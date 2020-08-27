@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {createStackNavigator} from '@react-navigation/stack';
-import AdminHomeScreen from './AdminHomeScreen';
 import DirectoryScreen from './DirectoryScreen';
 import PersonScreen from './PersonScreen';
 
@@ -56,15 +55,66 @@ const getUsersByEmail = async (email) => {
 
 const AdminStack = createStackNavigator();
 
-export default function AdminScreen({navigation, route}) {
+export default function AdminHomeScreen({navigation, route}) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   return (
-      <AdminStack.Navigator>
-        <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} />
-        <AdminStack.Screen name="Directory" component={DirectoryScreen} />
-        <AdminStack.Screen name="Person" component={PersonScreen} />
-      </AdminStack.Navigator>
+    <>
+      <Text style={styles.header}>Who are you looking for?{'\n'}</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Admin', {
+              screen: 'Directory',
+              params: {
+                userType: TYPE_STUDENT,
+              }
+            })
+          }
+          style={styles.blueButton}>
+          <Text style={styles.buttonText}>Students</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Admin', {
+              screen: 'Directory',
+              params: {
+                userType: TYPE_LEADER,
+              }
+            })
+          }
+          style={styles.blueButton}>
+          <Text style={styles.buttonText}>Student Leaders</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Admin', {
+              screen: 'Directory',
+              params: {
+                userType: TYPE_STAFF,
+              }
+            })
+          }
+          style={styles.blueButton}>
+          <Text style={styles.buttonText}>Staff</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Admin', {
+              screen: 'Directory',
+              params: {
+                userType: TYPE_DIRECTOR,
+              }
+            })
+          }
+          style={styles.blueButton}>
+          <Text style={styles.buttonText}>Directors</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </>
   );
 }
 

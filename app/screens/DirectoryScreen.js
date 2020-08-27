@@ -88,8 +88,11 @@ export default function DirectoryScreen({route, navigation}) {
 
   const selectPerson = (index) => {
     console.log("Person is selected, with index " + index.toString());
-    navigation.navigate('Person', {
-      person: users[index]
+    navigation.navigate('Admin', {
+      screen: 'Person',
+      params: {
+        person: users[index],
+      }
     });
   };
 
