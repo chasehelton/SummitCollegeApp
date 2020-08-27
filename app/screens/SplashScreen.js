@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import mountain from '../assets/mountain.jpeg';
 import logo from '../assets/logo.png';
+import {summitBlue} from '../assets/colors';
 
 export default function SplashScreen() {
   return (
