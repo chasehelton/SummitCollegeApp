@@ -41,7 +41,7 @@ export default function App() {
         }
       }
     });
-    return () => { isMounted = false }; // use effect cleanup to set flag false, if unmounted
+    return () => (isMounted = false); // use effect cleanup to set flag false, if unmounted
   }, []);
   return (
     <>
@@ -69,13 +69,18 @@ export default function App() {
                 activeTintColor: '#00a8ff',
                 inactiveTintColor: 'gray',
               }}>
-              <Tab.Screen name="Home" component={HomeScreen} />
-              {isAdmin && (<>
-                <Tab.Screen name="Admin" component={AdminScreen} />
-
+              {isAdmin && (
+                <>
+                  <Tab.Screen name="Admin" component={AdminScreen} />
+                  <Tab.Screen name="Settings" component={SettingsScreen} />
                 </>
               )}
-              <Tab.Screen name="Settings" component={SettingsScreen} />
+              {!isAdmin && (
+                <>
+                  <Tab.Screen name="Home" component={HomeScreen} />
+                  <Tab.Screen name="Settings" component={SettingsScreen} />
+                </>
+              )}
             </Tab.Navigator>
           )}
           {!currentUser && (

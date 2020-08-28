@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   input: {
     height: 40,
@@ -137,14 +138,19 @@ const styles = StyleSheet.create({
   },
   blueButton: {
     backgroundColor: '#3ab5e6',
-    marginVertical: 25,
-    padding: 15,
-    width: 200,
+    marginVertical: 15,
+    padding: 30,
+    width: '80%',
     borderRadius: 8,
+    elevation: 2, // Android
+    shadowColor: 'rgba(0,0,0, .3)', // IOS
+    shadowOffset: {height: 4, width: 4}, // IOS
+    shadowOpacity: 0.2, // IOS
+    shadowRadius: 0.5, //IOS
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 18,
     textAlign: 'center',
   },

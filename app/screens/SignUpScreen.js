@@ -82,7 +82,7 @@ export default function SignUpScreen({navigation}) {
         gradYear: gradYear,
         type: 'student',
         banned: false,
-        displayName: first + ' ' + last
+        displayName: first + ' ' + last,
       })
       .then(console.log('Success'))
       .catch((error) => console.log(error));

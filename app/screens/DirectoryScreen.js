@@ -9,13 +9,12 @@ import {
   ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  FlatList
-  } from 'react-native';
+  FlatList,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
 // define constants for actions
 const ACTION_BAN = 0;
@@ -30,10 +29,7 @@ const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
-const Item = ({title}) => (
-
-    <Text style={styles.itemText}>{title}</Text>
-);
+const Item = ({title}) => <Text style={styles.itemText}>{title}</Text>;
 
 export default function DirectoryScreen({route, navigation}) {
   const [users, setUsers] = React.useState([]);
@@ -68,10 +64,12 @@ export default function DirectoryScreen({route, navigation}) {
 
       try {
         const tempUsers = [];
-        querySnapshot.forEach(function(doc) {
-          tempUsers.push(
-            {data: doc.data(), id: doc.data().email, ref: doc.ref}
-          );
+        querySnapshot.forEach(function (doc) {
+          tempUsers.push({
+            data: doc.data(),
+            id: doc.data().email,
+            ref: doc.ref,
+          });
         });
         console.log('Actual-set user length: ' + tempUsers.length);
         setUsers(tempUsers);
@@ -87,29 +85,28 @@ export default function DirectoryScreen({route, navigation}) {
   }, [users, isLoaded, userType]);
 
   const selectPerson = (index) => {
-    console.log("Person is selected, with index " + index.toString());
+    console.log('Person is selected, with index ' + index.toString());
     navigation.navigate('Admin', {
       screen: 'Person',
       params: {
         person: users[index],
-      }
+      },
     });
   };
 
   return (
     <View contentContainerStyle={styles.container}>
-
-        <FlatList
-          data={users}
-          renderItem = { ({ item, index }) => (
-            <TouchableOpacity style={styles.item} onPress={() => selectPerson(index)}>
-                <Item title={item.data.displayName}  />
-            </TouchableOpacity>
-            )}
-          keyExtractor={(item) => item.id}
-        />
-
-
+      <FlatList
+        data={users}
+        renderItem={({item, index}) => (
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => selectPerson(index)}>
+            <Item title={item.data.displayName} />
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
@@ -144,11 +141,10 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     marginHorizontal: 16,
     borderRadius: 8,
-    width: '80%',
+    width: '85%',
   },
   itemText: {
     fontSize: 16,
     color: 'black',
-    fontWeight: 'bold',
   },
 });

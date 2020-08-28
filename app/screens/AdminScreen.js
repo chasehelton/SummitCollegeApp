@@ -60,11 +60,11 @@ export default function AdminScreen({navigation, route}) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   return (
-      <AdminStack.Navigator>
-        <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} />
-        <AdminStack.Screen name="Directory" component={DirectoryScreen} />
-        <AdminStack.Screen name="Person" component={PersonScreen} />
-      </AdminStack.Navigator>
+    <AdminStack.Navigator>
+      <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} />
+      <AdminStack.Screen name="Directory" component={DirectoryScreen} />
+      <AdminStack.Screen name="Person" component={PersonScreen} />
+    </AdminStack.Navigator>
   );
 }
 
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   blueButton: {
     backgroundColor: '#3ab5e6',
     marginVertical: 25,
-    padding: 15,
+    padding: 25,
     width: 200,
     borderRadius: 8,
   },
