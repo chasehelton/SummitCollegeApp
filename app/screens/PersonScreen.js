@@ -37,7 +37,7 @@ const TYPE_DIRECTOR = 4;
 export default function PersonScreen({route, navigation}) {
   const [users, setUsers] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  var {person} = route.params;
+  var {person, header} = route.params;
 
   const [userType, setUserType] = React.useState('');
   //setUserType(person.data.type);
@@ -51,7 +51,7 @@ export default function PersonScreen({route, navigation}) {
       setInitialType();
       setIsLoaded(true);
     }
-  }, [person, userType]);
+  }, [isLoaded, person, userType]);
 
   const [manageAccountVisible, setManageAccountVisible] = React.useState(false);
   const [manageArrow, setManageArrow] = React.useState('\u25BF'); // down is default
@@ -61,14 +61,19 @@ export default function PersonScreen({route, navigation}) {
 
   const toggleManageAccount = () => {
     setManageAccountVisible(!manageAccountVisible);
-    if (manageArrow == downArrow) {
+    if (manageArrow === downArrow) {
       setManageArrow(upArrow);
-    } else setManageArrow(downArrow);
+    } else {
+      setManageArrow(downArrow);
+    }
   };
 
   const writeUserType = (str) => {
-    if (str == 'studentLeader') return 'Student Leader';
-    else return str.charAt(0).toUpperCase() + str.slice(1);
+    if (str === 'studentLeader') {
+      return 'Student Leader';
+    } else {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
   };
 
   const getUserByEmail = async (email) => {
@@ -83,14 +88,16 @@ export default function PersonScreen({route, navigation}) {
 
     console.log('Result size: ' + querySnapshot.size);
 
-    if (querySnapshot.size == 0) {
+    if (querySnapshot.size === 0) {
       Alert.alert('No users found with the email: ' + email);
       return null;
-    } else if (querySnapshot.size != 1) {
+    } else if (querySnapshot.size !== 1) {
       Alert.alert('More than 1 user found with the email: ' + email);
       return null;
     }
-    if (querySnapshot == null) console.log('Snapshot is null');
+    if (querySnapshot == null) {
+      console.log('Snapshot is null');
+    }
 
     return querySnapshot;
   };
@@ -109,8 +116,11 @@ export default function PersonScreen({route, navigation}) {
               banned: value,
             })
             .then(function () {
-              if (value) Alert.alert('User successfully banned.');
-              else Alert.alert('User successfully unbanned.');
+              if (value) {
+                Alert.alert('User successfully banned.');
+              } else {
+                Alert.alert('User successfully unbanned.');
+              }
             })
             .catch(function (error) {
               Alert.alert('Error updating document: ', error);
@@ -167,7 +177,15 @@ export default function PersonScreen({route, navigation}) {
 
   return (
     <View contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Students{'\n'}</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Text>{'Back'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>{header}</Text>
+        <Text style={styles.empty} />
+      </View>
 
       <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
 
@@ -237,10 +255,29 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'column',
   },
-  header: {
+  headerContainer: {
+    backgroundColor: '#eee',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  backButton: {
+    marginTop: 55,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  userList: {
+    height: '100%',
+    backgroundColor: 'white',
+  },
+  title: {
+    flex: 1,
+    marginTop: 50,
+    marginBottom: 25,
+    fontSize: 28,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  empty: {
+    flex: 1,
   },
   profilePic: {
     width: 200,
@@ -277,6 +314,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 10,
     marginTop: 30,
+    padding: 8,
   },
   buttonText: {
     color: '#fff',
@@ -288,8 +326,9 @@ const styles = StyleSheet.create({
   blackButtonText: {
     color: '#000',
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 16,
     padding: 10,
+    fontWeight: '600',
   },
   whiteButton: {
     backgroundColor: '#fff',

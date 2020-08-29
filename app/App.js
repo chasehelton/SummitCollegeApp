@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -6,11 +7,9 @@ import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 //import Icon from 'react-native-ionicons';
 
-import AdminScreen from './screens/AdminScreen';
+import AdminScreen from './screens/AdminStack';
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import DirectoryScreen from './screens/DirectoryScreen';
-import PersonScreen from './screens/PersonScreen';
 
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -33,7 +32,7 @@ export default function App() {
           setUser(user);
           setIsLoading(false);
 
-          if (user.email == 'scappadmin@summitrdu.com') {
+          if (user.email === 'scappadmin@summitrdu.com') {
             setIsAdmin(true);
           }
         } else {

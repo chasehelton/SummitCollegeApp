@@ -13,6 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 import {createStackNavigator} from '@react-navigation/stack';
 import DirectoryScreen from './DirectoryScreen';
 import PersonScreen from './PersonScreen';
+import {summitBlue} from '../assets/colors';
 
 //import { NavigationContainer } from '@react-navigation/native';
 
@@ -48,7 +49,9 @@ const getUsersByEmail = async (email) => {
     Alert.alert('More than 1 user found with the email: ' + email);
     return null;
   }
-  if (querySnapshot == null) console.log('Snapshot is null');
+  if (querySnapshot == null) {
+    console.log('Snapshot is null');
+  }
 
   return querySnapshot;
 };
@@ -59,16 +62,20 @@ export default function AdminHomeScreen({navigation, route}) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   return (
-    <>
-      <Text style={styles.header}>Who are you looking for?{'\n'}</Text>
-      <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Admin</Text>
+        <Text style={styles.text}>Who are you looking for?{'\n'}</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Admin', {
               screen: 'Directory',
               params: {
+                header: 'Students',
                 userType: TYPE_STUDENT,
-              }
+              },
             })
           }
           style={styles.blueButton}>
@@ -80,8 +87,9 @@ export default function AdminHomeScreen({navigation, route}) {
             navigation.navigate('Admin', {
               screen: 'Directory',
               params: {
+                header: 'Student Leaders',
                 userType: TYPE_LEADER,
-              }
+              },
             })
           }
           style={styles.blueButton}>
@@ -93,8 +101,9 @@ export default function AdminHomeScreen({navigation, route}) {
             navigation.navigate('Admin', {
               screen: 'Directory',
               params: {
+                header: 'Staff',
                 userType: TYPE_STAFF,
-              }
+              },
             })
           }
           style={styles.blueButton}>
@@ -106,22 +115,27 @@ export default function AdminHomeScreen({navigation, route}) {
             navigation.navigate('Admin', {
               screen: 'Directory',
               params: {
+                header: 'Directors',
                 userType: TYPE_DIRECTOR,
-              }
+              },
             })
           }
           style={styles.blueButton}>
           <Text style={styles.buttonText}>Directors</Text>
         </TouchableOpacity>
       </ScrollView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'white',
   },
@@ -130,11 +144,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: 200,
   },
+  headerContainer: {
+    backgroundColor: '#eee',
+  },
   header: {
     marginTop: 50,
+    fontSize: 28,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  text: {
+    marginVertical: 25,
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '600',
     alignSelf: 'center',
+    color: summitBlue,
   },
   blueButton: {
     backgroundColor: '#3ab5e6',

@@ -1,20 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {
   Alert,
-  Button,
   StyleSheet,
   Text,
   TextInput,
   View,
-  ScrollView,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 
 // define constants for actions
 const ACTION_BAN = 0;
@@ -32,11 +26,12 @@ const TYPE_DIRECTOR = 4;
 const Item = ({title}) => <Text style={styles.itemText}>{title}</Text>;
 
 export default function DirectoryScreen({route, navigation}) {
-  const [users, setUsers] = React.useState([]);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const {userType} = route.params;
+  const [users, setUsers] = useState([]);
+  const [searchUsers, setSearchUsers] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const {userType, header} = route.params;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function getUsers() {
       var searchType = '';
       if (userType === TYPE_STUDENT) searchType = 'student';
@@ -84,20 +79,53 @@ export default function DirectoryScreen({route, navigation}) {
     }
   }, [users, isLoaded, userType]);
 
+  useEffect(() => {
+    setSearchUsers(users);
+  }, [users]);
+
   const selectPerson = (index) => {
     console.log('Person is selected, with index ' + index.toString());
     navigation.navigate('Admin', {
       screen: 'Person',
       params: {
+        header: header,
         person: users[index],
       },
     });
   };
 
+  const searchFilterFunc = (text) => {
+    const newData = users.filter((item) => {
+      const itemData = item.data.displayName.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setSearchUsers(newData);
+  };
+
   return (
     <View contentContainerStyle={styles.container}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Text>{'Back'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>{header}</Text>
+        <Text style={styles.empty} />
+      </View>
+
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          autoCorrect={false}
+          onChangeText={(text) => searchFilterFunc(text)}
+        />
+      </View>
       <FlatList
-        data={users}
+        style={styles.userList}
+        data={searchUsers}
         renderItem={({item, index}) => (
           <TouchableOpacity
             style={styles.item}
@@ -127,24 +155,57 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
-  header: {
+  headerContainer: {
+    backgroundColor: '#eee',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  backButton: {
+    marginTop: 55,
+    flex: 1,
+  },
+  userList: {
+    height: '100%',
+    backgroundColor: 'white',
+  },
+  title: {
+    flex: 1,
     marginTop: 50,
-    //flex: 1
-    alignSelf: 'center',
-    fontWeight: '700',
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: '600',
+    textAlign: 'center',
   },
+  empty: {
+    flex: 1,
+  },
+
+  searchContainer: {
+    justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#eee',
+  },
+  searchInput: {
+    backgroundColor: 'white',
+    width: 300,
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 25,
+  },
+
   item: {
-    backgroundColor: '#e6e6e6',
-    padding: 20,
-    marginVertical: 4,
+    backgroundColor: '#eee',
+    padding: 15,
+    marginVertical: 8,
     marginHorizontal: 16,
     borderRadius: 8,
-    width: '85%',
+    width: '90%',
   },
   itemText: {
     fontSize: 16,
     color: 'black',
+    fontWeight: '500',
   },
 });
