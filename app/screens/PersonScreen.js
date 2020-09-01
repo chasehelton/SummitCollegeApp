@@ -15,6 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import { Icon } from 'react-native-elements';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -54,10 +55,12 @@ export default function PersonScreen({route, navigation}) {
   }, [isLoaded, person, userType]);
 
   const [manageAccountVisible, setManageAccountVisible] = React.useState(false);
-  const [manageArrow, setManageArrow] = React.useState('\u25BF'); // down is default
+  const [manageArrow, setManageArrow] = React.useState('keyboard-arrow-down'); // down is default
 
-  const downArrow = '\u25BF';
-  const upArrow = '\u25B5';
+  //const downArrow = '\u25BF';
+  //const upArrow = '\u25B5';
+  const downArrow = 'keyboard-arrow-down';
+  const upArrow = 'keyboard-arrow-up';
 
   const toggleManageAccount = () => {
     setManageAccountVisible(!manageAccountVisible);
@@ -181,71 +184,68 @@ export default function PersonScreen({route, navigation}) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Text>{'Back'}</Text>
+          <Icon
+            name='keyboard-arrow-left'
+            type='material'
+            size={35}
+             />
         </TouchableOpacity>
         <Text style={styles.title}>{header}</Text>
         <Text style={styles.empty} />
       </View>
 
-      <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
+      <View style={styles.body}>
 
-      <Text style={styles.personName}>{person.data.displayName}</Text>
 
-      <Text style={styles.personInfo}>{writeUserType(userType)}</Text>
-      <Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>
+        <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
 
-      <TouchableOpacity
-        onPress={() => toggleManageAccount()}
-        style={styles.blueButton}>
-        <Text style={styles.buttonText}>Manage Account {manageArrow}</Text>
-      </TouchableOpacity>
+        <Text style={styles.personName}>{person.data.displayName}</Text>
 
-      {manageAccountVisible && (
-        <View>
-          <TouchableOpacity
-            onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'student')}
-            style={[styles.whiteButton, {borderTopLeftRadius: -10}]}>
-            <Text style={styles.blackButtonText}>Make Student</Text>
-          </TouchableOpacity>
+        <Text style={styles.personInfo}>{writeUserType(userType)}</Text>
+        <Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>
 
-          <TouchableOpacity
-            onPress={() =>
-              updateUser(person, ACTION_CHANGE_TYPE, 'studentLeader')
-            }
-            style={styles.whiteButton}>
-            <Text style={styles.blackButtonText}>Make Student Leader</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => toggleManageAccount()}
+          style={styles.blueButton}>
+          <Text style={styles.buttonText}>Manage Account <Icon name={manageArrow} type='material' color='white' style={styles.arrowIcon} /></Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'staff')}
-            style={styles.whiteButton}>
-            <Text style={styles.blackButtonText}>Make Staff</Text>
-          </TouchableOpacity>
+        {manageAccountVisible && (
+          <View>
+            <TouchableOpacity
+              onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'student')}
+              style={[styles.whiteButton, {borderTopLeftRadius: -10}]}>
+              <Text style={styles.blackButtonText}>Make Student</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'director')}
-            style={[
-              styles.whiteButton,
-              {borderBottomLeftRadius: 10, borderBottomRightRadius: 10},
-            ]}>
-            <Text style={styles.blackButtonText}>Make Director</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+            <TouchableOpacity
+              onPress={() =>
+                updateUser(person, ACTION_CHANGE_TYPE, 'studentLeader')
+              }
+              style={styles.whiteButton}>
+              <Text style={styles.blackButtonText}>Make Student Leader</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'staff')}
+              style={styles.whiteButton}>
+              <Text style={styles.blackButtonText}>Make Staff</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'director')}
+              style={[
+                styles.whiteButton,
+                {borderBottomLeftRadius: 10, borderBottomRightRadius: 10},
+              ]}>
+              <Text style={styles.blackButtonText}>Make Director</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
-
-/*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
-      <Text>{"\n"}</Text>
-
-      <Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
-      <Text>{"\n"}</Text>
-
-      <Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
-      <Text>{"\n"}</Text>
-
-      <Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
 
 const styles = StyleSheet.create({
   container: {
@@ -260,9 +260,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
+  body: {
+    backgroundColor: 'white',
+    height: '100%',
+  },
+  arrowIcon: {
+    //flexStart: 50,
+  },
   backButton: {
-    marginTop: 55,
+    marginTop: 25,
+    marginStart: 15,
     flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   userList: {
     height: '100%',
@@ -270,9 +280,9 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    marginTop: 50,
+    marginTop: 25,
     marginBottom: 25,
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -280,8 +290,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profilePic: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     alignSelf: 'center',
     marginTop: 30,
     borderRadius: 8,
@@ -310,7 +320,7 @@ const styles = StyleSheet.create({
   },
   blueButton: {
     backgroundColor: '#3ab5e6',
-    width: '80%',
+    width: '85%',
     alignSelf: 'center',
     borderRadius: 10,
     marginTop: 30,
@@ -332,20 +342,10 @@ const styles = StyleSheet.create({
   },
   whiteButton: {
     backgroundColor: '#fff',
-    width: '80%',
+    width: '85%',
     alignSelf: 'center',
-    borderWidth: 1.1,
+    borderWidth: 1.3,
     borderColor: '#3939391A',
     paddingVertical: 8,
-  },
-  item: {
-    backgroundColor: '#e6e6e6',
-    padding: 20,
-    marginVertical: 4,
-    marginHorizontal: 16,
-  },
-  itemText: {
-    fontSize: 12,
-    color: 'black',
   },
 });

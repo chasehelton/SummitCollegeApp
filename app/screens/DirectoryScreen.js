@@ -9,6 +9,7 @@ import {
   FlatList,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { Icon } from 'react-native-elements';
 
 // define constants for actions
 const ACTION_BAN = 0;
@@ -109,9 +110,13 @@ export default function DirectoryScreen({route, navigation}) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Text>{'Back'}</Text>
+          <Icon
+            name='keyboard-arrow-left'
+            type='material'
+            size={35}
+             />
         </TouchableOpacity>
-        <Text style={styles.title}>{header}</Text>
+        <Text numberOfLines={1} style={styles.title}>{header}</Text>
         <Text style={styles.empty} />
       </View>
 
@@ -163,8 +168,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   backButton: {
-    marginTop: 55,
+    marginTop: 25,
+    marginStart: 15,
     flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   userList: {
     height: '100%',
@@ -172,8 +180,9 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    marginTop: 50,
-    fontSize: 28,
+    marginTop: 25,
+        //marginBottom: 25,
+        fontSize: 22,
     fontWeight: '600',
     textAlign: 'center',
   },
