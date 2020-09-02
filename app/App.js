@@ -28,6 +28,7 @@ export default function App() {
   const [currentUser, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [initialPage, setInitialPage] = useState('Home');
 
   const images = {
     eventsImage: require('./assets/Icon-feather-calendar.png'),
@@ -48,10 +49,16 @@ export default function App() {
 
           if (user.email === 'scappadmin@summitrdu.com') {
             setIsAdmin(true);
+            setInitialPage('Admin');
+          }
+          else {
+            setIsAdmin(false);
+            setInitialPage('Home');
           }
         } else {
           setUser(null);
           setIsAdmin(false);
+
         }
       }
     });
@@ -63,7 +70,7 @@ export default function App() {
       {!isLoading && (
         <NavigationContainer>
           {currentUser && (
-            <Tab.Navigator initialRouteName="Home"
+            <Tab.Navigator initialRouteName={initialPage}
               screenOptions={({route}) => ({
                  tabBarIcon: ({focused, color, size}) => {
                    let iconName;
@@ -82,6 +89,9 @@ export default function App() {
                    }
                    else if (route.name === 'Settings') {
                      iconName = images.settingsImage;
+                   }
+                   else if (route.name === 'Admin') {
+                     return <Icon name='supervisor-account' type='material' size={size} color={color} />;
                    }
                    // You can return any component that you like here!
                    //return <Icon name={iconName} type='material' size={size} color={color} />;
