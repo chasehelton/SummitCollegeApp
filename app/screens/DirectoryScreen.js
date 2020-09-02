@@ -65,13 +65,16 @@ export default function DirectoryScreen({route, navigation}) {
 
       try {
         const tempUsers = [];
+        var count = 0;
         querySnapshot.forEach(function (doc) {
           tempUsers.push({
             data: doc.data(),
-            id: doc.data().email,
+            id: count,
             ref: doc.ref,
           });
+          count++;
         });
+        console.log('Count: ' + count);
         console.log('Actual-set user length: ' + tempUsers.length);
         setUsers(tempUsers);
       } catch (error) {
@@ -137,7 +140,7 @@ export default function DirectoryScreen({route, navigation}) {
         renderItem={({item, index}) => (
           <TouchableOpacity
             style={styles.item}
-            onPress={() => selectPerson(index)}>
+            onPress={() => selectPerson(item.id.toString())}>
             <Item title={item.data.displayName} key={index} />
           </TouchableOpacity>
         )}
