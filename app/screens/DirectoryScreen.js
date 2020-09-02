@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {
   Alert,
