@@ -63,7 +63,7 @@ export default function App() {
       {!isLoading && (
         <NavigationContainer>
           {currentUser && (
-            <Tab.Navigator
+            <Tab.Navigator initialRouteName="Home"
               screenOptions={({route}) => ({
                  tabBarIcon: ({focused, color, size}) => {
                    let iconName;
