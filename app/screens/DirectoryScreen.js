@@ -12,6 +12,8 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {Icon} from 'react-native-elements';
 
+const searchIcon = 'search';
+
 // define constants for actions
 const ACTION_BAN = 0;
 const ACTION_CHANGE_TYPE = 1;
@@ -127,6 +129,12 @@ export default function DirectoryScreen({route, navigation}) {
       </View>
 
       <View style={styles.searchContainer}>
+        <Icon
+          name={searchIcon}
+          type="material"
+          color="black"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Search"
@@ -196,11 +204,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  searchIcon: {
+    marginRight: 10,
+  },
   searchContainer: {
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
     backgroundColor: '#eee',
+    flexDirection: 'row',
   },
   searchInput: {
     backgroundColor: 'white',
