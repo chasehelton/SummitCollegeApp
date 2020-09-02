@@ -15,7 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import { Icon } from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -184,19 +184,13 @@ export default function PersonScreen({route, navigation}) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon
-            name='keyboard-arrow-left'
-            type='material'
-            size={35}
-             />
+          <Icon name="keyboard-arrow-left" type="material" size={35} />
         </TouchableOpacity>
         <Text style={styles.title}>{header}</Text>
         <Text style={styles.empty} />
       </View>
 
       <View style={styles.body}>
-
-
         <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
 
         <Text style={styles.personName}>{person.data.displayName}</Text>
@@ -207,7 +201,13 @@ export default function PersonScreen({route, navigation}) {
         <TouchableOpacity
           onPress={() => toggleManageAccount()}
           style={styles.blueButton}>
-          <Text style={styles.buttonText}>Manage Account <Icon name={manageArrow} type='material' color='white' style={styles.arrowIcon} /></Text>
+          <Text style={styles.buttonText}>Manage Account </Text>
+          <Icon
+            name={manageArrow}
+            type="material"
+            color="white"
+            style={styles.arrowIcon}
+          />
         </TouchableOpacity>
 
         {manageAccountVisible && (
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     //flexStart: 50,
   },
   backButton: {
-    marginTop: 25,
+    marginTop: 37,
     marginStart: 15,
     flex: 1,
     justifyContent: 'flex-start',
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    marginTop: 25,
+    marginTop: 40,
     marginBottom: 25,
     fontSize: 22,
     fontWeight: '600',
@@ -325,6 +325,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 30,
     padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#fff',

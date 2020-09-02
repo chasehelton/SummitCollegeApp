@@ -10,7 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Icon } from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 
 // define constants for actions
 const ACTION_BAN = 0;
@@ -25,7 +25,11 @@ const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
-const Item = ({title}) => <Text style={styles.itemText}>{title}</Text>;
+const Item = ({title, index}) => (
+  <Text key={index} style={styles.itemText}>
+    {title}
+  </Text>
+);
 
 export default function DirectoryScreen({route, navigation}) {
   const [users, setUsers] = useState([]);
@@ -97,7 +101,7 @@ export default function DirectoryScreen({route, navigation}) {
   };
 
   const searchFilterFunc = (text) => {
-    const newData = users.filter((item) => {
+    const newData = users.filter((item, i) => {
       const itemData = item.data.displayName.toUpperCase();
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1;
@@ -111,13 +115,11 @@ export default function DirectoryScreen({route, navigation}) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon
-            name='keyboard-arrow-left'
-            type='material'
-            size={35}
-             />
+          <Icon name="keyboard-arrow-left" type="material" size={35} />
         </TouchableOpacity>
-        <Text numberOfLines={1} style={styles.title}>{header}</Text>
+        <Text numberOfLines={1} style={styles.title}>
+          {header}
+        </Text>
         <Text style={styles.empty} />
       </View>
 
@@ -136,7 +138,7 @@ export default function DirectoryScreen({route, navigation}) {
           <TouchableOpacity
             style={styles.item}
             onPress={() => selectPerson(index)}>
-            <Item title={item.data.displayName} />
+            <Item title={item.data.displayName} key={index} />
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   backButton: {
-    marginTop: 25,
+    marginTop: 37,
     marginStart: 15,
     flex: 1,
     justifyContent: 'flex-start',
@@ -180,10 +182,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    flex: 1,
-    marginTop: 25,
-        //marginBottom: 25,
-        fontSize: 22,
+    flex: 4,
+    marginTop: 40,
+    //marginBottom: 25,
+    fontSize: 22,
     fontWeight: '600',
     textAlign: 'center',
   },
