@@ -6,9 +6,14 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 //import Icon from 'react-native-ionicons';
+import {Icon} from 'react-native-elements';
+import {StyleSheet, Image} from 'react-native';
 
 import AdminScreen from './screens/AdminStack';
+import EventsScreen from './screens/EventsScreen';
+import CommunityScreen from './screens/CommunityScreen';
 import HomeScreen from './screens/HomeScreen';
+import ResourcesScreen from './screens/ResourcesScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 import SignUpScreen from './screens/SignUpScreen';
@@ -23,6 +28,15 @@ export default function App() {
   const [currentUser, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const images = {
+    eventsImage: require('./assets/Icon-feather-calendar.png'),
+    communityImage: require('./assets/Icon-feather-users.png'),
+    homeImage: require('./assets/Icon-feather-home.png'),
+    resourcesImage: require('./assets/Icon-feather-folder.png'),
+    settingsImage: require('./assets/Icon-feather-settings.png'),
+  };
+
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
     auth().onAuthStateChanged((user) => {
@@ -37,6 +51,7 @@ export default function App() {
           }
         } else {
           setUser(null);
+          setIsAdmin(false);
         }
       }
     });
@@ -50,23 +65,34 @@ export default function App() {
           {currentUser && (
             <Tab.Navigator
               screenOptions={({route}) => ({
-                // tabBarIcon: ({focused, color, size}) => {
-                //   let iconName;
-                //   if (route.name === 'Home') {
-                //     iconName = focused
-                //       ? 'ios-add'
-                //       : 'ios-information-circle-outline';
-                //   } else if (route.name === 'Settings') {
-                //     iconName = focused ? 'ios-list-box' : 'ios-list';
-                //   }
-                //   // You can return any component that you like here!
-                //   return <Icon name={iconName} size={size} color={color} />;
-                // },
+                 tabBarIcon: ({focused, color, size}) => {
+                   let iconName;
+                   if (route.name === 'Events') {
+                     iconName = images.eventsImage;
+                   }
+                   else if (route.name === 'Community') {
+                     iconName = images.communityImage;
+                   }
+
+                   else if (route.name === 'Home') {
+                     iconName = images.homeImage;
+                   }
+                   else if (route.name === 'Resources') {
+                     iconName = images.resourcesImage;
+                   }
+                   else if (route.name === 'Settings') {
+                     iconName = images.settingsImage;
+                   }
+                   // You can return any component that you like here!
+                   //return <Icon name={iconName} type='material' size={size} color={color} />;
+                   return <Image source={iconName} style={styles.iconTest}/>
+                 },
               })}
               tabBarOptions={{
                 labelStyle: {fontSize: 13},
                 activeTintColor: '#00a8ff',
                 inactiveTintColor: 'gray',
+                showLabel: false,
               }}>
               {isAdmin && (
                 <>
@@ -76,7 +102,10 @@ export default function App() {
               )}
               {!isAdmin && (
                 <>
+                  <Tab.Screen name="Events" component={EventsScreen} />
+                  <Tab.Screen name="Community" component={CommunityScreen} />
                   <Tab.Screen name="Home" component={HomeScreen} />
+                  <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />
                 </>
               )}
@@ -97,3 +126,11 @@ export default function App() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  iconTest: {
+    width: 25,
+    height: 25,
+  }
+
+});
