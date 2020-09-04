@@ -12,13 +12,6 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {Icon} from 'react-native-elements';
 
-// define constants for actions
-const ACTION_BAN = 0;
-const ACTION_CHANGE_TYPE = 1;
-const ACTION_MAKE_LEADER = 2;
-const ACTION_MAKE_STAFF = 3;
-const ACTION_MAKE_DIRECTOR = 4;
-
 // define constants for users
 const TYPE_STUDENT = 1;
 const TYPE_LEADER = 2;
@@ -43,7 +36,7 @@ export default function DirectoryScreen({route, navigation}) {
       if (userType === TYPE_STUDENT) searchType = 'student';
       else if (userType === TYPE_LEADER) searchType = 'studentLeader';
       else if (userType === TYPE_STAFF) searchType = 'staff';
-      else if (userType === TYPE_LEADER) searchType = 'director';
+      else if (userType === TYPE_DIRECTOR) searchType = 'director';
 
       console.log('Search type: ' + searchType);
       const querySnapshot = await firestore()

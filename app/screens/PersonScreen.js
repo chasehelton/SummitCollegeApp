@@ -1,20 +1,13 @@
 import React from 'react';
 import {
   Alert,
-  Button,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  ScrollView,
   TouchableOpacity,
   Image,
   LogBox,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import {Icon} from 'react-native-elements';
 
 LogBox.ignoreLogs([
@@ -24,19 +17,12 @@ LogBox.ignoreLogs([
 // define constants for actions
 const ACTION_BAN = 0;
 const ACTION_CHANGE_TYPE = 1;
-const ACTION_MAKE_LEADER = 2;
-const ACTION_MAKE_STAFF = 3;
-const ACTION_MAKE_DIRECTOR = 4;
-const ACTION_MAKE_STUDENT = 5;
-
-// define constants for users
-const TYPE_STUDENT = 1;
-const TYPE_LEADER = 2;
-const TYPE_STAFF = 3;
-const TYPE_DIRECTOR = 4;
+// const ACTION_MAKE_LEADER = 2;
+// const ACTION_MAKE_STAFF = 3;
+// const ACTION_MAKE_DIRECTOR = 4;
+// const ACTION_MAKE_STUDENT = 5;
 
 export default function PersonScreen({route, navigation}) {
-  const [users, setUsers] = React.useState([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
   var {person, header} = route.params;
 
@@ -79,31 +65,31 @@ export default function PersonScreen({route, navigation}) {
     }
   };
 
-  const getUserByEmail = async (email) => {
-    const querySnapshot = await firestore()
-      .collection('users')
-      .where('email', '==', email)
-      .get();
-    if (querySnapshot.empty) {
-      Alert.alert('Some error here for empty snapshot');
-      return null;
-    }
+  // const getUserByEmail = async (email) => {
+  //   const querySnapshot = await firestore()
+  //     .collection('users')
+  //     .where('email', '==', email)
+  //     .get();
+  //   if (querySnapshot.empty) {
+  //     Alert.alert('Some error here for empty snapshot');
+  //     return null;
+  //   }
 
-    console.log('Result size: ' + querySnapshot.size);
+  //   console.log('Result size: ' + querySnapshot.size);
 
-    if (querySnapshot.size === 0) {
-      Alert.alert('No users found with the email: ' + email);
-      return null;
-    } else if (querySnapshot.size !== 1) {
-      Alert.alert('More than 1 user found with the email: ' + email);
-      return null;
-    }
-    if (querySnapshot == null) {
-      console.log('Snapshot is null');
-    }
+  //   if (querySnapshot.size === 0) {
+  //     Alert.alert('No users found with the email: ' + email);
+  //     return null;
+  //   } else if (querySnapshot.size !== 1) {
+  //     Alert.alert('More than 1 user found with the email: ' + email);
+  //     return null;
+  //   }
+  //   if (querySnapshot == null) {
+  //     console.log('Snapshot is null');
+  //   }
 
-    return querySnapshot;
-  };
+  //   return querySnapshot;
+  // };
 
   const updateUser = async (user, action, value) => {
     try {
@@ -214,7 +200,7 @@ export default function PersonScreen({route, navigation}) {
           <View>
             <TouchableOpacity
               onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'student')}
-              style={[styles.whiteButton, {borderTopLeftRadius: -10}]}>
+              style={styles.whiteButton}>
               <Text style={styles.blackButtonText}>Make Student</Text>
             </TouchableOpacity>
 
@@ -234,10 +220,7 @@ export default function PersonScreen({route, navigation}) {
 
             <TouchableOpacity
               onPress={() => updateUser(person, ACTION_CHANGE_TYPE, 'director')}
-              style={[
-                styles.whiteButton,
-                {borderBottomLeftRadius: 10, borderBottomRightRadius: 10},
-              ]}>
+              style={styles.whiteButton}>
               <Text style={styles.blackButtonText}>Make Director</Text>
             </TouchableOpacity>
           </View>

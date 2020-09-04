@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -50,15 +49,13 @@ export default function App() {
           if (user.email === 'scappadmin@summitrdu.com') {
             setIsAdmin(true);
             setInitialPage('Admin');
-          }
-          else {
+          } else {
             setIsAdmin(false);
             setInitialPage('Home');
           }
         } else {
           setUser(null);
           setIsAdmin(false);
-
         }
       }
     });
@@ -70,33 +67,35 @@ export default function App() {
       {!isLoading && (
         <NavigationContainer>
           {currentUser && (
-            <Tab.Navigator initialRouteName={initialPage}
+            <Tab.Navigator
+              initialRouteName={initialPage}
               screenOptions={({route}) => ({
-                 tabBarIcon: ({focused, color, size}) => {
-                   let iconName;
-                   if (route.name === 'Events') {
-                     iconName = images.eventsImage;
-                   }
-                   else if (route.name === 'Community') {
-                     iconName = images.communityImage;
-                   }
-
-                   else if (route.name === 'Home') {
-                     iconName = images.homeImage;
-                   }
-                   else if (route.name === 'Resources') {
-                     iconName = images.resourcesImage;
-                   }
-                   else if (route.name === 'Settings') {
-                     iconName = images.settingsImage;
-                   }
-                   else if (route.name === 'Admin') {
-                     return <Icon name='supervisor-account' type='material' size={size} color={color} />;
-                   }
-                   // You can return any component that you like here!
-                   //return <Icon name={iconName} type='material' size={size} color={color} />;
-                   return <Image source={iconName} style={styles.iconTest}/>
-                 },
+                tabBarIcon: ({focused, color, size}) => {
+                  let iconName;
+                  if (route.name === 'Events') {
+                    iconName = images.eventsImage;
+                  } else if (route.name === 'Community') {
+                    iconName = images.communityImage;
+                  } else if (route.name === 'Home') {
+                    iconName = images.homeImage;
+                  } else if (route.name === 'Resources') {
+                    iconName = images.resourcesImage;
+                  } else if (route.name === 'Settings') {
+                    iconName = images.settingsImage;
+                  } else if (route.name === 'Admin') {
+                    return (
+                      <Icon
+                        name="supervisor-account"
+                        type="material"
+                        size={size}
+                        color={color}
+                      />
+                    );
+                  }
+                  // You can return any component that you like here!
+                  //return <Icon name={iconName} type='material' size={size} color={color} />;
+                  return <Image source={iconName} style={styles.iconTest} />;
+                },
               })}
               tabBarOptions={{
                 labelStyle: {fontSize: 13},
@@ -141,6 +140,5 @@ const styles = StyleSheet.create({
   iconTest: {
     width: 25,
     height: 25,
-  }
-
+  },
 });
