@@ -1,10 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+
+import Header from '../components/Header';
 
 export default function EventsScreen() {
   return (
     <View style={styles.container}>
-      <Text>Events</Text>
+      <Header title={'Events'} backButton={false} />
     </View>
   );
 }
@@ -12,7 +14,11 @@ export default function EventsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  title: {
+    fontSize: 48,
   },
 });

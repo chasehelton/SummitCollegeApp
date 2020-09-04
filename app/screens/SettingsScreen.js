@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 
+import Header from '../components/Header';
+
 const handleLogOut = () => {
   auth()
     .signOut()
@@ -11,9 +13,9 @@ const handleLogOut = () => {
 export default function SettingsScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <TouchableOpacity onPress={() => handleLogOut()}>
-        <Text style={styles.logout}>Log Out</Text>
+      <Header title={'Settings'} backButton={false} />
+      <TouchableOpacity style={styles.logout} onPress={() => handleLogOut()}>
+        <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -22,15 +24,23 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 48,
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
   },
   logout: {
-    color: 'red',
+    width: '80%',
+    alignItems: 'center',
+    marginTop: 50,
     fontSize: 24,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 8,
+    alignSelf: 'center',
   },
 });

@@ -9,6 +9,7 @@ import {
   LogBox,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
+import Header from '../components/Header';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -166,7 +167,7 @@ export default function PersonScreen({route, navigation}) {
 
   return (
     <View contentContainerStyle={styles.container}>
-      <View style={styles.headerContainer}>
+      {/* <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -174,7 +175,8 @@ export default function PersonScreen({route, navigation}) {
         </TouchableOpacity>
         <Text style={styles.title}>{header}</Text>
         <Text style={styles.empty} />
-      </View>
+      </View> */}
+      <Header navigation={navigation} title={header} backButton={true} />
 
       <View style={styles.body}>
         <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />

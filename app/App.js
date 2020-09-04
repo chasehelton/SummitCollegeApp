@@ -19,6 +19,7 @@ import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import SplashScreen from './screens/SplashScreen';
+import {summitBlue} from './assets/colors';
 
 const Tab = createBottomTabNavigator();
 const Auth = createStackNavigator();
@@ -29,13 +30,13 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialPage, setInitialPage] = useState('Home');
 
-  const images = {
-    eventsImage: require('./assets/Icon-feather-calendar.png'),
-    communityImage: require('./assets/Icon-feather-users.png'),
-    homeImage: require('./assets/Icon-feather-home.png'),
-    resourcesImage: require('./assets/Icon-feather-folder.png'),
-    settingsImage: require('./assets/Icon-feather-settings.png'),
-  };
+  // const images = {
+  //   eventsImage: require('./assets/Icon-feather-calendar.png'),
+  //   communityImage: require('./assets/Icon-feather-users.png'),
+  //   homeImage: require('./assets/Icon-feather-home.png'),
+  //   resourcesImage: require('./assets/Icon-feather-folder.png'),
+  //   settingsImage: require('./assets/Icon-feather-settings.png'),
+  // };
 
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
@@ -73,15 +74,15 @@ export default function App() {
                 tabBarIcon: ({focused, color, size}) => {
                   let iconName;
                   if (route.name === 'Events') {
-                    iconName = images.eventsImage;
+                    iconName = 'event';
                   } else if (route.name === 'Community') {
-                    iconName = images.communityImage;
+                    iconName = 'group';
                   } else if (route.name === 'Home') {
-                    iconName = images.homeImage;
+                    iconName = 'home';
                   } else if (route.name === 'Resources') {
-                    iconName = images.resourcesImage;
+                    iconName = 'folder-open';
                   } else if (route.name === 'Settings') {
-                    iconName = images.settingsImage;
+                    iconName = 'settings';
                   } else if (route.name === 'Admin') {
                     return (
                       <Icon
@@ -93,15 +94,25 @@ export default function App() {
                     );
                   }
                   // You can return any component that you like here!
-                  //return <Icon name={iconName} type='material' size={size} color={color} />;
-                  return <Image source={iconName} style={styles.iconTest} />;
+                  return (
+                    <Icon
+                      name={iconName}
+                      type="material"
+                      size={size}
+                      color={color}
+                    />
+                  );
+                  //return <Image source={iconName} style={styles.iconTest} />;
                 },
               })}
               tabBarOptions={{
                 labelStyle: {fontSize: 13},
-                activeTintColor: '#00a8ff',
+                activeTintColor: summitBlue,
                 inactiveTintColor: 'gray',
                 showLabel: false,
+                style: {
+                  backgroundColor: '#eee',
+                },
               }}>
               {isAdmin && (
                 <>
@@ -138,7 +149,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   iconTest: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
+    margin: 10,
   },
 });

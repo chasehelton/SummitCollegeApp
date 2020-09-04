@@ -1,10 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+
+import Header from '../components/Header';
 
 export default function CommunityScreen() {
   return (
     <View style={styles.container}>
-      <Text>Community</Text>
+      <Header title={'Community'} backButton={false} />
     </View>
   );
 }
@@ -12,7 +14,11 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  title: {
+    fontSize: 48,
   },
 });
