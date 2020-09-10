@@ -60,3 +60,4 @@ buck-out/
 
 # Firebase Connection
 /ios/GoogleService-Info.plist
+/android/app/google-services.json
