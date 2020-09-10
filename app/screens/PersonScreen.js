@@ -167,15 +167,6 @@ export default function PersonScreen({route, navigation}) {
 
   return (
     <View contentContainerStyle={styles.container}>
-      {/* <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Icon name="keyboard-arrow-left" type="material" size={35} />
-        </TouchableOpacity>
-        <Text style={styles.title}>{header}</Text>
-        <Text style={styles.empty} />
-      </View> */}
       <Header navigation={navigation} title={header} backButton={true} />
 
       <View style={styles.body}>

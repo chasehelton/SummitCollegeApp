@@ -4,9 +4,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
-//import Icon from 'react-native-ionicons';
 import {Icon} from 'react-native-elements';
-import {StyleSheet, Image} from 'react-native';
+
+// Included to prevent warnings from displaying, comment out for debugging
+import {LogBox} from 'react-native';
+LogBox.ignoreLogs(['Sending...']);
 
 import AdminScreen from './screens/AdminStack';
 import EventsScreen from './screens/EventsScreen';
@@ -88,7 +90,7 @@ export default function App() {
                       <Icon
                         name="supervisor-account"
                         type="material"
-                        size={size}
+                        size={35}
                         color={color}
                       />
                     );
@@ -98,7 +100,7 @@ export default function App() {
                     <Icon
                       name={iconName}
                       type="material"
-                      size={size}
+                      size={35}
                       color={color}
                     />
                   );
@@ -106,12 +108,13 @@ export default function App() {
                 },
               })}
               tabBarOptions={{
-                labelStyle: {fontSize: 13},
+                labelStyle: {},
                 activeTintColor: summitBlue,
                 inactiveTintColor: 'gray',
                 showLabel: false,
                 style: {
                   backgroundColor: '#eee',
+                  height: 100,
                 },
               }}>
               {isAdmin && (
@@ -146,11 +149,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  iconTest: {
-    width: 30,
-    height: 30,
-    margin: 10,
-  },
-});
