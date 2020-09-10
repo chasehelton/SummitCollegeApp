@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -6,8 +7,10 @@ import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 //import Icon from 'react-native-ionicons';
 
+import AdminScreen from './screens/AdminStack';
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
+
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
@@ -19,16 +22,25 @@ const Auth = createStackNavigator();
 export default function App() {
   const [currentUser, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
+    let isMounted = true; // note this flag denote mount status
     auth().onAuthStateChanged((user) => {
-      if (user) {
-        setIsLoading(true);
-        setUser(user);
-        setIsLoading(false);
-      } else {
-        setUser(null);
+      if (isMounted) {
+        if (user) {
+          setIsLoading(true);
+          setUser(user);
+          setIsLoading(false);
+
+          if (user.email === 'scappadmin@summitrdu.com') {
+            setIsAdmin(true);
+          }
+        } else {
+          setUser(null);
+        }
       }
     });
+    return () => (isMounted = false); // use effect cleanup to set flag false, if unmounted
   }, []);
   return (
     <>
@@ -56,8 +68,18 @@ export default function App() {
                 activeTintColor: '#00a8ff',
                 inactiveTintColor: 'gray',
               }}>
-              <Tab.Screen name="Home" component={HomeScreen} />
-              <Tab.Screen name="Settings" component={SettingsScreen} />
+              {isAdmin && (
+                <>
+                  <Tab.Screen name="Admin" component={AdminScreen} />
+                  <Tab.Screen name="Settings" component={SettingsScreen} />
+                </>
+              )}
+              {!isAdmin && (
+                <>
+                  <Tab.Screen name="Home" component={HomeScreen} />
+                  <Tab.Screen name="Settings" component={SettingsScreen} />
+                </>
+              )}
             </Tab.Navigator>
           )}
           {!currentUser && (
