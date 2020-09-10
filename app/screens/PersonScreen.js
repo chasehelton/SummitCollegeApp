@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   personInfo: {
     //color: '#3ab5e6',
-    fontSize: 16,
+    fontSize: 14,
     alignSelf: 'center',
     marginBottom: 5,
   },
