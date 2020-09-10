@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    flex: 1,
+    flex: 4,
     marginTop: 40,
     marginBottom: 25,
     fontSize: 22,

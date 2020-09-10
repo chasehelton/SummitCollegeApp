@@ -12,6 +12,8 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {Icon} from 'react-native-elements';
 
+const searchIcon = 'search';
+
 // define constants for users
 const TYPE_STUDENT = 1;
 const TYPE_LEADER = 2;
@@ -58,13 +60,16 @@ export default function DirectoryScreen({route, navigation}) {
 
       try {
         const tempUsers = [];
+        var count = 0;
         querySnapshot.forEach(function (doc) {
           tempUsers.push({
             data: doc.data(),
-            id: doc.data().email,
+            id: count,
             ref: doc.ref,
           });
+          count++;
         });
+        console.log('Count: ' + count);
         console.log('Actual-set user length: ' + tempUsers.length);
         setUsers(tempUsers);
       } catch (error) {
@@ -117,6 +122,12 @@ export default function DirectoryScreen({route, navigation}) {
       </View>
 
       <View style={styles.searchContainer}>
+        <Icon
+          name={searchIcon}
+          type="material"
+          color="black"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Search"
@@ -130,7 +141,7 @@ export default function DirectoryScreen({route, navigation}) {
         renderItem={({item, index}) => (
           <TouchableOpacity
             style={styles.item}
-            onPress={() => selectPerson(index)}>
+            onPress={() => selectPerson(item.id.toString())}>
             <Item title={item.data.displayName} key={index} />
           </TouchableOpacity>
         )}
@@ -186,11 +197,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  searchIcon: {
+    marginRight: 10,
+  },
   searchContainer: {
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
     backgroundColor: '#eee',
+    flexDirection: 'row',
   },
   searchInput: {
     backgroundColor: 'white',
