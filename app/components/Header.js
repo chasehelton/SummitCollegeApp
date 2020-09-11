@@ -29,7 +29,7 @@ export default function Header({navigation, title, backButton}) {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: '#eee',
+    backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
   },

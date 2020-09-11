@@ -113,7 +113,7 @@ export default function App() {
                 inactiveTintColor: 'gray',
                 showLabel: false,
                 style: {
-                  backgroundColor: '#eee',
+                  backgroundColor: 'white',
                   height: 100,
                 },
               }}>

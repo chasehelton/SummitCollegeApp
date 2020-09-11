@@ -14,6 +14,7 @@ import Event from '../components/Event';
 
 export default function EventsScreen({navigation}) {
   const [events, setEvents] = useState([]);
+  const [noEvents, setNoEvents] = useState(false);
 
   useLayoutEffect(() => {
     async function getEvents() {
@@ -78,13 +79,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#eee',
   },
   title: {
     fontSize: 48,
   },
   eventList: {
     height: '100%',
-    backgroundColor: 'white',
+    padding: 10,
+    backgroundColor: '#eee',
   },
 });

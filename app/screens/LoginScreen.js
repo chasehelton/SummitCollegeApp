@@ -45,8 +45,8 @@ export default function LoginScreen({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>Summit College</Text>
             <Image source={logo} style={styles.logo} />
+            <Text style={styles.title}>Summit College</Text>
             <Text style={styles.loginText}>Login to your account</Text>
           </View>
           <View style={styles.inputContainer}>
@@ -66,26 +66,26 @@ export default function LoginScreen({navigation}) {
             <TouchableOpacity
               style={styles.loginButtonTouchable}
               onPress={() => navigation.navigate('Forgot Password')}>
-              <Text style={styles.loginButton}>Forgot Password?</Text>
+              <Text style={styles.blackTextButton}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
             {!isReadyToSubmit && (
-              <TouchableOpacity style={styles.createAccountButton}>
-                <Text style={styles.createAccountButtonText}>LOGIN</Text>
+              <TouchableOpacity style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>LOGIN</Text>
               </TouchableOpacity>
             )}
             {isReadyToSubmit && (
               <TouchableOpacity
-                style={styles.createAccountButtonActive}
+                style={styles.loginButtonActive}
                 onPress={() => handleLogIn()}>
-                <Text style={styles.createAccountButtonTextActive}>LOGIN</Text>
+                <Text style={styles.loginButtonTextActive}>LOGIN</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
               style={styles.loginButtonTouchable}
               onPress={() => navigation.navigate('Sign Up')}>
-              <Text style={styles.loginButton}>SIGN UP</Text>
+              <Text style={styles.blackTextButton}>SIGN UP</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   headerContainer: {
     marginTop: 50,
@@ -109,11 +109,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: summitBlue,
     alignSelf: 'center',
-    marginTop: 25,
     fontWeight: '600',
   },
   inputContainer: {
-    marginTop: 0,
+    marginVertical: 50,
     display: 'flex',
     // flex: 7,
     justifyContent: 'center',
@@ -123,7 +122,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 50,
+    marginVertical: 50,
   },
   loginButtonTouchable: {
     marginTop: 25,
@@ -131,6 +130,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 44,
     fontWeight: '300',
+    marginVertical: 15,
   },
   logo: {
     width: 150,
@@ -145,28 +145,29 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 5,
   },
-  createAccountButton: {
+  loginButton: {
     backgroundColor: 'gray',
     paddingVertical: 10,
-    paddingHorizontal: 70,
+    paddingHorizontal: 100,
     borderRadius: 8,
   },
-  createAccountButtonText: {
+  loginButtonText: {
     color: 'white',
     fontWeight: '800',
   },
-  createAccountButtonActive: {
+  loginButtonActive: {
     backgroundColor: summitBlue,
     paddingVertical: 10,
-    paddingHorizontal: 70,
+    paddingHorizontal: 100,
     borderRadius: 8,
   },
-  createAccountButtonTextActive: {
+  loginButtonTextActive: {
     color: 'white',
     fontWeight: '800',
   },
-  loginButton: {
+  blackTextButton: {
     color: 'black',
     fontWeight: '700',
+    paddingHorizontal: 70,
   },
 });

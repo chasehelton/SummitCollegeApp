@@ -98,8 +98,8 @@ export default function SignUpScreen({navigation}) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>Summit College</Text>
             <Image source={logo} style={styles.logo} />
+            <Text style={styles.title}>Summit College</Text>
             <Text style={styles.createText}>Create your account</Text>
           </View>
           <View style={styles.inputContainer}>
@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: summitBlue,
     alignSelf: 'center',
-    marginTop: 25,
     fontWeight: '600',
   },
   inputContainer: {
@@ -235,6 +234,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 44,
     fontWeight: '300',
+    marginVertical: 15,
   },
   logo: {
     width: 150,
