@@ -16,6 +16,7 @@ import CommunityScreen from './screens/CommunityScreen';
 import HomeScreen from './screens/HomeScreen';
 import ResourcesScreen from './screens/ResourcesScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import AnnouncementsScreen from './screens/AnnouncementsScreen';
 
 import SignUpScreen from './screens/SignUpScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -85,6 +86,8 @@ export default function App() {
                     iconName = 'folder-open';
                   } else if (route.name === 'Settings') {
                     iconName = 'settings';
+                  } else if (route.name === 'Announcements') {
+                    iconName = 'feedback';
                   } else if (route.name === 'Admin') {
                     return (
                       <Icon
@@ -130,6 +133,7 @@ export default function App() {
                   <Tab.Screen name="Home" component={HomeScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />
+                  <Tab.Screen name="Announcements" component={AnnouncementsScreen} />
                 </>
               )}
             </Tab.Navigator>
