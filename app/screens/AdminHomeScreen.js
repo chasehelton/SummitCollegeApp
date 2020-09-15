@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
   },
   text: {
     marginVertical: 25,
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     alignSelf: 'center',
     color: summitBlue,
+    fontFamily: 'OpenSans-SemiBold',
   },
   blueButton: {
     backgroundColor: '#3ab5e6',
@@ -131,5 +133,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 18,
     textAlign: 'center',
+    fontFamily: 'OpenSans-Bold',
   },
 });
