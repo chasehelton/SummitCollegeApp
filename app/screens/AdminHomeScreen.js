@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: '#eee',
+    marginBottom: 20,
   },
   header: {
     marginTop: 50,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginVertical: 25,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '600',
     alignSelf: 'center',
     color: summitBlue,

@@ -51,6 +51,7 @@ export default function LoginScreen({navigation}) {
           </View>
           <View style={styles.inputContainer}>
             <TextInput
+              placeholderStyle={styles.textInput}
               placeholder="Email"
               onChangeText={(val) => setEmail(val)}
               autoCapitalize="none"
@@ -85,7 +86,7 @@ export default function LoginScreen({navigation}) {
             <TouchableOpacity
               style={styles.loginButtonTouchable}
               onPress={() => navigation.navigate('Sign Up')}>
-              <Text style={styles.blackTextButton}>SIGN UP</Text>
+              <Text style={styles.blackTextButton}>CREATE AN ACCOUNT</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -106,10 +107,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginText: {
-    fontSize: 24,
+    fontSize: 20,
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
+    fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginVertical: 50,
@@ -128,9 +130,10 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   title: {
-    fontSize: 44,
+    fontSize: 40,
     fontWeight: '300',
     marginVertical: 15,
+    fontFamily: 'OpenSans-Regular',
   },
   logo: {
     width: 150,
@@ -144,6 +147,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     fontSize: 18,
     marginVertical: 5,
+    fontFamily: 'OpenSans-Regular',
   },
   loginButton: {
     backgroundColor: 'gray',
@@ -154,6 +158,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: 'white',
     fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
   },
   loginButtonActive: {
     backgroundColor: summitBlue,
@@ -169,5 +174,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '700',
     paddingHorizontal: 70,
+    fontFamily: 'OpenSans-Bold',
   },
 });

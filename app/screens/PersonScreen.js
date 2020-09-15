@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   TouchableOpacity,
   Image,
   LogBox,
@@ -169,7 +170,7 @@ export default function PersonScreen({route, navigation}) {
     <View contentContainerStyle={styles.container}>
       <Header navigation={navigation} title={header} backButton={true} />
 
-      <View style={styles.body}>
+      <ScrollView style={styles.body}>
         <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
 
         <Text style={styles.personName}>{person.data.displayName}</Text>
@@ -218,7 +219,7 @@ export default function PersonScreen({route, navigation}) {
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -261,6 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
     textAlign: 'center',
+
   },
   empty: {
     flex: 1,
@@ -277,12 +279,14 @@ const styles = StyleSheet.create({
     fontSize: 32,
     alignSelf: 'center',
     marginBottom: 10,
+    fontFamily: 'OpenSans-Regular',
   },
   personInfo: {
     //color: '#3ab5e6',
     fontSize: 16,
     alignSelf: 'center',
     marginBottom: 5,
+    fontFamily: 'OpenSans-Regular',
   },
   infoPanel: {
     flex: 4,
@@ -311,6 +315,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 10,
     fontWeight: 'bold',
+    fontFamily: 'OpenSans-Bold',
   },
   blackButtonText: {
     color: '#000',
@@ -318,6 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
     fontWeight: '600',
+    fontFamily: 'OpenSans-SemiBold',
   },
   whiteButton: {
     backgroundColor: '#fff',

@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
   },
   empty: {
     flex: 1,
@@ -213,6 +214,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginVertical: 25,
+    fontFamily: 'OpenSans-Regular',
   },
 
   item: {
@@ -224,8 +226,9 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   itemText: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'black',
     fontWeight: '500',
+    fontFamily: 'OpenSans-SemiBold',
   },
 });

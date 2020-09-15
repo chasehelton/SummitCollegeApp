@@ -105,6 +105,7 @@ export default function SignUpScreen({navigation}) {
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="First Name"
+              placeholderStyle={styles.textInput}
               onChangeText={(val) => setFirst(val)}
               autoCapitalize="words"
               style={styles.textInput}
@@ -194,10 +195,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   createText: {
-    fontSize: 24,
+    fontSize: 20,
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
+    fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginTop: 0,
@@ -232,9 +234,10 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   title: {
-    fontSize: 44,
+    fontSize: 40,
     fontWeight: '300',
     marginVertical: 15,
+    fontFamily: 'OpenSans-Regular',
   },
   logo: {
     width: 150,
@@ -248,6 +251,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     fontSize: 18,
     marginVertical: 5,
+    fontFamily: 'OpenSans-Regular',
   },
   createAccountButton: {
     backgroundColor: 'gray',
@@ -258,6 +262,7 @@ const styles = StyleSheet.create({
   createAccountButtonText: {
     color: 'white',
     fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
   },
   createAccountButtonActive: {
     backgroundColor: summitBlue,
@@ -272,5 +277,6 @@ const styles = StyleSheet.create({
   loginButton: {
     color: 'black',
     fontWeight: '700',
+    fontFamily: 'OpenSans-Bold',
   },
 });
