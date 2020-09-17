@@ -30,18 +30,30 @@ export default function Announcement({navigation, timestamp, title, body}) {
   };
 
   const getHours = (timestamp) => {
-    return twoDigits(new Date(timestamp.seconds * 1000).getHours());
+    hours = new Date(timestamp.seconds * 1000).getHours();
+    if (hours > 12) {
+      hours -= 12;
+    }
+    return twoDigits(hours)
   };
 
   const getMinutes = (timestamp) => {
     return twoDigits(new Date(timestamp.seconds * 1000).getMinutes());
   };
 
+  const getAMPM = (timestamp) => {
+    hours = new Date(timestamp.seconds * 1000).getHours();
+    if (hours >= 12 && hours < 24) {
+      return "PM"
+    }
+    else {
+      return "AM"
+    }
+  };
+
   const isToday = (timestamp) => {
     let today = new Date().toDateString();
     let announcementDate = new Date(timestamp.seconds * 1000).toDateString();
-    //let todayString = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate();
-    //let dString = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
     return today == announcementDate;
   };
 
@@ -50,14 +62,6 @@ export default function Announcement({navigation, timestamp, title, body}) {
     else return num;
   }
 
-  /*
-    <View style={styles.dateContainer}>
-    <Text style={styles.monthText}>{getMonth(timestamp)}</Text>
-    <Text style={styles.dayText}>{getDay(timestamp)}</Text>
-    </View>
-  */
-
-
   return (
     <TouchableOpacity style={styles.announcementContainer}>
       <View style={styles.infoContainer}>
@@ -65,7 +69,7 @@ export default function Announcement({navigation, timestamp, title, body}) {
       </View>
       {isToday(timestamp)
         ? <View style={styles.dateContainer}>
-          <Text style={styles.hourText}>{getHours(timestamp)}:{getMinutes(timestamp)}</Text>
+          <Text style={styles.hourText}>{getHours(timestamp)}:{getMinutes(timestamp)}{getAMPM(timestamp)}</Text>
         </View>
         : <View style={styles.dateContainer}>
           <Text style={styles.monthText}>{getMonth(timestamp)} {getDate(timestamp)}</Text>
