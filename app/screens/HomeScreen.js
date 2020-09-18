@@ -16,13 +16,30 @@ import Header from '../components/Header';
 export default function HomeScreen() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
+
+  const [readingPlan, setReadingPlan] = useState(null);
+  const [noReadingPlan, setNoReadingPlan] = useState(false);
+
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const formatDate = (date) => {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
 
   useLayoutEffect(() => {
     async function getUpcomingEvents() {
       // TODO: make sure only the upcoming ones display
       const querySnapshot = await firestore().collection('events')
-        /*where('startDate','>=', new Date())*/.orderBy('startDate').limit(2).get();
+        .where('startDate','>=', formatDate(new Date())).orderBy('startDate').limit(2).get();
       if (
         querySnapshot === null ||
         querySnapshot.size === 0 ||
@@ -52,10 +69,46 @@ export default function HomeScreen() {
       }
     }
 
+    async function getReadingPlan() {
+      const querySnapshot = await firestore().collection('readingPlan')
+        .where('date','==', formatDate(new Date())).get();
+      if (
+        querySnapshot === null ||
+        querySnapshot.size === 0 ||
+        querySnapshot.empty
+      ) {
+        setNoReadingPlan(true);
+        console.log("No reading plan!");
+        return null;
+      }
+
+      if (querySnapshot.size > 1) {
+        console.log("Too many reading plan entries for this day.");
+      }
+
+      try {
+        querySnapshot.forEach((doc) => {
+          console.log("Setting the reading plan!");
+          setReadingPlan(
+            {
+              data: doc.data(),
+              id: formatDate(new Date()),
+              ref: doc.ref,
+            }
+          );
+        });
+      } catch (error) {
+        Alert.alert('Error', 'Error retrieving reading plan');
+        console.log("Error: " + error);
+      }
+    }
+
 
     if (!isLoaded) {
-      getUpcomingEvents();
       setIsLoaded(true);
+      getUpcomingEvents();
+      getReadingPlan();
+
       /*setState({isLoaded: true}, function() {
         getUpcomingEvents();
         console.log("Set isLoaded to true");
@@ -63,7 +116,9 @@ export default function HomeScreen() {
       });*/
 
     }
-  }, [upcomingEvents, isLoaded]);
+  }, [upcomingEvents, readingPlan, isLoaded]);
+
+
 
   return (
     <View style={styles.container}>
@@ -85,7 +140,8 @@ export default function HomeScreen() {
             }
           >
             <View style={styles.infoContainer}>
-              <Text style={styles.readingPlanText}>{"1 Thessalonians 1"}</Text>
+              {!noReadingPlan && readingPlan && <Text style={styles.readingPlanText}>{readingPlan.data.reading}</Text>}
+              {noReadingPlan && <Text style={styles.readingPlanText}>No reading plan found.</Text>}
             </View>
           </TouchableOpacity>
         </View>
@@ -130,8 +186,6 @@ export default function HomeScreen() {
             />
           )}
           {noUpcomingEvents && <Text style={styles.noUpcomingEventsText}>No upcoming events found.</Text>}
-
-
         </View>
 
         <View style={styles.podcast}>
@@ -197,7 +251,6 @@ const styles = StyleSheet.create({
     height: 60
   },
   upcomingEventsList: {
-    height: '100%',
     backgroundColor: '#eee',
   },
   noUpcomingEventsText: {
