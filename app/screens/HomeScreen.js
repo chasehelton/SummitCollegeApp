@@ -6,12 +6,14 @@ import {StyleSheet,
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Image,
   } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import {Icon} from 'react-native-elements';
 import {summitBlue} from '../assets/colors';
 import Header from '../components/Header';
+import UpcomingEvent from '../components/UpcomingEvent';
 
 export default function HomeScreen() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -122,7 +124,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Header title={'Home'} backButton={false} />
+      {/*<Header title={'Home'} backButton={false} />*/}
+
+      <Image source={require('../assets/Talley.jpg')} style={{width: '100%', height: '24%'}}>
+      </Image>
+      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center'}}>
+        <Text style={styles.welcomeText}>Hey, Summit College at NC State!</Text>
+      </View>
+
       <ScrollView style={styles.bodyContainer}>
 
         <View style={styles.reading}>
@@ -149,41 +158,11 @@ export default function HomeScreen() {
         <View style={styles.events}>
           <Text style={styles.subheader}>{"UPCOMING EVENTS"}</Text>
 
-          {!noUpcomingEvents && (
-            <FlatList
-              style={styles.upcomingEventsList}
-              data={upcomingEvents.sort((a, b) => {
-                let date1 = new Date(a.data.timestamp);
-                let date2 = new Date(b.data.timestamp);
-                return date1.getTime() - date2.getTime();
-              })}
-              renderItem={({item, index}) => (
-                <TouchableOpacity
-                  style={[styles.itemContainer, styles.eventsContainer]}
-                  onPress={() =>
-                    navigation.navigate('Admin', {
-                      screen: 'Directory',
-                      params: {
-                        header: 'Students',
-                        userType: TYPE_STUDENT,
-                      },
-                    })
-                  }
-                >
-                  <View style={styles.infoContainer}>
-                    <Text style={styles.eventText}>{item.data.title}</Text>
-                  </View>
-                  <Icon
-                    name="keyboard-arrow-right"
-                    type="material"
-                    color='#eee'
-                    style={{marginLeft: 10}}
-                    size={35}
-                  />
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-            />
+          {!noUpcomingEvents && upcomingEvents[0] && (
+            <View>
+              <UpcomingEvent title={upcomingEvents[0].data.title} />
+              <UpcomingEvent title={upcomingEvents[1].data.title} />
+            </View>
           )}
           {noUpcomingEvents && <Text style={styles.noUpcomingEventsText}>No upcoming events found.</Text>}
         </View>
@@ -247,8 +226,8 @@ const styles = StyleSheet.create({
     height: 70,
   },
   eventContainer: {
-    paddingVertical: 20,
-    height: 60
+    paddingVertical: 5,
+    height: 40
   },
   upcomingEventsList: {
     backgroundColor: '#eee',
@@ -257,5 +236,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
     fontSize: 24,
+  },
+  welcomeText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 24,
+    textAlign: 'center',
+    marginTop: 40,
   },
 });
