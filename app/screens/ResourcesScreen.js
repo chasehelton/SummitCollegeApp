@@ -32,31 +32,6 @@ export default function ResourcesScreen() {
     return podcastTitle;
   }
 
-  async function axiosTest() {
-      try {
-        const {data:response} = axios.get(podcastUrl); //use data destructuring to get data from the promise object
-        return response;
-        return "shit";
-      }
-
-      catch (error) {
-        console.log(error);
-      }
-    }
-
-  function axiosTest2() {
-    return axios.get(podcastUrl).then(response => {
-      // returning the data here allows the caller to get it through another .then(...)
-      return response.data
-    })
-  }
-
-  const toprint = axiosTest2()
-    .then(data => {
-      response.json({ message: 'Request received!', data })
-    })
-    .catch(err => console.log(err))
-
   return (
     <View style={styles.container}>
       <Header title={'Resources'} backButton={false} />
