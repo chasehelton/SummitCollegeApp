@@ -146,7 +146,7 @@ export default function SignUpScreen({navigation}) {
                 style={styles.gradPicker}
                 selectedValue={gradYear}
                 onValueChange={(itemValue) => setGradYear(itemValue)}>
-                <Picker.Item label="Graduation Year" value="" />
+                <Picker.Item label="Grad Year" value="" />
                 {years.map((year, index) => (
                   <Picker.Item key={index} label={year} value={year} />
                 ))}
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
-    fontFamily: 'OpenSans-SemiBold',
+    //fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginTop: 0,
@@ -216,13 +216,13 @@ const styles = StyleSheet.create({
     width: 150,
     height: 100,
     marginHorizontal: 10,
-    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+    transform: [{scaleX: 0.9}, {scaleY: 0.9}],
   },
   gradPicker: {
     width: 150,
     height: 100,
     marginHorizontal: 10,
-    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+    transform: [{scaleX: 0.9}, {scaleY: 0.9}],
   },
   buttonContainer: {
     display: 'flex',
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '300',
     marginVertical: 15,
-    fontFamily: 'OpenSans-Regular',
+    //fontFamily: 'OpenSans-Regular',
   },
   logo: {
     width: 150,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     fontSize: 18,
     marginVertical: 5,
-    fontFamily: 'OpenSans-Regular',
+    //fontFamily: 'OpenSans-Regular',
   },
   createAccountButton: {
     backgroundColor: 'gray',
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   createAccountButtonText: {
     color: 'white',
     fontWeight: '800',
-    fontFamily: 'OpenSans-Bold',
+    //fontFamily: 'OpenSans-Bold',
   },
   createAccountButtonActive: {
     backgroundColor: summitBlue,
@@ -277,6 +277,6 @@ const styles = StyleSheet.create({
   loginButton: {
     color: 'black',
     fontWeight: '700',
-    fontFamily: 'OpenSans-Bold',
+    //fontFamily: 'OpenSans-Bold',
   },
 });

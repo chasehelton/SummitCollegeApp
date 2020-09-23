@@ -128,7 +128,8 @@ export default function HomeScreen({navigation}) {
 
       <Image
         source={require('../assets/Talley.jpg')}
-        style={{width: '100%', height: '24%'}} />
+        style={{width: '100%', height: '24%'}}
+      />
       <View
         style={{
           position: 'absolute',
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   },
   subheader: {
     fontSize: 14,
-    fontFamily: 'OpenSans-SemiBold',
+    //fontFamily: 'OpenSans-SemiBold',
     color: summitBlue,
     marginTop: 30,
   },
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: 'white',
-    fontFamily: 'OpenSans-Bold',
+    //fontFamily: 'OpenSans-Bold',
     fontSize: 24,
     textAlign: 'center',
     marginTop: 40,
