@@ -47,6 +47,18 @@ export default function EventsScreen({navigation}) {
     }
     getEvents();
   }, []);
+
+  const selectEvent = (index) => {
+    console.log(events[index]);
+    console.log('Event is selected, with index ' + index.toString());
+    navigation.navigate('Event', {
+      screen: 'Event',
+      params: {
+        event: events[index],
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Header title={'Events'} backButton={false} />
@@ -58,13 +70,14 @@ export default function EventsScreen({navigation}) {
             let date2 = new Date(b.data.startDate);
             return date1.getTime() - date2.getTime();
           })}
+          disableScrollViewPanResponder
           renderItem={({item, index}) => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => selectEvent(item.id)}>
               <Event
                 title={item.data.title}
                 previewText={item.data.previewText}
                 startDate={item.data.startDate}
-                key={index}
+                key={index.toString()}
               />
             </TouchableOpacity>
           )}

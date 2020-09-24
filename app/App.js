@@ -12,6 +12,7 @@ LogBox.ignoreLogs(['Sending...']);
 
 import AdminScreen from './screens/AdminStack';
 import EventsScreen from './screens/EventsScreen';
+import EventScreen from './screens/EventScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import HomeScreen from './screens/HomeScreen';
 import ResourcesScreen from './screens/ResourcesScreen';
@@ -129,6 +130,7 @@ export default function App() {
               {!isAdmin && (
                 <>
                   <Tab.Screen name="Events" component={EventsScreen} />
+                  <Tab.Screen name="Event" component={EventScreen} />
                   <Tab.Screen name="Community" component={CommunityScreen} />
                   <Tab.Screen name="Home" component={HomeScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
