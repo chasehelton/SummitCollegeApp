@@ -15,7 +15,7 @@ import {summitBlue} from '../assets/colors';
 import Header from '../components/Header';
 import UpcomingEvent from '../components/UpcomingEvent';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation, route}) {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
 
@@ -35,6 +35,11 @@ export default function HomeScreen() {
         day = '0' + day;
 
     return [year, month, day].join('-');
+  };
+
+  const selectReadingPlan = () => {
+    console.log(readingPlan);
+
   };
 
   useLayoutEffect(() => {
@@ -95,7 +100,6 @@ export default function HomeScreen() {
             {
               data: doc.data(),
               id: formatDate(new Date()),
-              ref: doc.ref,
             }
           );
         });
@@ -138,14 +142,13 @@ export default function HomeScreen() {
           <Text style={styles.subheader}>{"TODAY'S READING"}</Text>
           <TouchableOpacity
             style={[styles.itemContainer, styles.readingPlanContainer]}
-            onPress={() =>
-              navigation.navigate('Admin', {
-                screen: 'Directory',
-                params: {
-                  header: 'Students',
-                  userType: TYPE_STUDENT,
-                },
-              })
+            onPress={() => navigation.navigate('Home', {
+                                 screen: 'ReadingPlan',
+                                 params: {
+                                   header: 'Reading Plan',
+                                   readingPlanObject: readingPlan,
+                                 },
+                               })
             }
           >
             <View style={styles.infoContainer}>
@@ -168,6 +171,26 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.podcast}>
+          <Text style={styles.subheader}>{"PODCAST"}</Text>
+            <TouchableOpacity
+              style={[styles.itemContainer, styles.podcastContainer]}
+              onPress={() =>
+                navigation.navigate('Admin', {
+                  screen: 'Directory',
+                  params: {
+                    header: 'Students',
+                    userType: TYPE_STUDENT,
+                  },
+                })
+              }
+            >
+                <Image source={require('../assets/sc_podcast_logo.jpg')} style={styles.podcastImage}></Image>
+                <Text style={styles.podcastTitle}>{"Love\n"}</Text>
+                {/*<Text style={styles.podcastText}>{"On this episode"}</Text>*/}
+                {/*ing from Charles Holmes, the HBCU Director for Summit College, and Sam Mendes, UNC Summit College staff member,
+                about why the gospel points us to love our… neighbor that is culturally different than us and how practically to do that well."}</Text>*/}
+
+            </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -229,6 +252,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     height: 40
   },
+  podcastContainer: {
+    paddingVertical: 0,
+    height: 150,
+    paddingLeft: 0,
+  },
   upcomingEventsList: {
     backgroundColor: '#eee',
   },
@@ -243,5 +271,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     marginTop: 40,
+  },
+  podcastImage: {
+    width: '40%',
+    height: '100%',
+  },
+  podcastTitle: {
+    alignItems: 'flex-start',
+    paddingTop: 0,
+    fontFamily: 'OpenSans-Regular',
+    fontWeight: 'bold',
+    marginLeft: 0,
+    textAlign: 'left',
+    textAlignVertical: 'top',
+  },
+  podcastText: {
+    //width: '100%',
   },
 });
