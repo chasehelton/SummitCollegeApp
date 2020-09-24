@@ -2,14 +2,36 @@ import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
 import Header from '../components/Header';
+import cheerio from 'cheerio';
+import axios from 'axios';
+
+const podcastUrl = 'https://anchor.fm/summitcollege';
+const getData = async () => {
+  let podcastTitle = 'before';
+  await axios
+    .get(podcastUrl)
+    .then((response) => {
+      const che = cheerio.load(response.data);
+      console.log(che);
+      podcastTitle = che('div.app').find('a').text();
+    })
+    .catch((error) => {
+      podcastTitle = 'error!';
+    });
+  return podcastTitle;
+};
 
 export default function ResourcesScreen() {
+  console.log(getData());
   return (
     <View style={styles.container}>
       <Header title={'Resources'} backButton={false} />
       <View style={styles.nonHeader}>
         <Text style={styles.comingSoonText}>Coming Soon.</Text>
-        <Text style={styles.comingSoonSubtext}>The Resources feature will arrive by Christmas.</Text>
+        <Text style={styles.comingSoonSubtext}>
+          The Resources feature will arrive by Christmas.
+        </Text>
+        <Text style={styles.comingSoonSubtext}>Hey</Text>
       </View>
     </View>
   );

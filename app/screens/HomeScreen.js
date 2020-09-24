@@ -1,5 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useLayoutEffect, useEffect, useState} from 'react';
-import {StyleSheet,
+import {
+  StyleSheet,
   Alert,
   View,
   Text,
@@ -7,7 +9,7 @@ import {StyleSheet,
   TouchableOpacity,
   FlatList,
   Image,
-  } from 'react-native';
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import {Icon} from 'react-native-elements';
@@ -15,7 +17,7 @@ import {summitBlue} from '../assets/colors';
 import Header from '../components/Header';
 import UpcomingEvent from '../components/UpcomingEvent';
 
-export default function HomeScreen({navigation, route}) {
+export default function HomeScreen({navigation}) {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
 
@@ -29,10 +31,8 @@ export default function HomeScreen({navigation, route}) {
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
       year = d.getFullYear();
-    if (month.length < 2)
-        month = '0' + month;
-    if (day.length < 2)
-        day = '0' + day;
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
 
     return [year, month, day].join('-');
   };
@@ -43,123 +43,144 @@ export default function HomeScreen({navigation, route}) {
   };
 
   useLayoutEffect(() => {
-    async function getUpcomingEvents() {
-      // TODO: make sure only the upcoming ones display
-      const querySnapshot = await firestore().collection('events')
-        .where('startDate','>=', formatDate(new Date())).orderBy('startDate').limit(2).get();
-      if (
-        querySnapshot === null ||
-        querySnapshot.size === 0 ||
-        querySnapshot.empty
-      ) {
-        setNoUpcomingEvents(true);
-        console.log("No upcoming events!");
-        return null;
-      }
+    let mounted = true;
+    if (mounted) {
+      async function getUpcomingEvents() {
+        // TODO: make sure only the upcoming ones display
+        const querySnapshot = await firestore()
+          .collection('events')
+          .where('startDate', '>=', formatDate(new Date()))
+          .orderBy('startDate')
+          .limit(2)
+          .get();
+        if (
+          querySnapshot === null ||
+          querySnapshot.size === 0 ||
+          querySnapshot.empty
+        ) {
+          setNoUpcomingEvents(true);
+          console.log('No upcoming events!');
+          return null;
+        }
 
-      try {
-        const tempUpcomingEvents = [];
-        var count = 0;
-        querySnapshot.forEach((doc) => {
-          tempUpcomingEvents.push({
-            data: doc.data(),
-            id: count,
-            ref: doc.ref,
+        try {
+          const tempUpcomingEvents = [];
+          var count = 0;
+          querySnapshot.forEach((doc) => {
+            tempUpcomingEvents.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
           });
-          count++;
-        });
-        console.log("Count of upcoming events: " + count);
-        setUpcomingEvents(tempUpcomingEvents);
-      } catch (error) {
-        Alert.alert('Error', 'Error retrieving upcoming events');
-        console.log("Error: " + error);
-      }
-    }
-
-    async function getReadingPlan() {
-      const querySnapshot = await firestore().collection('readingPlan')
-        .where('date','==', formatDate(new Date())).get();
-      if (
-        querySnapshot === null ||
-        querySnapshot.size === 0 ||
-        querySnapshot.empty
-      ) {
-        setNoReadingPlan(true);
-        console.log("No reading plan!");
-        return null;
+          console.log('Count of upcoming events: ' + count);
+          setUpcomingEvents(tempUpcomingEvents);
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving upcoming events');
+          console.log('Error: ' + error);
+        }
       }
 
-      if (querySnapshot.size > 1) {
-        console.log("Too many reading plan entries for this day.");
-      }
+      async function getReadingPlan() {
+        const querySnapshot = await firestore()
+          .collection('readingPlan')
+          .where('date', '==', formatDate(new Date()))
+          .get();
+        if (
+          querySnapshot === null ||
+          querySnapshot.size === 0 ||
+          querySnapshot.empty
+        ) {
+          setNoReadingPlan(true);
+          console.log('No reading plan!');
+          return null;
+        }
 
-      try {
-        querySnapshot.forEach((doc) => {
-          console.log("Setting the reading plan!");
-          setReadingPlan(
-            {
+        if (querySnapshot.size > 1) {
+          console.log('Too many reading plan entries for this day.');
+        }
+
+        try {
+          querySnapshot.forEach((doc) => {
+            console.log('Setting the reading plan!');
+            setReadingPlan({
               data: doc.data(),
               id: formatDate(new Date()),
-            }
-          );
-        });
-      } catch (error) {
-        Alert.alert('Error', 'Error retrieving reading plan');
-        console.log("Error: " + error);
+            });
+          });
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving reading plan');
+          console.log('Error: ' + error);
+        }
+      }
+
+      if (!isLoaded) {
+        setIsLoaded(true);
+        getUpcomingEvents();
+        getReadingPlan();
+
+        /*setState({isLoaded: true}, function() {
+          getUpcomingEvents();
+          console.log("Set isLoaded to true");
+                console.log("It is now: " + isLoaded);
+        });*/
       }
     }
-
-
-    if (!isLoaded) {
-      setIsLoaded(true);
-      getUpcomingEvents();
-      getReadingPlan();
-
-      /*setState({isLoaded: true}, function() {
-        getUpcomingEvents();
-        console.log("Set isLoaded to true");
-              console.log("It is now: " + isLoaded);
-      });*/
-
-    }
+    return () => (mounted = false);
   }, [upcomingEvents, readingPlan, isLoaded]);
-
-
 
   return (
     <View style={styles.container}>
       {/*<Header title={'Home'} backButton={false} />*/}
 
-      <Image source={require('../assets/Talley.jpg')} style={{width: '100%', height: '24%'}}>
-      </Image>
-      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center'}}>
+      <Image
+        source={require('../assets/Talley.jpg')}
+        style={{width: '100%', height: '24%'}}
+      />
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          alignItems: 'center',
+        }}>
         <Text style={styles.welcomeText}>Hey, Summit College at NC State!</Text>
       </View>
 
       <ScrollView style={styles.bodyContainer}>
-
         <View style={styles.reading}>
           <Text style={styles.subheader}>{"TODAY'S READING"}</Text>
           <TouchableOpacity
             style={[styles.itemContainer, styles.readingPlanContainer]}
             onPress={() => navigation.navigate('Home', {
-                                 screen: 'ReadingPlan',
-                                 params: {
-                                   header: 'Reading Plan',
-                                   readingPlanObject: readingPlan,
-                                 },
-                               })
+                 screen: 'ReadingPlan',
+                 params: {
+                   header: 'Reading Plan',
+                   readingPlanObject: readingPlan,
+                 },
+               })
             }
           >
             <View style={styles.infoContainer}>
-              {!noReadingPlan && readingPlan && <Text style={styles.readingPlanText}>{readingPlan.data.reading}</Text>}
-              {noReadingPlan && <Text style={styles.readingPlanText}>No reading plan found.</Text>}
+              {!noReadingPlan && readingPlan && (
+                <Text style={styles.readingPlanText}>
+                  {readingPlan.data.reading}
+                </Text>
+              )}
+              {noReadingPlan && (
+                <Text style={styles.readingPlanText}>
+                  No reading plan found.
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         </View>
 
         <View style={styles.events}>
-          <Text style={styles.subheader}>{"UPCOMING EVENTS"}</Text>
+          <Text style={styles.subheader}>{'UPCOMING EVENTS'}</Text>
 
           {!noUpcomingEvents && upcomingEvents[0] && (
             <View>
@@ -167,7 +188,11 @@ export default function HomeScreen({navigation, route}) {
               <UpcomingEvent title={upcomingEvents[1].data.title} />
             </View>
           )}
-          {noUpcomingEvents && <Text style={styles.noUpcomingEventsText}>No upcoming events found.</Text>}
+          {noUpcomingEvents && (
+            <Text style={styles.noUpcomingEventsText}>
+              No upcoming events found.
+            </Text>
+          )}
         </View>
 
         <View style={styles.podcast}>
@@ -204,21 +229,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#eee',
   },
-  bodyContainer: {
-
-  },
+  bodyContainer: {},
   title: {
     fontSize: 48,
   },
   subheader: {
     fontSize: 14,
-    fontFamily: 'OpenSans-SemiBold',
+    //fontFamily: 'OpenSans-SemiBold',
     color: summitBlue,
     marginTop: 30,
   },
-  whiteButton: {
-
-  },
+  whiteButton: {},
   infoContainer: {
     textAlign: 'left',
     width: 275,
@@ -242,7 +263,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
 
     borderRadius: 8,
-
   },
   readingPlanContainer: {
     paddingVertical: 20,
@@ -250,7 +270,7 @@ const styles = StyleSheet.create({
   },
   eventContainer: {
     paddingVertical: 5,
-    height: 40
+    height: 40,
   },
   podcastContainer: {
     paddingVertical: 0,
@@ -267,7 +287,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: 'white',
-    fontFamily: 'OpenSans-Bold',
+    //fontFamily: 'OpenSans-Bold',
     fontSize: 24,
     textAlign: 'center',
     marginTop: 40,
