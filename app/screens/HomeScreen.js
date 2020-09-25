@@ -203,13 +203,14 @@ export default function HomeScreen({navigation}) {
                 screen: 'Directory',
                 params: {
                   header: 'Students',
-                  userType: TYPE_STUDENT,
+                  // userType: TYPE_STUDENT,
                 },
               })
             }>
             <Image
               source={require('../assets/sc_podcast_logo.jpg')}
-              style={styles.podcastImage}></Image>
+              style={styles.podcastImage}
+            />
             <Text style={styles.podcastTitle}>{'Love\n'}</Text>
             {/*<Text style={styles.podcastText}>{"On this episode"}</Text>*/}
             {/*ing from Charles Holmes, the HBCU Director for Summit College, and Sam Mendes, UNC Summit College staff member,
