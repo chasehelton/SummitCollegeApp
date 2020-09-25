@@ -35,7 +35,7 @@ export default function EventsScreen({navigation}) {
         querySnapshot.forEach((doc) => {
           tempEvents.push({
             data: doc.data(),
-            id: count,
+            id: count.toString(),
             ref: doc.ref,
           });
           count++;

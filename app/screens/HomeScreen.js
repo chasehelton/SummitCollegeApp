@@ -39,7 +39,6 @@ export default function HomeScreen({navigation}) {
 
   const selectReadingPlan = () => {
     console.log(readingPlan);
-
   };
 
   useLayoutEffect(() => {
@@ -155,15 +154,15 @@ export default function HomeScreen({navigation}) {
           <Text style={styles.subheader}>{"TODAY'S READING"}</Text>
           <TouchableOpacity
             style={[styles.itemContainer, styles.readingPlanContainer]}
-            onPress={() => navigation.navigate('Home', {
-                 screen: 'ReadingPlan',
-                 params: {
-                   header: 'Reading Plan',
-                   readingPlanObject: readingPlan,
-                 },
-               })
-            }
-          >
+            onPress={() =>
+              navigation.navigate('Home', {
+                screen: 'ReadingPlan',
+                params: {
+                  header: 'Reading Plan',
+                  readingPlanObject: readingPlan,
+                },
+              })
+            }>
             <View style={styles.infoContainer}>
               {!noReadingPlan && readingPlan && (
                 <Text style={styles.readingPlanText}>
@@ -196,26 +195,26 @@ export default function HomeScreen({navigation}) {
         </View>
 
         <View style={styles.podcast}>
-          <Text style={styles.subheader}>{"PODCAST"}</Text>
-            <TouchableOpacity
-              style={[styles.itemContainer, styles.podcastContainer]}
-              onPress={() =>
-                navigation.navigate('Admin', {
-                  screen: 'Directory',
-                  params: {
-                    header: 'Students',
-                    userType: TYPE_STUDENT,
-                  },
-                })
-              }
-            >
-                <Image source={require('../assets/sc_podcast_logo.jpg')} style={styles.podcastImage}></Image>
-                <Text style={styles.podcastTitle}>{"Love\n"}</Text>
-                {/*<Text style={styles.podcastText}>{"On this episode"}</Text>*/}
-                {/*ing from Charles Holmes, the HBCU Director for Summit College, and Sam Mendes, UNC Summit College staff member,
+          <Text style={styles.subheader}>{'PODCAST'}</Text>
+          <TouchableOpacity
+            style={[styles.itemContainer, styles.podcastContainer]}
+            onPress={() =>
+              navigation.navigate('Admin', {
+                screen: 'Directory',
+                params: {
+                  header: 'Students',
+                  userType: TYPE_STUDENT,
+                },
+              })
+            }>
+            <Image
+              source={require('../assets/sc_podcast_logo.jpg')}
+              style={styles.podcastImage}></Image>
+            <Text style={styles.podcastTitle}>{'Love\n'}</Text>
+            {/*<Text style={styles.podcastText}>{"On this episode"}</Text>*/}
+            {/*ing from Charles Holmes, the HBCU Director for Summit College, and Sam Mendes, UNC Summit College staff member,
                 about why the gospel points us to love our… neighbor that is culturally different than us and how practically to do that well."}</Text>*/}
-
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -299,7 +298,7 @@ const styles = StyleSheet.create({
   podcastTitle: {
     alignItems: 'flex-start',
     paddingTop: 0,
-    fontFamily: 'OpenSans-Regular',
+    //fontFamily: 'OpenSans-Regular',
     fontWeight: 'bold',
     marginLeft: 0,
     textAlign: 'left',
