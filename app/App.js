@@ -28,6 +28,8 @@ import {summitBlue} from './assets/colors';
 const Tab = createBottomTabNavigator();
 const Auth = createStackNavigator();
 
+import firestore from '@react-native-firebase/firestore';
+
 export default function App() {
   const [currentUser, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +46,7 @@ export default function App() {
 
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
+    //if (isMounted) storeData();
     auth().onAuthStateChanged((user) => {
       if (isMounted) {
         if (user) {

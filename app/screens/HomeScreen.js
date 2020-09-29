@@ -11,11 +11,14 @@ import {
   Image,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import axios from 'axios';
 
 import {Icon} from 'react-native-elements';
 import {summitBlue} from '../assets/colors';
 import Header from '../components/Header';
 import UpcomingEvent from '../components/UpcomingEvent';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default function HomeScreen({navigation}) {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -25,6 +28,8 @@ export default function HomeScreen({navigation}) {
   const [noReadingPlan, setNoReadingPlan] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const [memorizationText, setMemorizationText] = React.useState('');
 
   const formatDate = (date) => {
     var d = new Date(date),
@@ -39,6 +44,16 @@ export default function HomeScreen({navigation}) {
 
   const selectReadingPlan = () => {
     console.log(readingPlan);
+    if (noReadingPlan) Alert.alert('There is no reading plan');
+    else
+    navigation.navigate('Home', {
+      screen: 'ReadingPlan',
+      params: {
+        header: 'Reading Plan',
+        readingPlanObject: readingPlan,
+        memText: memorizationText,
+      },
+    });
 
   };
 
@@ -83,6 +98,30 @@ export default function HomeScreen({navigation}) {
       }
 
       async function getReadingPlan() {
+        // first check to see if the api key exists locally
+        var esvKeyValue = await AsyncStorage.getItem('@esvKey');
+        if (esvKeyValue == null) {
+          console.log("ESV Key not found, now retrieve from database");
+          console.log("Storing data for api key");
+          const keyDoc = await firestore()
+            .collection('apiKeys').doc('esv_key').get();
+          if (!keyDoc.exists) {
+            console.log('ESV key does not exist in firestore');
+          }
+          else {
+            try {
+              console.log('ESV key: ' + keyDoc.data().key);
+              await AsyncStorage.setItem('@esvKey', keyDoc.data().key);
+              esvKeyValue = keyDoc.data().key;
+            } catch (e) {
+              // saving error
+              console.log("Error trying to save esv key: " + e);
+            }
+          }
+        }
+        else console.log("ESV Key was found!");
+        console.log("Esv Key Value is now: " + esvKeyValue);
+
         const querySnapshot = await firestore()
           .collection('readingPlan')
           .where('date', '==', formatDate(new Date()))
@@ -108,6 +147,7 @@ export default function HomeScreen({navigation}) {
               data: doc.data(),
               id: formatDate(new Date()),
             });
+            getMemorizationText(doc.data(), esvKeyValue);
           });
         } catch (error) {
           Alert.alert('Error', 'Error retrieving reading plan');
@@ -115,20 +155,44 @@ export default function HomeScreen({navigation}) {
         }
       }
 
+      async function getMemorizationText(data, key) {
+        let passageText = data.memorization.replace(/ /g, '+');
+        console.log("Passage text: " + passageText);
+        await axios
+          .get('https://api.esv.org/v3/passage/text/?q=' + passageText,
+            {
+              headers: {
+                'Authorization': key
+              },
+              params: {
+                include_passage_references: false,
+                include_verse_numbers: false,
+                include_first_verse_numbers: false,
+                include_footnotes: false,
+                include_headings: false,
+              }
+            }
+          )
+          .then((response) => {
+            console.log(response.data)
+            console.log(response.data.passages[0]);
+            setMemorizationText(response.data.passages[0].trim());
+          })
+          .catch((error) => {
+            console.log('Error: ' + error);
+            setMemorizationText('error!');
+          });
+      }
+
       if (!isLoaded) {
         setIsLoaded(true);
         getUpcomingEvents();
         getReadingPlan();
 
-        /*setState({isLoaded: true}, function() {
-          getUpcomingEvents();
-          console.log("Set isLoaded to true");
-                console.log("It is now: " + isLoaded);
-        });*/
       }
     }
     return () => (mounted = false);
-  }, [upcomingEvents, readingPlan, isLoaded]);
+  }, [upcomingEvents, readingPlan, memorizationText, isLoaded]);
 
   return (
     <View style={styles.container}>
@@ -155,13 +219,7 @@ export default function HomeScreen({navigation}) {
           <Text style={styles.subheader}>{"TODAY'S READING"}</Text>
           <TouchableOpacity
             style={[styles.itemContainer, styles.readingPlanContainer]}
-            onPress={() => navigation.navigate('Home', {
-                 screen: 'ReadingPlan',
-                 params: {
-                   header: 'Reading Plan',
-                   readingPlanObject: readingPlan,
-                 },
-               })
+            onPress={() => selectReadingPlan()
             }
           >
             <View style={styles.infoContainer}>
@@ -235,7 +293,7 @@ const styles = StyleSheet.create({
   },
   subheader: {
     fontSize: 14,
-    //fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
     color: summitBlue,
     marginTop: 30,
   },
@@ -287,7 +345,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: 'white',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 24,
     textAlign: 'center',
     marginTop: 40,

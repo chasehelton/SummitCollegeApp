@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
 import {Icon} from 'react-native-elements';
 import Header from '../components/Header';
 import {summitBlue} from '../assets/colors';
+import axios from 'axios';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -20,25 +21,44 @@ LogBox.ignoreLogs([
 export default function ReadingPlanScreen({route, navigation}) {
   const [isLoaded, setIsLoaded] = React.useState(false);
   var {readingPlanObject, header} = route.params;
+  var {memText, header} = route.params;
 
   const [userType, setUserType] = React.useState('');
 
-  /*React.useEffect(() => {
-    async function setInitialType() {
-      setUserType(person.data.type);
-    }
 
-    if (!isLoaded) {
-      setInitialType();
-      setIsLoaded(true);
+  const nth = (day) => {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1:  return "st";
+      case 2:  return "nd";
+      case 3:  return "rd";
+      default: return "th";
     }
-  }, [isLoaded, person, userType]);*/
+  };
+
+  const months = ["January", "February", "March", "April", "May",
+    "June", "July", "August", "September", "October", "November", "December"];
+
+  const printDate = (date) => {
+    var tempDate = readingPlanObject.data.date;
+    var dateArray = tempDate.split('-');
+    var year = tempDate[0];
+    var month = tempDate[1];
+    var day = tempDate[2];
+
+    return months[month - 1] + ' ' + parseInt(day) + nth(day) + ', ' + year;
+  };
 
   return (
     <View contentContainerStyle={styles.container}>
       <Header navigation={navigation} title={header} backButton={true} />
+      <View style={styles.dateStripe}>
+                <Text style={styles.dateText}>{"September 25th, 2020"}</Text>
+              </View>
 
       <View style={styles.body}>
+
+
         <Text style={styles.subheader}>{"READ"}</Text>
         <TouchableOpacity
           style={[styles.itemContainer, styles.readingPlanContainer]}
@@ -48,6 +68,23 @@ export default function ReadingPlanScreen({route, navigation}) {
           </View>
         </TouchableOpacity>
 
+        <Text style={styles.subheader}>{"MEDITATE"}</Text>
+        <TouchableOpacity
+          style={[styles.itemContainer, styles.readingPlanContainer]}
+        >
+          <View style={styles.infoContainer}>
+            <Text style={styles.readingPlanText}>{readingPlanObject.data.meditation}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <Text style={styles.subheader}>{"MEMORIZE"}</Text>
+        <TouchableOpacity
+          style={[styles.itemContainer, styles.readingPlanContainer]}
+        >
+          <View style={styles.infoContainer}>
+            <Text style={styles.readingPlanText}>{memText}</Text>
+          </View>
+        </TouchableOpacity>
 
       </View>
     </View>
@@ -68,17 +105,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   body: {
-    backgroundColor: 'white',
+    backgroundColor: '#eee',
     height: '100%',
+    paddingHorizontal: 25,
+  },
+  dateStripe: {
+    backgroundColor: summitBlue,
+    width: '100%',
+    height: 60,
+    justifyContent: 'center',
+        alignItems: 'center',
+  },
+  dateText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    textAlign: 'center',
   },
   subheader: {
     fontSize: 14,
     fontFamily: 'OpenSans-SemiBold',
-    color: summitBlue,
+    color: 'black',
     marginTop: 30,
   },
   readingPlanText: {
-    fontSize: 20,
+    fontSize: 16,
   },
   itemContainer: {
     display: 'flex',
@@ -91,7 +142,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     elevation: 2,
     paddingHorizontal: 20,
-
     borderRadius: 8,
 
   },
@@ -140,57 +190,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     fontFamily: 'OpenSans-Regular',
-  },
-  personInfo: {
-    //color: '#3ab5e6',
-    fontSize: 16,
-    alignSelf: 'center',
-    marginBottom: 5,
-    fontFamily: 'OpenSans-Regular',
-  },
-  infoPanel: {
-    flex: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  managePanel: {
-    flex: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  blueButton: {
-    backgroundColor: '#3ab5e6',
-    width: '85%',
-    alignSelf: 'center',
-    borderRadius: 10,
-    marginTop: 30,
-    padding: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 18,
-    padding: 10,
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans-Bold',
-  },
-  blackButtonText: {
-    color: '#000',
-    textAlign: 'center',
-    fontSize: 16,
-    padding: 10,
-    fontWeight: '600',
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  whiteButton: {
-    backgroundColor: '#fff',
-    width: '85%',
-    alignSelf: 'center',
-    borderWidth: 1.3,
-    borderColor: '#3939391A',
-    paddingVertical: 8,
   },
 });
