@@ -11,6 +11,7 @@ import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Sending...']);
 
 import AdminScreen from './screens/AdminStack';
+import EventsStackScreen from './screens/EventsStack';
 import EventsScreen from './screens/EventsScreen';
 import EventScreen from './screens/EventScreen';
 import CommunityScreen from './screens/CommunityScreen';
@@ -132,8 +133,8 @@ export default function App() {
               )}
               {!isAdmin && (
                 <>
-                  <Tab.Screen name="Events" component={EventsScreen} />
-                  <Tab.Screen name="Event" component={EventScreen} />
+                  <Tab.Screen name="Events" component={EventsStackScreen} />
+                  {/*<Tab.Screen name="Event" component={EventScreen} />*/}
                   <Tab.Screen name="Community" component={CommunityScreen} />
                   <Tab.Screen name="Home" component={HomeStackScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
