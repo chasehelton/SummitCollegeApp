@@ -6,23 +6,23 @@ import cheerio from 'cheerio';
 import axios from 'axios';
 
 const podcastUrl = 'https://anchor.fm/summitcollege';
-const getData = async () => {
-  let podcastTitle = 'before';
-  await axios
-    .get(podcastUrl)
-    .then((response) => {
-      const che = cheerio.load(response.data);
-      console.log(che);
-      podcastTitle = che('div.app').find('a').text();
-    })
-    .catch((error) => {
-      podcastTitle = 'error!';
-    });
-  return podcastTitle;
-};
+// const getData = async () => {
+//   let podcastTitle = 'before';
+//   await axios
+//     .get(podcastUrl)
+//     .then((response) => {
+//       const che = cheerio.load(response.data);
+//       console.log(che);
+//       podcastTitle = che('div.app').find('a').text();
+//     })
+//     .catch((error) => {
+//       podcastTitle = 'error!';
+//     });
+//   return podcastTitle;
+// };
 
 export default function ResourcesScreen() {
-  console.log(getData());
+  //onsole.log(getData());
   return (
     <View style={styles.container}>
       <Header title={'Resources'} backButton={false} />

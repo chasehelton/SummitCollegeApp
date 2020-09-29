@@ -16,7 +16,7 @@ export default function EventScreen({route, navigation}) {
   return (
     <View>
       <Header navigation={navigation} backButton={true} />
-      <Text>Hi</Text>
+      <Text>{event}</Text>
     </View>
   );
 }

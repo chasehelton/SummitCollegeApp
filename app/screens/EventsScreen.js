@@ -32,7 +32,7 @@ export default function EventsScreen({navigation}) {
       try {
         const tempEvents = [];
         var count = 0;
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(function (doc) {
           tempEvents.push({
             data: doc.data(),
             id: count,
@@ -48,15 +48,14 @@ export default function EventsScreen({navigation}) {
     getEvents();
   }, []);
 
-  const selectEvent = (index) => {
-    console.log(events[index]);
-    console.log('Event is selected, with index ' + index.toString());
-    navigation.navigate('Event', {
-      screen: 'Event',
-      params: {
-        event: events[index],
-      },
-    });
+  const selectEvent = (param) => {
+    console.log('Event clicked, parameter: ' + param);
+    // navigation.navigate('Event', {
+    //   screen: 'Event',
+    //   params: {
+    //     event: events[index],
+    //   },
+    // });
   };
 
   return (
@@ -70,18 +69,17 @@ export default function EventsScreen({navigation}) {
             let date2 = new Date(b.data.startDate);
             return date1.getTime() - date2.getTime();
           })}
-          disableScrollViewPanResponder
           renderItem={({item, index}) => (
-            <TouchableOpacity onPress={() => selectEvent(item.id)}>
+            <TouchableOpacity onPress={() => selectEvent(item.id.toString())}>
               <Event
                 title={item.data.title}
                 previewText={item.data.previewText}
                 startDate={item.data.startDate}
-                key={index.toString()}
+                key={index}
               />
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
       {noEvents && <Text style={styles.noEventsText}>No events found.</Text>}

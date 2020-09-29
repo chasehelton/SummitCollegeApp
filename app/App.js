@@ -133,8 +133,7 @@ export default function App() {
               )}
               {!isAdmin && (
                 <>
-                  <Tab.Screen name="Events" component={EventsStackScreen} />
-                  {/*<Tab.Screen name="Event" component={EventScreen} />*/}
+                  <Tab.Screen name="Events" component={EventsScreen} />
                   <Tab.Screen name="Community" component={CommunityScreen} />
                   <Tab.Screen name="Home" component={HomeStackScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
