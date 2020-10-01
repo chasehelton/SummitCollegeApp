@@ -54,7 +54,17 @@ export default function HomeScreen({navigation}) {
         memText: memorizationText,
       },
     });
+  };
 
+  const selectUpcomingEvent = (e) => {
+    console.log("Selecting this upcoming event: " + e);
+    navigation.navigate('Events', {
+      screen: 'Event',
+      params: {
+        header: 'Events',
+        event: e,
+      },
+    });
   };
 
   useLayoutEffect(() => {
@@ -242,8 +252,18 @@ export default function HomeScreen({navigation}) {
 
           {!noUpcomingEvents && upcomingEvents[0] && (
             <View>
-              <UpcomingEvent title={upcomingEvents[0].data.title} />
-              <UpcomingEvent title={upcomingEvents[1].data.title} />
+              <TouchableOpacity
+                style={[styles.itemContainer, styles.eventContainer]}
+                onPress={() => selectUpcomingEvent(upcomingEvents[0])}
+              >
+                <UpcomingEvent title={upcomingEvents[0].data.title} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.itemContainer, styles.eventContainer]}
+                onPress={() => selectUpcomingEvent(upcomingEvents[1])}
+              >
+                <UpcomingEvent title={upcomingEvents[1].data.title} />
+              </TouchableOpacity>
             </View>
           )}
           {noUpcomingEvents && (

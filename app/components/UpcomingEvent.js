@@ -8,29 +8,19 @@ import {summitBlue} from '../assets/colors';
 
 export default function UpcomingEvent({navigation, title}) {
   return (
-    <TouchableOpacity
-      style={[styles.itemContainer, styles.eventContainer]}
-      onPress={() =>
-        navigation.navigate('Admin', {
-          screen: 'Directory',
-          params: {
-            header: 'Students',
-            userType: TYPE_STUDENT,
-          },
-        })
-      }
-    >
-      <View style={styles.infoContainer}>
+    [
+      <View style={styles.infoContainer} key="eventTitleView">
         <Text style={styles.eventText}>{title}</Text>
-      </View>
+      </View>,
       <Icon
+        key="eventArrowIcon"
         name="keyboard-arrow-right"
         type="material"
         color='#eee'
         style={{marginLeft: 10}}
         size={35}
-      />
-    </TouchableOpacity>
+      />,
+    ]
   );
 }
 
