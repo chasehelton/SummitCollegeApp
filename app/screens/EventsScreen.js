@@ -50,12 +50,12 @@ export default function EventsScreen({navigation}) {
 
   const selectEvent = (param) => {
     console.log('Event clicked, parameter: ' + param);
-    // navigation.navigate('Event', {
-    //   screen: 'Event',
-    //   params: {
-    //     event: events[index],
-    //   },
-    // });
+    navigation.navigate('Events', {
+      screen: 'Event',
+      params: {
+        event: events[param],
+      },
+    });
   };
 
   return (
@@ -70,7 +70,9 @@ export default function EventsScreen({navigation}) {
             return date1.getTime() - date2.getTime();
           })}
           renderItem={({item, index}) => (
-            <TouchableOpacity onPress={() => selectEvent(item.id.toString())}>
+            <TouchableOpacity
+              style={styles.eventContainer}
+              onPress={() => selectEvent(index)}>
               <Event
                 title={item.data.title}
                 previewText={item.data.previewText}
@@ -106,5 +108,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
     fontSize: 24,
+  },
+  eventContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    shadowOffset: {height: 5, width: 5},
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    backgroundColor: '#fff',
+    elevation: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 8,
+    height: 100,
   },
 });

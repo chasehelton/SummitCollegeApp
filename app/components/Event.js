@@ -31,23 +31,24 @@ export default function Event({navigation, startDate, title, previewText}) {
   };
 
   return (
-    <TouchableOpacity style={styles.eventContainer}>
-      <View style={styles.dateContainer}>
+    [
+      <View style={styles.dateContainer} key="dateView">
         <Text style={styles.monthText}>{getMonth(startDate)}</Text>
         <Text style={styles.dayText}>{getDay(startDate)}</Text>
-      </View>
-      <View style={styles.infoContainer}>
+      </View>,
+      <View style={styles.infoContainer} key="infoView">
         <Text style={styles.eventTitle}>{title}</Text>
         <Text style={styles.eventDesc}>{previewText}</Text>
-      </View>
+      </View>,
       <Icon
+        key="iconView"
         name="keyboard-arrow-right"
         type="material"
         color={summitBlue}
         style={{marginLeft: 10}}
         size={35}
       />
-    </TouchableOpacity>
+    ]
   );
 }
 
