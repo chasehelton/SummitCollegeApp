@@ -73,7 +73,7 @@ export default function AnnouncementsScreen({navigation}) {
               />
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
       {noAnnouncements && (
