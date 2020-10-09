@@ -17,6 +17,16 @@ export default function AnnouncementsScreen({navigation}) {
   const [announcements, setAnnouncements] = useState([]);
   const [noAnnouncements, setNoAnnouncements] = useState(false);
 
+  const selectAnnouncement = (index) => {
+    console.log('Announcement clicked, index: ' + index);
+    navigation.navigate('Home', {
+      screen: 'Announcement',
+      params: {
+        announcement: announcements[index],
+      },
+    });
+  };
+
   useLayoutEffect(() => {
     let mounted = true;
     if (mounted) {
@@ -65,7 +75,10 @@ export default function AnnouncementsScreen({navigation}) {
             return date1.getTime() - date2.getTime();
           })}
           renderItem={({item, index}) => (
-            <TouchableOpacity>
+            <TouchableOpacity style={styles.announcementContainer}
+              onPress={() => selectAnnouncement(index)}
+
+            >
               <Announcement
                 title={item.data.title}
                 timestamp={item.data.timestamp}
@@ -102,5 +115,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
     fontSize: 24,
+  },
+  announcementContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    shadowOffset: {height: 5, width: 5},
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    backgroundColor: '#fff',
+    elevation: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 8,
+    height: 70,
   },
 });

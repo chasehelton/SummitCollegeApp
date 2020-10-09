@@ -63,45 +63,32 @@ export default function Announcement({navigation, timestamp, title, body}) {
   }
 
   return (
-    <TouchableOpacity style={styles.announcementContainer}>
-      <View style={styles.infoContainer}>
+    <>
+      <View style={styles.infoContainer} key="infoView">
         <Text style={styles.announcementTitle}>{title}</Text>
       </View>
       {isToday(timestamp)
-        ? <View style={styles.dateContainer}>
+        ? <View style={styles.dateContainer} key="dateView">
           <Text style={styles.hourText}>{getHours(timestamp)}:{getMinutes(timestamp)}{getAMPM(timestamp)}</Text>
         </View>
-        : <View style={styles.dateContainer}>
+        : <View style={styles.dateContainer} key="dateView">
           <Text style={styles.monthText}>{getMonth(timestamp)} {getDate(timestamp)}</Text>
         </View>
       }
       <Icon
+        key="iconView"
         name="keyboard-arrow-right"
         type="material"
         color={summitBlue}
         style={{marginLeft: 10}}
         size={35}
       />
-    </TouchableOpacity>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  announcementContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-    shadowOffset: {height: 5, width: 5},
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    backgroundColor: '#fff',
-    elevation: 2,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 8,
-    height: 70,
-  },
+
   dateContainer: {
     alignItems: 'center',
     marginLeft: 13,
