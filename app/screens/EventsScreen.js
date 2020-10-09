@@ -15,7 +15,19 @@ import Event from '../components/Event';
 
 export default function EventsScreen({navigation}) {
   const [events, setEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
   const [noEvents, setNoEvents] = useState(false);
+
+  const formatDate = (date) => {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
 
   useLayoutEffect(() => {
     async function getEvents() {
@@ -31,16 +43,28 @@ export default function EventsScreen({navigation}) {
 
       try {
         const tempEvents = [];
+        const tempPastEvents = [];
         var count = 0;
+        var countPast = 0;
         querySnapshot.forEach(function (doc) {
-          tempEvents.push({
-            data: doc.data(),
-            id: count,
-            ref: doc.ref,
-          });
-          count++;
+          if (doc.data().startDate >= formatDate(new Date())) {
+            tempEvents.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
+          } else {
+            tempPastEvents.push({
+              data: doc.data(),
+              id: countPast,
+              ref: doc.ref,
+            });
+            countPast++;
+          }
         });
         setEvents(tempEvents);
+        setPastEvents(tempPastEvents);
       } catch (error) {
         Alert.alert('Error', 'Error retrieving events');
       }
@@ -77,6 +101,7 @@ export default function EventsScreen({navigation}) {
                 title={item.data.title}
                 previewText={item.data.previewText}
                 startDate={item.data.startDate}
+                time={item.data.time}
                 key={index}
               />
             </TouchableOpacity>
@@ -124,5 +149,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 8,
     height: 100,
+    marginBottom: 15,
   },
 });

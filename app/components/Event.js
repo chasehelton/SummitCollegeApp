@@ -1,12 +1,11 @@
 /* eslint-disable curly */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {Icon} from 'react-native-elements';
-
 import {summitBlue} from '../assets/colors';
 
-export default function Event({navigation, startDate, title, previewText}) {
+export default function Event({time, startDate, title, previewText}) {
   const getMonth = (date) => {
     let month = '';
     let m = new Date(date).getMonth() + 1;
@@ -30,16 +29,31 @@ export default function Event({navigation, startDate, title, previewText}) {
     return d;
   };
 
+  const convertTime = (t) => {
+    var timeArray = t.split(':');
+    var hours = Number(timeArray[0]);
+    var minutes = Number(timeArray[1]);
+    var timeValue;
+    if (hours > 0 && hours <= 12) timeValue = '' + hours;
+    else if (hours > 12) timeValue = '' + (hours - 12);
+    else if (hours === 0) timeValue = '12';
+    timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
+    timeValue += hours >= 12 ? ' PM' : ' AM';
+    return timeValue;
+  };
+
   return (
-    [
+    <>
       <View style={styles.dateContainer} key="dateView">
         <Text style={styles.monthText}>{getMonth(startDate)}</Text>
         <Text style={styles.dayText}>{getDay(startDate)}</Text>
-      </View>,
+      </View>
       <View style={styles.infoContainer} key="infoView">
         <Text style={styles.eventTitle}>{title}</Text>
-        <Text style={styles.eventDesc}>{previewText}</Text>
-      </View>,
+        <Text style={styles.eventDesc}>
+          {convertTime(time)} | {previewText}
+        </Text>
+      </View>
       <Icon
         key="iconView"
         name="keyboard-arrow-right"
@@ -48,7 +62,7 @@ export default function Event({navigation, startDate, title, previewText}) {
         style={{marginLeft: 10}}
         size={35}
       />
-    ]
+    </>
   );
 }
 

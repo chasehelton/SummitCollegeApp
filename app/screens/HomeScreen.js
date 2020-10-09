@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {
@@ -15,6 +16,8 @@ import axios from 'axios';
 
 import {Icon} from 'react-native-elements';
 import {summitBlue} from '../assets/colors';
+import talley from '../assets/Talley.jpg';
+import pod from '../assets/sc_podcast_logo.jpg';
 import UpcomingEvent from '../components/UpcomingEvent';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -67,147 +70,136 @@ export default function HomeScreen({navigation}) {
   };
 
   useLayoutEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      async function getUpcomingEvents() {
-        // TODO: make sure only the upcoming ones display
-        const querySnapshot = await firestore()
-          .collection('events')
-          .where('startDate', '>=', formatDate(new Date()))
-          .orderBy('startDate')
-          .limit(2)
-          .get();
-        if (
-          querySnapshot === null ||
-          querySnapshot.size === 0 ||
-          querySnapshot.empty
-        ) {
-          setNoUpcomingEvents(true);
-          console.log('No upcoming events!');
-          return null;
-        }
-
-        try {
-          const tempUpcomingEvents = [];
-          var count = 0;
-          querySnapshot.forEach((doc) => {
-            tempUpcomingEvents.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
-            });
-            count++;
-          });
-          console.log('Count of upcoming events: ' + count);
-          setUpcomingEvents(tempUpcomingEvents);
-        } catch (error) {
-          Alert.alert('Error', 'Error retrieving upcoming events');
-          console.log('Error: ' + error);
-        }
+    async function getUpcomingEvents() {
+      // TODO: make sure only the upcoming ones display
+      const querySnapshot = await firestore()
+        .collection('events')
+        .where('startDate', '>=', formatDate(new Date()))
+        .orderBy('startDate')
+        .limit(2)
+        .get();
+      if (
+        querySnapshot === null ||
+        querySnapshot.size === 0 ||
+        querySnapshot.empty
+      ) {
+        setNoUpcomingEvents(true);
+        console.log('No upcoming events!');
+        return null;
       }
 
-      async function getReadingPlan() {
-        // first check to see if the api key exists locally
-        var esvKeyValue = await AsyncStorage.getItem('@esvKey');
-        if (esvKeyValue == null) {
-          console.log('ESV Key not found, now retrieve from database');
-          console.log('Storing data for api key');
-          const keyDoc = await firestore()
-            .collection('apiKeys')
-            .doc('esv_key')
-            .get();
-          if (!keyDoc.exists) {
-            console.log('ESV key does not exist in firestore');
-          } else {
-            try {
-              console.log('ESV key: ' + keyDoc.data().key);
-              await AsyncStorage.setItem('@esvKey', keyDoc.data().key);
-              esvKeyValue = keyDoc.data().key;
-            } catch (e) {
-              // saving error
-              console.log('Error trying to save esv key: ' + e);
-            }
-          }
-        } else console.log('ESV Key was found!');
-        console.log('Esv Key Value is now: ' + esvKeyValue);
-
-        const querySnapshot = await firestore()
-          .collection('readingPlan')
-          .where('date', '==', formatDate(new Date()))
-          .get();
-        if (
-          querySnapshot === null ||
-          querySnapshot.size === 0 ||
-          querySnapshot.empty
-        ) {
-          setNoReadingPlan(true);
-          console.log('No reading plan!');
-          return null;
-        }
-
-        if (querySnapshot.size > 1) {
-          console.log('Too many reading plan entries for this day.');
-        }
-
-        try {
-          querySnapshot.forEach((doc) => {
-            console.log('Setting the reading plan!');
-            setReadingPlan({
-              data: doc.data(),
-              id: formatDate(new Date()),
-            });
-            getMemorizationText(doc.data(), esvKeyValue);
+      try {
+        const tempUpcomingEvents = [];
+        var count = 0;
+        querySnapshot.forEach((doc) => {
+          tempUpcomingEvents.push({
+            data: doc.data(),
+            id: count,
+            ref: doc.ref,
           });
-        } catch (error) {
-          Alert.alert('Error', 'Error retrieving reading plan');
-          console.log('Error: ' + error);
-        }
-      }
-
-      async function getMemorizationText(data, key) {
-        let passageText = data.memorization.replace(/ /g, '+');
-        console.log('Passage text: ' + passageText);
-        await axios
-          .get('https://api.esv.org/v3/passage/text/?q=' + passageText, {
-            headers: {
-              Authorization: key,
-            },
-            params: {
-              include_passage_references: false,
-              include_verse_numbers: false,
-              include_first_verse_numbers: false,
-              include_footnotes: false,
-              include_headings: false,
-            },
-          })
-          .then((response) => {
-            console.log(response.data);
-            console.log(response.data.passages[0]);
-            setMemorizationText(response.data.passages[0].trim());
-          })
-          .catch((error) => {
-            console.log('Error: ' + error);
-            setMemorizationText('error!');
-          });
-      }
-
-      if (!isLoaded) {
-        setIsLoaded(true);
-        getUpcomingEvents();
-        getReadingPlan();
+          count++;
+        });
+        console.log('Count of upcoming events: ' + count);
+        setUpcomingEvents(tempUpcomingEvents);
+      } catch (error) {
+        Alert.alert('Error', 'Error retrieving upcoming events');
+        console.log('Error: ' + error);
       }
     }
-    return () => (mounted = false);
-  }, [upcomingEvents, readingPlan, memorizationText, isLoaded]);
+
+    async function getReadingPlan() {
+      // first check to see if the api key exists locally
+      var esvKeyValue = await AsyncStorage.getItem('@esvKey');
+      if (esvKeyValue == null) {
+        console.log('ESV Key not found, now retrieve from database');
+        console.log('Storing data for api key');
+        const keyDoc = await firestore()
+          .collection('apiKeys')
+          .doc('esv_key')
+          .get();
+        if (!keyDoc.exists) {
+          console.log('ESV key does not exist in firestore');
+        } else {
+          try {
+            console.log('ESV key: ' + keyDoc.data().key);
+            await AsyncStorage.setItem('@esvKey', keyDoc.data().key);
+            esvKeyValue = keyDoc.data().key;
+          } catch (e) {
+            // saving error
+            console.log('Error trying to save esv key: ' + e);
+          }
+        }
+      } else console.log('ESV Key was found!');
+      console.log('Esv Key Value is now: ' + esvKeyValue);
+
+      const querySnapshot = await firestore()
+        .collection('readingPlan')
+        .where('date', '==', formatDate(new Date()))
+        .get();
+      if (
+        querySnapshot === null ||
+        querySnapshot.size === 0 ||
+        querySnapshot.empty
+      ) {
+        setNoReadingPlan(true);
+        console.log('No reading plan!');
+        return null;
+      }
+
+      if (querySnapshot.size > 1) {
+        console.log('Too many reading plan entries for this day.');
+      }
+
+      try {
+        querySnapshot.forEach((doc) => {
+          console.log('Setting the reading plan!');
+          setReadingPlan({
+            data: doc.data(),
+            id: formatDate(new Date()),
+          });
+          getMemorizationText(doc.data(), esvKeyValue);
+        });
+      } catch (error) {
+        Alert.alert('Error', 'Error retrieving reading plan');
+        console.log('Error: ' + error);
+      }
+    }
+
+    async function getMemorizationText(data, key) {
+      let passageText = data.memorization.replace(/ /g, '+');
+      console.log('Passage text: ' + passageText);
+      await axios
+        .get('https://api.esv.org/v3/passage/text/?q=' + passageText, {
+          headers: {
+            Authorization: key,
+          },
+          params: {
+            include_passage_references: false,
+            include_verse_numbers: false,
+            include_first_verse_numbers: false,
+            include_footnotes: false,
+            include_headings: false,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          console.log(response.data.passages[0]);
+          setMemorizationText(response.data.passages[0].trim());
+        })
+        .catch((error) => {
+          console.log('Error: ' + error);
+          setMemorizationText('error!');
+        });
+    }
+    getUpcomingEvents();
+    getReadingPlan();
+  }, []);
 
   return (
     <View style={styles.container}>
       {/*<Header title={'Home'} backButton={false} />*/}
 
-      <Image
-        source={require('../assets/Talley.jpg')}
-        style={{width: '100%', height: '24%'}}
-      />
+      <Image source={talley} style={styles.talley} />
       <View
         style={{
           position: 'absolute',
@@ -299,6 +291,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#eee',
+  },
+  talley: {
+    width: '100%',
+    height: '25%',
   },
   bodyContainer: {},
   title: {
