@@ -22,6 +22,9 @@ import UpcomingEvent from '../components/UpcomingEvent';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+global.Buffer = global.Buffer || require('buffer').Buffer;
+
+
 export default function HomeScreen({navigation}) {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
@@ -32,6 +35,16 @@ export default function HomeScreen({navigation}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [memorizationText, setMemorizationText] = React.useState('');
+
+  const [podcastState, setPodcastState] = useState(
+    {
+      podcastTitle: "",
+      podcastDescription: "",
+      podcastDate: "",
+      podcastImageUrl: "",
+    }
+  );
+
 
   const formatDate = (date) => {
     var d = new Date(date),
@@ -191,8 +204,37 @@ export default function HomeScreen({navigation}) {
           setMemorizationText('error!');
         });
     }
+
+    async function getPodcastData() {
+      const cheerio = require("cheerio");
+      const axios = require("axios");
+      const podcastUrl = 'https://anchor.fm/summitcollege';
+      await axios.get(podcastUrl).then((response) => {
+        const che = cheerio.load(response.data);
+        // This isn't the actual way to get the title, it was just easier to test with this.
+        podTitle = che("div.styles__episodeHeading___29q7v").first().text();
+        podDescription = che("div.styles__episodeDescription___C3oZg").first().text();
+        podDateFull = che("div.styles__episodeCreated___1zP5p").first().text();
+        podDate = podDateFull.match(/[a-zA-Z]+ \d+/g);
+        console.log(podDate);
+        podImageUrl = che("a.styles__episodeImage___tMifW").find('img').attr('src');
+        console.log("Image URL: " + podImageUrl);
+        setPodcastState(
+          {
+            podcastTitle: podTitle,
+            podcastDescription: podDescription,
+            podcastDate: podDate,
+            podcastImageUrl: podImageUrl,
+          }
+        );
+      }).catch((error) => {
+        console.log("Error: " + error);
+      });
+    }
+
     getUpcomingEvents();
     getReadingPlan();
+    getPodcastData();
   }, []);
 
   return (
@@ -209,7 +251,7 @@ export default function HomeScreen({navigation}) {
           bottom: 0,
           alignItems: 'center',
         }}>
-        <Text style={styles.welcomeText}>Hey, Summit College at NC State!</Text>
+        <Text style={styles.welcomeText}>Hey, NC State Summit College!</Text>
       </View>
 
       <ScrollView style={styles.bodyContainer}>
@@ -271,13 +313,24 @@ export default function HomeScreen({navigation}) {
               })
             }>
             <Image
-              source={require('../assets/sc_podcast_logo.jpg')}
+
+              source={{ uri: podcastState.podcastImageUrl }}
               style={styles.podcastImage}
+              resizeMode='contain'
             />
-            <Text style={styles.podcastTitle}>{'Love\n'}</Text>
-            {/*<Text style={styles.podcastText}>{"On this episode"}</Text>*/}
-            {/*ing from Charles Holmes, the HBCU Director for Summit College, and Sam Mendes, UNC Summit College staff member,
-                about why the gospel points us to love our… neighbor that is culturally different than us and how practically to do that well."}</Text>*/}
+            <View style={{borderWidth: 1, flex: .6, /*flexDirection: 'column',
+                                                        alignItems: 'flex-start',*/}}>
+              <View style={{borderWidth: 1}}>
+                <Text style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
+              </View>
+              <View style={{borderWidth: 1}}>
+                <Text style={styles.podcastDateText}>{podcastState.podcastDate}</Text>
+              </View>
+              <View style={{borderWidth: 1}}>
+                <Text style={styles.podcastText}>{podcastState.podcastDescription}</Text>
+              </View>
+              {/*ing "}</Text>*/}
+            </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -343,6 +396,9 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     height: 150,
     paddingLeft: 0,
+    flexDirection:"row",
+    alignItems:'flex-start',
+    justifyContent:'flex-start'
   },
   upcomingEventsList: {
     backgroundColor: '#eee',
@@ -358,16 +414,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     marginTop: 40,
+    width: '70%',
   },
   podcastImage: {
     width: '40%',
     height: '100%',
+    flex: .4,
   },
   podcastTitle: {
-    alignItems: 'flex-start',
-    paddingTop: 0,
+    paddingTop: 5,
     //fontFamily: 'OpenSans-Regular',
     fontWeight: 'bold',
+    width: '100%',
     marginLeft: 0,
     textAlign: 'left',
     textAlignVertical: 'top',
