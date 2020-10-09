@@ -39,12 +39,12 @@ export default function ReadingPlanScreen({route, navigation}) {
   const months = ["January", "February", "March", "April", "May",
     "June", "July", "August", "September", "October", "November", "December"];
 
-  const printDate = (date) => {
+  const printDate = () => {
     var tempDate = readingPlanObject.data.date;
     var dateArray = tempDate.split('-');
-    var year = tempDate[0];
-    var month = tempDate[1];
-    var day = tempDate[2];
+    var year = dateArray[0];
+    var month = dateArray[1];
+    var day = dateArray[2];
 
     return months[month - 1] + ' ' + parseInt(day) + nth(day) + ', ' + year;
   };
@@ -53,7 +53,7 @@ export default function ReadingPlanScreen({route, navigation}) {
     <View contentContainerStyle={styles.container}>
       <Header navigation={navigation} title={header} backButton={true} />
       <View style={styles.dateStripe}>
-                <Text style={styles.dateText}>{"September 25th, 2020"}</Text>
+                <Text style={styles.dateText}>{printDate()}</Text>
               </View>
 
       <View style={styles.body}>
