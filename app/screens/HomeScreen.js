@@ -312,24 +312,28 @@ export default function HomeScreen({navigation}) {
                 },
               })
             }>
-            <Image
+            <View style={styles.topHalfContainer}>
+              <View style={styles.podcastImageContainer}>
+                <Image
 
-              source={{ uri: podcastState.podcastImageUrl }}
-              style={styles.podcastImage}
-              resizeMode='contain'
-            />
-            <View style={{borderWidth: 1, flex: .6, /*flexDirection: 'column',
-                                                        alignItems: 'flex-start',*/}}>
-              <View style={{borderWidth: 1}}>
-                <Text style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
+                  source={{ uri: podcastState.podcastImageUrl }}
+                  style={styles.podcastImage}
+                  resizeMode='contain'
+                />
               </View>
-              <View style={{borderWidth: 1}}>
-                <Text style={styles.podcastDateText}>{podcastState.podcastDate}</Text>
+              <View style={{flex: .65, /*flexDirection: 'column',
+                                                          alignItems: 'flex-start',*/}}>
+                <View style={{borderWidth: 0}}>
+                  <Text style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
+                </View>
+                <View style={{borderWidth: 0}}>
+                  <Text style={styles.podcastDateText}>{podcastState.podcastDate}</Text>
+                </View>
+
               </View>
-              <View style={{borderWidth: 1}}>
-                <Text style={styles.podcastText}>{podcastState.podcastDescription}</Text>
-              </View>
-              {/*ing "}</Text>*/}
+            </View>
+            <View style={styles.bottomHalfContainer}>
+              <Text style={styles.podcastText} numberOfLines={4} >{podcastState.podcastDescription}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -349,7 +353,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '25%',
   },
-  bodyContainer: {},
+  bodyContainer: {
+    paddingHorizontal: 20,
+  },
   title: {
     fontSize: 48,
   },
@@ -392,14 +398,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     height: 40,
   },
-  podcastContainer: {
-    paddingVertical: 0,
-    height: 150,
-    paddingLeft: 0,
-    flexDirection:"row",
-    alignItems:'flex-start',
-    justifyContent:'flex-start'
-  },
+
   upcomingEventsList: {
     backgroundColor: '#eee',
   },
@@ -416,21 +415,58 @@ const styles = StyleSheet.create({
     marginTop: 40,
     width: '70%',
   },
+  topHalfContainer: {
+    height: 125,
+    //borderWidth: 1,
+    borderColor: 'red',
+    flexDirection:"row",
+    alignItems:'flex-start',
+    justifyContent:'flex-start',
+  },
+  bottomHalfContainer: {
+    marginTop: 10,
+    //borderWidth: 1, borderColor: 'yellow',
+  },
+  podcastContainer: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    flexDirection: 'column',
+    marginBottom: 20,
+    /*flexDirection:"row",
+    alignItems:'flex-start',
+    justifyContent:'flex-start',*/
+  },
+  podcastImageContainer: {
+    marginRight: 10,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'black',
+    overflow: 'hidden',
+    flex: .35,
+  },
   podcastImage: {
-    width: '40%',
     height: '100%',
-    flex: .4,
+
+
   },
   podcastTitle: {
     paddingTop: 5,
-    //fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-SemiBold',
     fontWeight: 'bold',
     width: '100%',
     marginLeft: 0,
     textAlign: 'left',
     textAlignVertical: 'top',
+    color: summitBlue,
+    fontSize: 15,
+  },
+  podcastDateText: {
+    marginTop: 7,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
   },
   podcastText: {
     //width: '100%',
+    fontFamily: 'OpenSans-Regular',
   },
 });
