@@ -100,22 +100,22 @@ export default function App() {
                     img = images.settingsImage;
                   } else if (route.name === 'Announcements') {
                     iconName = 'feedback';
-                    return (<Icon
+                    return (<View style={{height: 35, width: 35,}}><Icon
                       name="feedback"
                       type="material"
                       size={35}
                       color={color}
 
-                    /> );
+                    /></View> );
                   } else if (route.name === 'Admin') {
                     return (
-                      <Icon
+                      <View style={{height: 35, width: 35,}}><Icon
                         name="supervisor-account"
                         type="material"
                         size={35}
                         color={color}
 
-                      />
+                      /></View>
                     );
                   }
                   // You can return any component that you like here!
@@ -142,8 +142,8 @@ export default function App() {
                   backgroundColor: 'white',
                   paddingLeft: 30,
                   paddingRight: 30,
-                  paddingBottom: 10,
-                  paddingTop: 10,
+                  paddingBottom: 30,
+                  paddingTop: 30,
                 },
               }}>
               {isAdmin && (
