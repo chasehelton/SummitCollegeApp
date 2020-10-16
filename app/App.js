@@ -142,8 +142,7 @@ export default function App() {
                   backgroundColor: 'white',
                   paddingLeft: 30,
                   paddingRight: 30,
-                  paddingBottom: 30,
-                  paddingTop: 30,
+                  height: 60,
                 },
               }}>
               {isAdmin && (
