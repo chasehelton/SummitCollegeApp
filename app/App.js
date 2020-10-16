@@ -5,6 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import {Icon} from 'react-native-elements';
+import {Image, View} from 'react-native';
 
 // Included to prevent warnings from displaying, comment out for debugging
 import {LogBox} from 'react-native';
@@ -37,13 +38,13 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialPage, setInitialPage] = useState('Home');
 
-  // const images = {
-  //   eventsImage: require('./assets/Icon-feather-calendar.png'),
-  //   communityImage: require('./assets/Icon-feather-users.png'),
-  //   homeImage: require('./assets/Icon-feather-home.png'),
-  //   resourcesImage: require('./assets/Icon-feather-folder.png'),
-  //   settingsImage: require('./assets/Icon-feather-settings.png'),
-  // };
+   const images = {
+     eventsImage: require('./assets/Icon-feather-calendar.png'),
+     communityImage: require('./assets/Icon-feather-users.png'),
+     homeImage: require('./assets/Icon-feather-home.png'),
+     resourcesImage: require('./assets/Icon-feather-folder.png'),
+     settingsImage: require('./assets/Icon-feather-settings.png'),
+   };
 
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
@@ -81,18 +82,31 @@ export default function App() {
               screenOptions={({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
                   let iconName;
+                  let img;
                   if (route.name === 'Events') {
                     iconName = 'event';
+                    img = images.eventsImage;
                   } else if (route.name === 'Community') {
                     iconName = 'group';
+                    img = images.communityImage;
                   } else if (route.name === 'Home') {
                     iconName = 'home';
+                    img = images.homeImage;
                   } else if (route.name === 'Resources') {
                     iconName = 'folder-open';
+                    img = images.resourcesImage;
                   } else if (route.name === 'Settings') {
                     iconName = 'settings';
+                    img = images.settingsImage;
                   } else if (route.name === 'Announcements') {
                     iconName = 'feedback';
+                    return (<Icon
+                      name="feedback"
+                      type="material"
+                      size={35}
+                      color={color}
+
+                    /> );
                   } else if (route.name === 'Admin') {
                     return (
                       <Icon
@@ -100,19 +114,23 @@ export default function App() {
                         type="material"
                         size={35}
                         color={color}
+
                       />
                     );
                   }
                   // You can return any component that you like here!
-                  return (
+                  return <View style={{height: 35, width: 35, }}><Image source={img} /></View>;
+                  /*return (
                     <Icon
                       name={iconName}
                       type="material"
                       size={35}
                       color={color}
                     />
-                  );
-                  //return <Image source={iconName} style={styles.iconTest} />;
+
+                  );*/
+                  //return <Image source={iconName} style={{ height: 35 }} />;
+                  //return <Image source={img} style={{ height: 35 }} />;
                 },
               })}
               tabBarOptions={{
@@ -122,7 +140,10 @@ export default function App() {
                 showLabel: false,
                 style: {
                   backgroundColor: 'white',
-                  height: 100,
+                  paddingLeft: 30,
+                  paddingRight: 30,
+                  paddingBottom: 10,
+                  paddingTop: 10,
                 },
               }}>
               {isAdmin && (
