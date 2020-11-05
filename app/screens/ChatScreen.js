@@ -9,8 +9,30 @@ import ChatMessage from '../components/ChatMessage';
 
 export default function CommunityScreen() {
 
+  const [formValue, setFormValue] = useState('');
+  const [testMessage, setTestMessage] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  const [sendMessageText, onChangeText] = useState('Useless Placeholder');
+
+  const sendMessage = async () => {
+    const res = await firestore()
+      .collection('rooms')
+      .doc('C08P2GCtlOrcKDTYjdQD')
+      .collection('messages')
+      .add({
+        msg: sendMessageText,
+        createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
+        uid: auth().currentUser.uid,
+
+      });
+    console.log('Added document with ID: ', res.id);
+  };
+
+  // CONSIDER USING FIREBASE HOOKS: https://github.com/csfrequency/react-firebase-hooks/tree/048dcb4553e7aecab5b8bf2a586d4349bb28998f/firestore
+
   useLayoutEffect(() => {
-    async function getRooms() {
+    async function getMessages() {
       const query = await firestore()
         .collection('rooms')
         .doc('C08P2GCtlOrcKDTYjdQD')
@@ -40,6 +62,46 @@ export default function CommunityScreen() {
       }, err => {
         console.log('Encountered error: ' + err);
       });
+
+
+      /*const querySnapshot = await firestore()
+        .collection('rooms')
+        .doc('C08P2GCtlOrcKDTYjdQD')
+        .collection('messages')
+        .orderBy('createdAt')
+        //.doc('xFAadox0fgogTEmUUBxj')
+        .get();
+      if (querySnapshot.empty) {
+        Alert.alert('Empty snapshot - no messages were found for this room');
+        return null;
+      }
+      console.log('Result size: ' + querySnapshot.size);
+
+      try {
+        const tempMessages = [];
+        var count = 0;
+        querySnapshot.forEach(function (doc) {
+          console.log('Message: ' + doc.data().msg);
+          tempMessages.push({
+            data: doc.data(),
+            id: count,
+            ref: doc.ref,
+          });
+          count++;
+        });
+        console.log('Count: ' + count);
+        console.log('Actual-set messages length: ' + tempMessages.length);
+        setMessages(tempMessages);
+      } catch (error) {
+        Alert.alert('Error', 'Some bad error here: ' + error);
+      }*/
+
+      /*else {
+        console.log('Message data: ' + doc.data());
+        console.log('Try to get msg: ' + doc.data().msg);
+        //setTestMessage({data: doc.data()});
+        setMessages([{data: doc.data()}]);
+      }*/
     }
     getMessages();
   }, []);
