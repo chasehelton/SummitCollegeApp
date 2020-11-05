@@ -53,12 +53,10 @@ export default function ReadingPlanScreen({route, navigation}) {
     <View contentContainerStyle={styles.container}>
       <Header navigation={navigation} title={header} backButton={true} />
       <View style={styles.dateStripe}>
-                <Text style={styles.dateText}>{printDate()}</Text>
-              </View>
+        <Text style={styles.dateText}>{printDate()}</Text>
+      </View>
 
       <View style={styles.body}>
-
-
         <Text style={styles.subheader}>{"READ"}</Text>
         <TouchableOpacity
           style={[styles.itemContainer, styles.readingPlanContainer]}
@@ -82,7 +80,8 @@ export default function ReadingPlanScreen({route, navigation}) {
           style={[styles.itemContainer, styles.readingPlanContainer]}
         >
           <View style={styles.infoContainer}>
-            <Text style={styles.readingPlanText}>{memText}</Text>
+            <Text style={styles.readingPlanText}>{'"' + memText.substring(0, memText.length - 5) + '"'}</Text>
+            <Text style={styles.citation}>{readingPlanObject.data.memorization}</Text>
           </View>
         </TouchableOpacity>
 
@@ -125,12 +124,20 @@ const styles = StyleSheet.create({
   subheader: {
     fontSize: 14,
     fontFamily: 'OpenSans-SemiBold',
-    color: 'black',
-    marginTop: 30,
+    marginTop: 20,
+    letterSpacing: 0.5,
+    color: summitBlue,
   },
   readingPlanText: {
     fontSize: 16,
+    fontFamily: 'OpenSans-SemiBold',
   },
+  citation: {
+      fontSize: 16,
+      fontFamily: 'OpenSans-SemiBold',
+      textAlign: 'right',
+      marginTop: 10,
+    },
   itemContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -147,11 +154,11 @@ const styles = StyleSheet.create({
   },
   readingPlanContainer: {
     paddingVertical: 20,
-    height: 70,
+    //height: 70,
   },
   infoContainer: {
     textAlign: 'left',
-    width: 275,
+    //width: 275,
   },
 
   backButton: {
@@ -160,10 +167,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-  },
-  userList: {
-    height: '100%',
-    backgroundColor: 'white',
   },
   title: {
     flex: 4,
@@ -176,19 +179,5 @@ const styles = StyleSheet.create({
   },
   empty: {
     flex: 1,
-  },
-  profilePic: {
-    width: 150,
-    height: 150,
-    alignSelf: 'center',
-    marginTop: 30,
-    borderRadius: 8,
-  },
-  personName: {
-    color: '#3ab5e6',
-    fontSize: 32,
-    alignSelf: 'center',
-    marginBottom: 10,
-    fontFamily: 'OpenSans-Regular',
   },
 });

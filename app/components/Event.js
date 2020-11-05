@@ -30,14 +30,17 @@ export default function Event({time, startDate, title, previewText}) {
   };
 
   const convertTime = (t) => {
+
     var timeArray = t.split(':');
     var hours = Number(timeArray[0]);
     var minutes = Number(timeArray[1]);
+    console.log('Hours: ' + hours);
+        console.log('Minutes: ' + minutes);
     var timeValue;
     if (hours > 0 && hours <= 12) timeValue = '' + hours;
     else if (hours > 12) timeValue = '' + (hours - 12);
     else if (hours === 0) timeValue = '12';
-    timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
+    if (minutes != 0) timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
     timeValue += hours >= 12 ? ' PM' : ' AM';
     return timeValue;
   };
@@ -50,8 +53,8 @@ export default function Event({time, startDate, title, previewText}) {
       </View>
       <View style={styles.infoContainer} key="infoView">
         <Text style={styles.eventTitle}>{title}</Text>
-        <Text style={styles.eventDesc}>
-          {convertTime(time)} | {previewText}
+        <Text style={styles.eventDesc} numberOfLines={1}>
+          {convertTime(time)} | {previewText.toUpperCase()}
         </Text>
       </View>
       <Icon
@@ -67,35 +70,21 @@ export default function Event({time, startDate, title, previewText}) {
 }
 
 const styles = StyleSheet.create({
-  eventContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    shadowOffset: {height: 5, width: 5},
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    backgroundColor: '#fff',
-    elevation: 2,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 8,
-    height: 100,
-  },
   dateContainer: {
     alignItems: 'center',
     marginRight: 13,
+    marginVertical: 20,
   },
   monthText: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '300',
     color: 'darkgray',
   },
   dayText: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: '300',
     color: 'darkgray',
+    marginTop: -10,
   },
   infoContainer: {
     textAlign: 'left',
@@ -104,6 +93,7 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontWeight: 'bold',
     fontSize: 22,
+
   },
   eventDesc: {
     fontSize: 18,

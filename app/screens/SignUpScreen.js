@@ -23,6 +23,7 @@ export default function SignUpScreen({navigation}) {
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [gender, setGender] = useState('');
   const [school, setSchool] = useState('');
   const [gradYear, setGradYear] = useState('');
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
@@ -70,6 +71,9 @@ export default function SignUpScreen({navigation}) {
         }
         console.error(error);
       });
+
+  // TODO: also add user to the database!!!
+
   };
 
   const createUserData = async () => {
@@ -132,7 +136,16 @@ export default function SignUpScreen({navigation}) {
             <View style={styles.pickerContainer}>
               <Picker
                 mode="dropdown"
-                style={styles.schoolPicker}
+                style={styles.pickerStyle}
+                selectedValue={gender}
+                onValueChange={(itemValue) => setGender(itemValue)}>
+                <Picker.Item label="Gender" value="" />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+              </Picker>
+              <Picker
+                mode="dropdown"
+                style={styles.pickerStyle}
                 selectedValue={school}
                 onValueChange={(itemValue) => setSchool(itemValue)}>
                 <Picker.Item label="School" value="" />
@@ -143,10 +156,10 @@ export default function SignUpScreen({navigation}) {
               </Picker>
               <Picker
                 mode="dropdown"
-                style={styles.gradPicker}
+                style={styles.pickerStyle}
                 selectedValue={gradYear}
                 onValueChange={(itemValue) => setGradYear(itemValue)}>
-                <Picker.Item label="Grad Year" value="" />
+                <Picker.Item label="Year" value="" />
                 {years.map((year, index) => (
                   <Picker.Item key={index} label={year} value={year} />
                 ))}
@@ -199,7 +212,7 @@ const styles = StyleSheet.create({
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
-    //fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginTop: 0,
@@ -211,17 +224,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  schoolPicker: {
-    width: 150,
+  pickerStyle: {
     height: 100,
-    marginHorizontal: 10,
-    transform: [{scaleX: 0.9}, {scaleY: 0.9}],
-  },
-  gradPicker: {
-    width: 150,
-    height: 100,
-    marginHorizontal: 10,
+    flex: 1,
+    //marginHorizontal: 10,
     transform: [{scaleX: 0.9}, {scaleY: 0.9}],
   },
   buttonContainer: {
@@ -237,7 +245,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '300',
     marginVertical: 15,
-    //fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular',
   },
   logo: {
     width: 150,
@@ -246,12 +254,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: 350,
-    height: 40,
+    //height: 40,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
     fontSize: 18,
-    marginVertical: 5,
-    //fontFamily: 'OpenSans-Regular',
+    //marginVertical: 5,
+    fontFamily: 'OpenSans-Light',
   },
   createAccountButton: {
     backgroundColor: 'gray',
@@ -262,7 +270,7 @@ const styles = StyleSheet.create({
   createAccountButtonText: {
     color: 'white',
     fontWeight: '800',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
   createAccountButtonActive: {
     backgroundColor: summitBlue,
@@ -273,10 +281,11 @@ const styles = StyleSheet.create({
   createAccountButtonTextActive: {
     color: 'white',
     fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
   },
   loginButton: {
     color: 'black',
     fontWeight: '700',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
 });

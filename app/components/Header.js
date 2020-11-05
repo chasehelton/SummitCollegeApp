@@ -34,19 +34,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   backButton: {
-    marginTop: 42,
+    marginTop: 35,
     flex: 1,
+    paddingStart: 15,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
   title: {
     flex: 4,
-    marginTop: 45,
-    marginBottom: 25,
+    marginTop: 35, // was 45; need to adjust for iOS somehow
+    marginBottom: 35, // was 25
     fontSize: 22,
-    fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
+    paddingEnd: 15, // not a good fix....
   },
   empty: {
     flex: 1,

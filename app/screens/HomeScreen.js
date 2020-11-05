@@ -285,11 +285,13 @@ export default function HomeScreen({navigation}) {
                 onPress={() => selectUpcomingEvent(upcomingEvents[0])}>
                 <UpcomingEvent title={upcomingEvents[0].data.title} />
               </TouchableOpacity>
+              {upcomingEvents[1] && (
               <TouchableOpacity
                 style={[styles.itemContainer, styles.eventContainer]}
                 onPress={() => selectUpcomingEvent(upcomingEvents[1])}>
                 <UpcomingEvent title={upcomingEvents[1].data.title} />
               </TouchableOpacity>
+              )}
             </View>
           )}
           {noUpcomingEvents && (
@@ -364,6 +366,7 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     color: summitBlue,
     marginTop: 30,
+    letterSpacing: 0.5,
   },
   whiteButton: {},
   infoContainer: {
