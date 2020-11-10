@@ -1,5 +1,6 @@
 import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {Image, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert, TextInput} from 'react-native';
+import {Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
@@ -159,7 +160,20 @@ export default function CommunityScreen() {
 
   return (
     <View style={styles.container}>
-      <Header title={'Community'} backButton={false} />
+
+
+      <View style={styles.headerContainer}>
+
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Icon name="keyboard-arrow-left" type="material" size={35} />
+        </TouchableOpacity>
+        <Text style={styles.title}>{'Community'}</Text>
+        <Text style={styles.empty} />
+
+      </View>
+
       <View style={styles.nonHeader}>
         {/*<Text style={styles.comingSoonText}>Coming Soon.</Text>
         <Text style={styles.comingSoonSubtext}>The Community feature will arrive by Christmas.</Text>*/}
@@ -238,4 +252,27 @@ const styles = StyleSheet.create({
   comingSoonSubtext: {
     fontSize: 12,
   },
+   headerContainer: {
+      backgroundColor: 'white',
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    backButton: {
+      marginTop: 42,
+      flex: 1,
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+    },
+    title: {
+      flex: 4,
+      marginTop: 45,
+      marginBottom: 25,
+      fontSize: 22,
+      fontWeight: '600',
+      textAlign: 'center',
+      fontFamily: 'OpenSans-Regular',
+    },
+    empty: {
+      flex: 1,
+    },
 });
