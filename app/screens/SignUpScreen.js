@@ -23,6 +23,7 @@ export default function SignUpScreen({navigation}) {
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmationPassword, setConfirmationPassword] = useState('');
   const [gender, setGender] = useState('');
   const [school, setSchool] = useState('');
   const [gradYear, setGradYear] = useState('');
@@ -45,14 +46,19 @@ export default function SignUpScreen({navigation}) {
   }, []);
 
   useEffect(() => {
-    if (first && last && email && password && school && gradYear) {
+    if (first && last && email && password && confirmationPassword && school && gradYear) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
-  }, [first, last, email, password, school, gradYear]);
+  }, [first, last, email, password, confirmationPassword, school, gradYear]);
 
   const handleSignUp = () => {
+    if (password != confirmationPassword) {
+      // tell the user the password is not correct
+      Alert.alert('Your passwords must match.');
+      return;
+    }
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then(async () => {
@@ -127,8 +133,15 @@ export default function SignUpScreen({navigation}) {
               style={styles.textInput}
             />
             <TextInput
-              placeholder="Password"
+              placeholder="Create Password"
               onChangeText={(val) => setPassword(val)}
+              autoCapitalize="none"
+              secureTextEntry
+              style={styles.textInput}
+            />
+            <TextInput
+              placeholder="Confirm Password"
+              onChangeText={(val) => setConfirmationPassword(val)}
               autoCapitalize="none"
               secureTextEntry
               style={styles.textInput}
@@ -208,7 +221,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   createText: {
-    fontSize: 20,
+    fontSize: 14,
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
@@ -242,24 +255,27 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   title: {
-    fontSize: 40,
+    fontSize: 28,
     fontWeight: '300',
     marginVertical: 15,
     fontFamily: 'OpenSans-Regular',
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     alignSelf: 'center',
   },
   textInput: {
     width: 350,
     //height: 40,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#9F9F9F',
+    color: '#9F9F9F',
     borderBottomWidth: 1,
-    fontSize: 18,
+    fontSize: 14,
     //marginVertical: 5,
     fontFamily: 'OpenSans-Light',
+    textAlignVertical: 'bottom',
+    paddingTop: 25,
   },
   createAccountButton: {
     backgroundColor: 'gray',
