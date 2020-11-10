@@ -278,7 +278,7 @@ export default function HomeScreen({navigation}) {
         <View style={styles.events}>
           <Text style={styles.subheader}>{'UPCOMING EVENTS'}</Text>
 
-          {!noUpcomingEvents && upcomingEvents[0] && (
+          {!noUpcomingEvents && upcomingEvents[0] && upcomingEvents.size == 2 && (
             <View>
               <TouchableOpacity
                 style={[styles.itemContainer, styles.eventContainer]}
