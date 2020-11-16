@@ -45,6 +45,15 @@ export default function HomeScreen({navigation}) {
     }
   );
 
+  const displayShortDate = (dateText) => {
+    if (dateText == null || dateText == '') return;
+    var numberPattern = /\d+/g;
+    console.log("Date text: " + dateText.toString());
+
+    return dateText.toString().substring(0, 3).toUpperCase()
+      + ' ' + dateText.toString().match( numberPattern )[0];
+  };
+
 
   const formatDate = (date) => {
     var d = new Date(date),
@@ -326,11 +335,19 @@ export default function HomeScreen({navigation}) {
               <View style={{flex: .65, /*flexDirection: 'column',
                                                           alignItems: 'flex-start',*/}}>
                 <View style={{borderWidth: 0}}>
-                  <Text style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
+                  <Text style={styles.podcastDateText}>{displayShortDate(podcastState.podcastDate)}</Text>
                 </View>
                 <View style={{borderWidth: 0}}>
-                  <Text style={styles.podcastDateText}>{podcastState.podcastDate}</Text>
+                  <Text numberOfLines={2} style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
                 </View>
+                <View style={{borderWidth: 0}}>
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={() => handlePlayButton()}>
+                    <Text style={styles.playButtonText}>PLAY</Text>
+                  </TouchableOpacity>
+                </View>
+
 
               </View>
             </View>
@@ -442,7 +459,7 @@ const styles = StyleSheet.create({
   podcastImageContainer: {
     marginRight: 10,
     borderRadius: 20,
-    borderWidth: 2,
+    borderWidth: 0,
     borderColor: 'black',
     overflow: 'hidden',
     flex: .35,
@@ -452,6 +469,7 @@ const styles = StyleSheet.create({
 
 
   },
+
   podcastTitle: {
     paddingTop: 5,
     fontFamily: 'OpenSans-SemiBold',
@@ -460,8 +478,8 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     textAlign: 'left',
     textAlignVertical: 'top',
-    color: summitBlue,
-    fontSize: 15,
+    color: 'black',
+    fontSize: 20,
   },
   podcastDateText: {
     marginTop: 7,
@@ -471,5 +489,18 @@ const styles = StyleSheet.create({
   podcastText: {
     //width: '100%',
     fontFamily: 'OpenSans-Regular',
+  },
+  playButtonText: {
+    color: 'white',
+    fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
+    textAlign: 'center',
+  },
+  playButton: {
+    backgroundColor: summitBlue,
+    paddingVertical: 5,
+    borderRadius: 8,
+    width: '40%',
+    marginTop: 2,
   },
 });
