@@ -46,12 +46,14 @@ export default function SignUpScreen({navigation}) {
   }, []);
 
   useEffect(() => {
-    if (first && last && email && password && confirmationPassword && school && gradYear) {
+    if (first && last && email
+      && password && confirmationPassword
+      && school && gradYear && gender) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
-  }, [first, last, email, password, confirmationPassword, school, gradYear]);
+  }, [first, last, email, password, confirmationPassword, school, gender, gradYear]);
 
   const handleSignUp = () => {
     if (password != confirmationPassword) {
@@ -61,10 +63,12 @@ export default function SignUpScreen({navigation}) {
     }
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(async () => {
+      .then(async (userCred) => {
         await createUserData().then(
           console.log('User account created & signed in!'),
         );
+
+        // TODO: DO SOMETHING HERE
       })
       .catch((error) => {
         if (error.code === 'auth/email-already-in-use') {
@@ -77,9 +81,6 @@ export default function SignUpScreen({navigation}) {
         }
         console.error(error);
       });
-
-  // TODO: also add user to the database!!!
-
   };
 
   const createUserData = async () => {
@@ -94,8 +95,12 @@ export default function SignUpScreen({navigation}) {
         type: 'student',
         banned: false,
         displayName: first + ' ' + last,
+        createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
+        uid: auth().currentUser.uid,
+        photoURL: '',
+        gender: gender,
       })
-      .then(console.log('Success'))
+      .then(console.log('Successfully added the user to the database'))
       .catch((error) => console.log(error));
   };
 
