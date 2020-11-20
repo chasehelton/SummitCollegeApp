@@ -3,6 +3,7 @@ import {Image, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert, TextIn
 import {Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import {summitBlue} from '../assets/colors';
 
 import storage from '@react-native-firebase/storage';
 
@@ -10,9 +11,12 @@ import Header from '../components/Header';
 import ChatMessage from '../components/ChatMessage';
 import ChatGroupPreview from '../components/ChatGroupPreview';
 
-export default function CommunityScreen() {
+import * as Constants from '../constants/userTypeConstants';
+
+export default function CommunityScreen({navigation}) {
 
   const [rooms, setRooms] = useState([]);
+
 
 
 
@@ -165,12 +169,23 @@ export default function CommunityScreen() {
       <View style={styles.headerContainer}>
 
         <TouchableOpacity
-          style={styles.backButton}
+          style={styles.leftHeaderButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="keyboard-arrow-left" type="material" size={35} />
+          <Icon name="list" type="material" color={summitBlue} size={35} />
         </TouchableOpacity>
         <Text style={styles.title}>{'Community'}</Text>
-        <Text style={styles.empty} />
+        <TouchableOpacity
+          style={styles.rightHeaderButton}
+          onPress={() => navigation.navigate('Community', {
+                           screen: 'Directory',
+                           params: {
+                             header: 'Community',
+                             userType: Constants.TYPE_STUDENT,
+                             isAdmin: false,
+                           },
+                         })}>
+          <Icon name="create" type="material" color={summitBlue} size={35} />
+        </TouchableOpacity>
 
       </View>
 
@@ -252,27 +267,33 @@ const styles = StyleSheet.create({
   comingSoonSubtext: {
     fontSize: 12,
   },
-   headerContainer: {
-      backgroundColor: 'white',
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    backButton: {
-      marginTop: 42,
-      flex: 1,
-      justifyContent: 'flex-start',
-      alignItems: 'flex-start',
-    },
-    title: {
-      flex: 4,
-      marginTop: 45,
-      marginBottom: 25,
-      fontSize: 22,
-      fontWeight: '600',
-      textAlign: 'center',
-      fontFamily: 'OpenSans-Regular',
-    },
-    empty: {
-      flex: 1,
-    },
+  headerContainer: {
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  leftHeaderButton: {
+    marginTop: 45,
+    flex: 1,
+    //justifyContent: 'center',
+    //alignItems: 'flex-start',
+  },
+  rightHeaderButton: {
+    marginTop: 45,
+    flex: 1,
+    //justifyContent: 'flex-end',
+    //alignItems: 'flex-end',
+  },
+  title: {
+    flex: 4,
+    marginTop: 45,
+    marginBottom: 25,
+    fontSize: 22,
+    fontWeight: '600',
+    textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
+  },
+  empty: {
+    flex: 1,
+  },
 });

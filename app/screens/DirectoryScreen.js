@@ -8,6 +8,8 @@ import {
   View,
   TouchableOpacity,
   FlatList,
+  Component,
+  Image,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Icon} from 'react-native-elements';
@@ -20,17 +22,25 @@ const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
 
-const Item = ({title, index}) => (
-  <Text key={index} style={styles.itemText}>
-    {title}
-  </Text>
+const Item = ({title, index, photoURL}) => (
+  <>
+  <View style={styles.photoContainer} key="photoView">
+    <Image source = {{uri: photoURL}}
+        style = {styles.userPicture} />
+  </View>
+  <View style={{ flex: 6, }}>
+    <Text key={index} style={styles.itemText}>
+      {title}
+    </Text>
+  </View>
+  </>
 );
 
 export default function DirectoryScreen({route, navigation}) {
   const [users, setUsers] = useState([]);
   const [searchUsers, setSearchUsers] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const {userType, header} = route.params;
+  const {userType, header, isAdmin} = route.params;
 
   useLayoutEffect(() => {
     async function getUsers() {
@@ -89,7 +99,7 @@ export default function DirectoryScreen({route, navigation}) {
 
   const selectPerson = (index) => {
     console.log('Person is selected, with index ' + index.toString());
-    navigation.navigate('Admin', {
+    navigation.navigate('Community', {
       screen: 'Person',
       params: {
         header: header,
@@ -107,9 +117,16 @@ export default function DirectoryScreen({route, navigation}) {
     setSearchUsers(newData);
   };
 
+  const checkPhotoURL = (url) => {
+    if (url == null || url == '') {
+      return 'https://www.pngitem.com/pimgs/m/517-5177724_vector-transparent-stock-icon-svg-profile-user-profile.png';
+    }
+    else return url;
+  };
+
   return (
-    <View contentContainerStyle={styles.container}>
-      <View style={styles.headerContainer}>
+    <View contentContainerstyle={styles.container}>
+      <View style={[styles.headerContainer, isAdmin ? styles.grayBackground : styles.whiteBackground]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -121,69 +138,80 @@ export default function DirectoryScreen({route, navigation}) {
         <Text style={styles.empty} />
       </View>
 
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, isAdmin ? styles.grayBackground : styles.whiteBackground]}>
         <Icon
           name={searchIcon}
           type="material"
           color="black"
           style={styles.searchIcon}
         />
+
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, isAdmin ? styles.whiteBackground : styles.grayBackground]}
           placeholder="Search"
           autoCorrect={false}
           onChangeText={(text) => searchFilterFunc(text)}
         />
       </View>
+
       <FlatList
-        style={styles.userList}
+        style={[styles.userList, isAdmin ? styles.whiteBackground : styles.grayBackground]}
         data={searchUsers}
         renderItem={({item, index}) => (
           <TouchableOpacity
-            style={styles.item}
+            style={[styles.item, isAdmin ? styles.grayBackground : styles.whiteBackground]}
             onPress={() => selectPerson(item.id.toString())}>
-            <Item title={item.data.displayName} key={index} />
+            <Item title={item.data.displayName} key={index}
+              photoURL=
+              {checkPhotoURL(item.data.photoURL)}
+              />
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
 }
-
-/*<TextInput style={styles.input} onChangeText={(text) => setEmail(text)} />
-<Text>{"\n"}</Text>
-
-<Button title="Add staff by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'staff')} />
-<Text>{"\n"}</Text>
-
-<Button title="Ban user by email" onPress={() => updateUser(email, ACTION_BAN, true)} />
-<Text>{"\n"}</Text>
-
-<Button title="Add director by email" onPress={() => updateUser(email, ACTION_CHANGE_TYPE, 'director')} />*/
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    //backgroundColor: 'white',
+  },
+  grayContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'gray',
+  },
+  whiteContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
   },
   headerContainer: {
-    backgroundColor: '#eee',
     display: 'flex',
     flexDirection: 'row',
   },
+  grayBackground: {
+    backgroundColor: '#eee',
+  },
+  whiteBackground: {
+    backgroundColor: 'white',
+  },
   backButton: {
-    marginTop: 37,
-    marginStart: 15,
+    marginTop: 40,
+    //marginStart: 15,
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
   userList: {
     height: '100%',
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
   },
   title: {
     flex: 4,
@@ -200,35 +228,52 @@ const styles = StyleSheet.create({
 
   searchIcon: {
     marginRight: 10,
+    backgroundColor: '#eee',
   },
   searchContainer: {
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#eee',
+    //backgroundColor: '#eee',
     flexDirection: 'row',
   },
   searchInput: {
-    backgroundColor: 'white',
-    width: 300,
+    //backgroundColor: 'white',
+    width: 325,
     padding: 12,
     borderRadius: 8,
     marginVertical: 25,
     fontFamily: 'OpenSans-Regular',
+
   },
 
   item: {
-    backgroundColor: '#eee',
+    //backgroundColor: '#eee',
     padding: 15,
-    marginVertical: 8,
+    marginVertical: 10,
     marginHorizontal: 16,
     borderRadius: 8,
     width: '90%',
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemText: {
     fontSize: 14,
     color: 'black',
     fontWeight: '500',
     fontFamily: 'OpenSans-SemiBold',
+    //paddingLeft: 20,
+  },
+  photoContainer: {
+    flex: 1,
+    //paddingLeft: 20,
+    //paddingRight: 15,
+  },
+  userPicture: {
+    width: 25,
+    height: 25,
+    borderRadius: 5,
+    overflow: 'hidden',
   },
 });

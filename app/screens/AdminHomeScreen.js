@@ -29,6 +29,7 @@ export default function AdminHomeScreen({navigation, route}) {
               params: {
                 header: 'Students',
                 userType: TYPE_STUDENT,
+                isAdmin: true,
               },
             })
           }
@@ -43,6 +44,7 @@ export default function AdminHomeScreen({navigation, route}) {
               params: {
                 header: 'Student Leaders',
                 userType: TYPE_LEADER,
+                isAdmin: true,
               },
             })
           }
@@ -57,6 +59,7 @@ export default function AdminHomeScreen({navigation, route}) {
               params: {
                 header: 'Staff',
                 userType: TYPE_STAFF,
+                isAdmin: true,
               },
             })
           }
@@ -71,6 +74,7 @@ export default function AdminHomeScreen({navigation, route}) {
               params: {
                 header: 'Directors',
                 userType: TYPE_DIRECTOR,
+                isAdmin: true,
               },
             })
           }

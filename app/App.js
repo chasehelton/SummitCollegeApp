@@ -15,6 +15,7 @@ import AdminScreen from './screens/AdminStack';
 import EventsStackScreen from './screens/EventsStack';
 import EventsScreen from './screens/EventsScreen';
 import EventScreen from './screens/EventScreen';
+import CommunityStackScreen from './screens/CommunityStack';
 import CommunityScreen from './screens/CommunityScreen';
 import HomeStackScreen from './screens/HomeStack';
 import ResourcesScreen from './screens/ResourcesScreen';
@@ -154,7 +155,7 @@ export default function App() {
               {!isAdmin && (
                 <>
                   <Tab.Screen name="Events" component={EventsStackScreen} />
-                  <Tab.Screen name="Community" component={CommunityScreen} />
+                  <Tab.Screen name="Community" component={CommunityStackScreen} />
                   <Tab.Screen name="Home" component={HomeStackScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />

@@ -26,7 +26,7 @@ const ACTION_CHANGE_TYPE = 1;
 
 export default function PersonScreen({route, navigation}) {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  var {person, header} = route.params;
+  var {person, header, isAdmin} = route.params;
 
   const [userType, setUserType] = React.useState('');
   //setUserType(person.data.type);
@@ -45,8 +45,6 @@ export default function PersonScreen({route, navigation}) {
   const [manageAccountVisible, setManageAccountVisible] = React.useState(false);
   const [manageArrow, setManageArrow] = React.useState('keyboard-arrow-down'); // down is default
 
-  //const downArrow = '\u25BF';
-  //const upArrow = '\u25B5';
   const downArrow = 'keyboard-arrow-down';
   const upArrow = 'keyboard-arrow-up';
 
@@ -66,32 +64,6 @@ export default function PersonScreen({route, navigation}) {
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
   };
-
-  // const getUserByEmail = async (email) => {
-  //   const querySnapshot = await firestore()
-  //     .collection('users')
-  //     .where('email', '==', email)
-  //     .get();
-  //   if (querySnapshot.empty) {
-  //     Alert.alert('Some error here for empty snapshot');
-  //     return null;
-  //   }
-
-  //   console.log('Result size: ' + querySnapshot.size);
-
-  //   if (querySnapshot.size === 0) {
-  //     Alert.alert('No users found with the email: ' + email);
-  //     return null;
-  //   } else if (querySnapshot.size !== 1) {
-  //     Alert.alert('More than 1 user found with the email: ' + email);
-  //     return null;
-  //   }
-  //   if (querySnapshot == null) {
-  //     console.log('Snapshot is null');
-  //   }
-
-  //   return querySnapshot;
-  // };
 
   const updateUser = async (user, action, value) => {
     try {
@@ -166,11 +138,15 @@ export default function PersonScreen({route, navigation}) {
     }
   };
 
+  const createNewChat = () => {
+    console.log('Creating new chat');
+  };
+
   return (
     <View contentContainerStyle={styles.container}>
-      <Header navigation={navigation} title={header} backButton={true} />
+      <Header navigation={navigation} title={header} backButton={true} isAdmin={isAdmin} />
 
-      <ScrollView style={styles.body}>
+      <ScrollView style={[styles.body, isAdmin ? styles.whiteBackground : styles.grayBackground]}>
         <Image source={{uri: person.data.photoURL}} style={styles.profilePic} />
 
         <Text style={styles.personName}>{person.data.displayName}</Text>
@@ -178,17 +154,21 @@ export default function PersonScreen({route, navigation}) {
         <Text style={styles.personInfo}>{writeUserType(userType)}</Text>
         <Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>
 
+        {!isAdmin && (
+          <TouchableOpacity
+            onPress={() => createNewChat()}
+            style={styles.blueButton}>
+            <Text style={styles.buttonText}>New Chat</Text>
+          </TouchableOpacity>
+        )}
+
+        {isAdmin && (
         <TouchableOpacity
           onPress={() => toggleManageAccount()}
           style={styles.blueButton}>
-          <Text style={styles.buttonText}>Manage Account </Text>
-          <Icon
-            name={manageArrow}
-            type="material"
-            color="white"
-            style={styles.arrowIcon}
-          />
+          <Text style={styles.buttonText}>Manage Account</Text>
         </TouchableOpacity>
+        )}
 
         {manageAccountVisible && (
           <View>
@@ -238,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   body: {
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
     height: '100%',
   },
   arrowIcon: {
@@ -332,5 +312,11 @@ const styles = StyleSheet.create({
     borderWidth: 1.3,
     borderColor: '#3939391A',
     paddingVertical: 8,
+  },
+  grayBackground: {
+    backgroundColor: '#eee',
+  },
+  whiteBackground: {
+    backgroundColor: 'white',
   },
 });
