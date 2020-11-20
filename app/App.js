@@ -159,10 +159,10 @@ export default function App() {
                   <Tab.Screen name="Home" component={HomeStackScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />
-                  <Tab.Screen
+                  {/*<Tab.Screen
                     name="Announcements"
                     component={AnnouncementsScreen}
-                  />
+                  />*/}
                 </>
               )}
             </Tab.Navigator>
