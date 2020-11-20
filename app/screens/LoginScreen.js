@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
-    //fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginVertical: 50,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '300',
     marginVertical: 15,
-    //fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular',
   },
   logo: {
     width: 150,
@@ -142,12 +142,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: 350,
-    height: 40,
+    //height: 40,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
     fontSize: 18,
     marginVertical: 5,
-    //fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular',
   },
   loginButton: {
     backgroundColor: 'gray',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: 'white',
     fontWeight: '800',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
   loginButtonActive: {
     backgroundColor: summitBlue,
@@ -169,11 +169,12 @@ const styles = StyleSheet.create({
   loginButtonTextActive: {
     color: 'white',
     fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
   },
   blackTextButton: {
     color: 'black',
     fontWeight: '700',
     paddingHorizontal: 70,
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
 });

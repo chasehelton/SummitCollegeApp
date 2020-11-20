@@ -23,6 +23,8 @@ export default function SignUpScreen({navigation}) {
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmationPassword, setConfirmationPassword] = useState('');
+  const [gender, setGender] = useState('');
   const [school, setSchool] = useState('');
   const [gradYear, setGradYear] = useState('');
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
@@ -44,20 +46,29 @@ export default function SignUpScreen({navigation}) {
   }, []);
 
   useEffect(() => {
-    if (first && last && email && password && school && gradYear) {
+    if (first && last && email
+      && password && confirmationPassword
+      && school && gradYear && gender) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
-  }, [first, last, email, password, school, gradYear]);
+  }, [first, last, email, password, confirmationPassword, school, gender, gradYear]);
 
   const handleSignUp = () => {
+    if (password != confirmationPassword) {
+      // tell the user the password is not correct
+      Alert.alert('Your passwords must match.');
+      return;
+    }
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(async () => {
+      .then(async (userCred) => {
         await createUserData().then(
           console.log('User account created & signed in!'),
         );
+
+        // TODO: DO SOMETHING HERE
       })
       .catch((error) => {
         if (error.code === 'auth/email-already-in-use') {
@@ -84,8 +95,12 @@ export default function SignUpScreen({navigation}) {
         type: 'student',
         banned: false,
         displayName: first + ' ' + last,
+        createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
+        uid: auth().currentUser.uid,
+        photoURL: '',
+        gender: gender,
       })
-      .then(console.log('Success'))
+      .then(console.log('Successfully added the user to the database'))
       .catch((error) => console.log(error));
   };
 
@@ -123,8 +138,15 @@ export default function SignUpScreen({navigation}) {
               style={styles.textInput}
             />
             <TextInput
-              placeholder="Password"
+              placeholder="Create Password"
               onChangeText={(val) => setPassword(val)}
+              autoCapitalize="none"
+              secureTextEntry
+              style={styles.textInput}
+            />
+            <TextInput
+              placeholder="Confirm Password"
+              onChangeText={(val) => setConfirmationPassword(val)}
               autoCapitalize="none"
               secureTextEntry
               style={styles.textInput}
@@ -132,7 +154,16 @@ export default function SignUpScreen({navigation}) {
             <View style={styles.pickerContainer}>
               <Picker
                 mode="dropdown"
-                style={styles.schoolPicker}
+                style={styles.pickerStyle}
+                selectedValue={gender}
+                onValueChange={(itemValue) => setGender(itemValue)}>
+                <Picker.Item label="Gender" value="" />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+              </Picker>
+              <Picker
+                mode="dropdown"
+                style={styles.pickerStyle}
                 selectedValue={school}
                 onValueChange={(itemValue) => setSchool(itemValue)}>
                 <Picker.Item label="School" value="" />
@@ -143,10 +174,10 @@ export default function SignUpScreen({navigation}) {
               </Picker>
               <Picker
                 mode="dropdown"
-                style={styles.gradPicker}
+                style={styles.pickerStyle}
                 selectedValue={gradYear}
                 onValueChange={(itemValue) => setGradYear(itemValue)}>
-                <Picker.Item label="Grad Year" value="" />
+                <Picker.Item label="Year" value="" />
                 {years.map((year, index) => (
                   <Picker.Item key={index} label={year} value={year} />
                 ))}
@@ -195,11 +226,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   createText: {
-    fontSize: 20,
+    fontSize: 14,
     color: summitBlue,
     alignSelf: 'center',
     fontWeight: '600',
-    //fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
   },
   inputContainer: {
     marginTop: 0,
@@ -211,17 +242,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  schoolPicker: {
-    width: 150,
+  pickerStyle: {
     height: 100,
-    marginHorizontal: 10,
-    transform: [{scaleX: 0.9}, {scaleY: 0.9}],
-  },
-  gradPicker: {
-    width: 150,
-    height: 100,
-    marginHorizontal: 10,
+    flex: 1,
+    //marginHorizontal: 10,
     transform: [{scaleX: 0.9}, {scaleY: 0.9}],
   },
   buttonContainer: {
@@ -234,24 +260,27 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   title: {
-    fontSize: 40,
+    fontSize: 28,
     fontWeight: '300',
     marginVertical: 15,
-    //fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular',
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     alignSelf: 'center',
   },
   textInput: {
     width: 350,
-    height: 40,
-    borderBottomColor: '#ddd',
+    //height: 40,
+    borderBottomColor: '#9F9F9F',
+    color: '#9F9F9F',
     borderBottomWidth: 1,
-    fontSize: 18,
-    marginVertical: 5,
-    //fontFamily: 'OpenSans-Regular',
+    fontSize: 14,
+    //marginVertical: 5,
+    fontFamily: 'OpenSans-Light',
+    textAlignVertical: 'bottom',
+    paddingTop: 25,
   },
   createAccountButton: {
     backgroundColor: 'gray',
@@ -262,7 +291,7 @@ const styles = StyleSheet.create({
   createAccountButtonText: {
     color: 'white',
     fontWeight: '800',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
   createAccountButtonActive: {
     backgroundColor: summitBlue,
@@ -273,10 +302,11 @@ const styles = StyleSheet.create({
   createAccountButtonTextActive: {
     color: 'white',
     fontWeight: '800',
+    fontFamily: 'OpenSans-Bold',
   },
   loginButton: {
     color: 'black',
     fontWeight: '700',
-    //fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Bold',
   },
 });

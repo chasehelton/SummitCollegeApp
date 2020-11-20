@@ -37,7 +37,8 @@ export default function EventScreen({route, navigation}) {
     if (hours > 0 && hours <= 12) timeValue = '' + hours;
     else if (hours > 12) timeValue = '' + (hours - 12);
     else if (hours === 0) timeValue = '12';
-    timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
+    if (minutes != 0) timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
+
     timeValue += hours >= 12 ? ' PM' : ' AM';
     return timeValue;
   };
@@ -55,7 +56,7 @@ export default function EventScreen({route, navigation}) {
           <View style={styles.infoContainer} key="infoView">
             <Text style={styles.eventTitle}>{event.data.title}</Text>
             <Text style={styles.eventDesc}>
-              {convertTime(event.data.time)} | {event.data.previewText}
+              {convertTime(event.data.time)} | {event.data.previewText.toUpperCase()}
             </Text>
           </View>
         </View>
@@ -89,14 +90,15 @@ const styles = StyleSheet.create({
     marginRight: 13,
   },
   monthText: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '300',
     color: 'darkgray',
   },
   dayText: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: '300',
     color: 'darkgray',
+    marginTop: -10,
   },
   infoContainer: {
     textAlign: 'left',

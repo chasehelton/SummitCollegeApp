@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 4,
-    marginTop: 45,
-    marginBottom: 25,
+    marginTop: 35, // was 45; need to adjust for iOS somehow
+    marginBottom: 35, // was 25
     fontSize: 22,
-    fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
+    paddingEnd: 15, // not a good fix....
   },
   empty: {
     flex: 1,
