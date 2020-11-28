@@ -19,8 +19,9 @@ import {summitBlue} from '../assets/colors';
 import talley from '../assets/Talley.jpg';
 import pod from '../assets/sc_podcast_logo.jpg';
 import UpcomingEvent from '../components/UpcomingEvent';
+import Announcement from '../components/Announcement';
 
-import AsyncStorage from '@react-native-community/async-storage';
+
 
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
@@ -28,6 +29,9 @@ global.Buffer = global.Buffer || require('buffer').Buffer;
 export default function HomeScreen({navigation}) {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
+
+  const [announcements, setAnnouncements] = useState([]);
+  const [noAnnouncements, setNoAnnouncements] = useState(false);
 
   const [readingPlan, setReadingPlan] = useState(null);
   const [noReadingPlan, setNoReadingPlan] = useState(false);
@@ -96,99 +100,133 @@ export default function HomeScreen({navigation}) {
   };
 
   useLayoutEffect(() => {
-    async function getUpcomingEvents() {
-      // TODO: make sure only the upcoming ones display
-      const querySnapshot = await firestore()
+    /*async function getUpcomingEvents() {
+      const eventsQuery = await firestore()
         .collection('events')
         .where('startDate', '>=', formatDate(new Date()))
         .orderBy('startDate')
-        .limit(2)
-        .get();
-      if (
-        querySnapshot === null ||
-        querySnapshot.size === 0 ||
-        querySnapshot.empty
-      ) {
-        setNoUpcomingEvents(true);
-        console.log('No upcoming events!');
-        return null;
-      }
+        .limit(2);
+        //.get();
+      const eventsObserver = eventsQuery.onSnapshot(eventsSnapshot => {
+        if (eventsSnapshot === null ||
+          eventsSnapshot.size === 0 ||
+          eventsSnapshot.empty
+        ) {
+          setNoUpcomingEvents(true);
+          console.log('No upcoming events!');
+          return null;
+        }
 
-      try {
-        const tempUpcomingEvents = [];
-        var count = 0;
-        querySnapshot.forEach((doc) => {
-          tempUpcomingEvents.push({
-            data: doc.data(),
-            id: count,
-            ref: doc.ref,
+        try {
+          const tempUpcomingEvents = [];
+          var count = 0;
+          eventsSnapshot.forEach((doc) => {
+            tempUpcomingEvents.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
           });
-          count++;
-        });
-        console.log('Count of upcoming events: ' + count);
-        setUpcomingEvents(tempUpcomingEvents);
-      } catch (error) {
-        Alert.alert('Error', 'Error retrieving upcoming events');
-        console.log('Error: ' + error);
-      }
-    }
+          console.log('Count of upcoming events: ' + count);
+          setUpcomingEvents(tempUpcomingEvents);
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving upcoming events');
+          console.log('Error: ' + error);
+        }
+      });
+
+      return () => eventsObserver();
+    }*/
 
     async function getReadingPlan() {
-      // first check to see if the api key exists locally
+      /*// first check to see if the api key exists locally
       var esvKeyValue = await AsyncStorage.getItem('@esvKey');
       if (esvKeyValue == null) {
         console.log('ESV Key not found, now retrieve from database');
         console.log('Storing data for api key');
-        const keyDoc = await firestore()
+        const keyDocQuery = await firestore()
           .collection('apiKeys')
-          .doc('esv_key')
-          .get();
-        if (!keyDoc.exists) {
-          console.log('ESV key does not exist in firestore');
-        } else {
-          try {
-            console.log('ESV key: ' + keyDoc.data().key);
-            await AsyncStorage.setItem('@esvKey', keyDoc.data().key);
-            esvKeyValue = keyDoc.data().key;
-          } catch (e) {
-            // saving error
-            console.log('Error trying to save esv key: ' + e);
+          .doc('esv_key');
+          //.get();
+        const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
+          if (!keyDocSnapshot.exists) {
+            console.log('ESV key does not exist in firestore');
+          } else {
+            try {
+              // TODO: figure out if I still need AsyncStorage if Firestore
+              // works offline
+              console.log('ESV key: ' + keyDocSnapshot.data().key);
+              await AsyncStorage.setItem('@esvKey', keyDocSnapshot.data().key);
+              esvKeyValue = keyDocSnapshot.data().key;
+            } catch (e) {
+              // saving error
+              console.log('Error trying to save esv key: ' + e);
+            }
           }
         }
       } else console.log('ESV Key was found!');
-      console.log('Esv Key Value is now: ' + esvKeyValue);
+      console.log('ESV Key Value is now: ' + esvKeyValue);*/
 
-      const querySnapshot = await firestore()
+      // first check to see if the api key exists locally
+      var esvKeyValue;
+      const keyDocQuery = await firestore()
+        .collection('apiKeys')
+        .doc('esv_key');
+        //.get();
+      const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
+        if (!keyDocSnapshot.exists) {
+          console.log('ESV key does not exist in firestore');
+        } else {
+          try {
+            // TODO: figure out if I still need AsyncStorage if Firestore
+            // works offline
+            console.log('ESV key: ' + keyDocSnapshot.data().key);
+            esvKeyValue = keyDocSnapshot.data().key;
+          } catch (e) {
+            // saving error
+            console.log('Error trying to retrieve esv key: ' + e);
+          }
+        }
+      });
+
+      console.log('ESV Key Value is: ' + esvKeyValue);
+
+      // read the reading plan from firestore
+      const readingPlanQuery = await firestore()
         .collection('readingPlan')
-        .where('date', '==', formatDate(new Date()))
-        .get();
-      if (
-        querySnapshot === null ||
-        querySnapshot.size === 0 ||
-        querySnapshot.empty
-      ) {
-        setNoReadingPlan(true);
-        console.log('No reading plan!');
-        return null;
-      }
+        .where('date', '==', formatDate(new Date()));
+        //.get();
 
-      if (querySnapshot.size > 1) {
-        console.log('Too many reading plan entries for this day.');
-      }
+      const readingPlanObserver = readingPlanQuery.onSnapshot(readingPlanSnapshot => {
+        if (readingPlanSnapshot === null ||
+          readingPlanSnapshot.size === 0 ||
+          readingPlanSnapshot.empty) {
+          setNoReadingPlan(true);
+          console.log('No reading plan!');
+          return null;
+        }
 
-      try {
-        querySnapshot.forEach((doc) => {
-          console.log('Setting the reading plan!');
-          setReadingPlan({
-            data: doc.data(),
-            id: formatDate(new Date()),
+        if (readingPlanSnapshot.size > 1) {
+          console.log('Too many reading plan entries for this day.');
+        }
+
+        try {
+          readingPlanSnapshot.forEach((doc) => {
+            console.log('Setting the reading plan!');
+            setReadingPlan({
+              data: doc.data(),
+              id: formatDate(new Date()),
+            });
+            getMemorizationText(doc.data(), esvKeyValue);
           });
-          getMemorizationText(doc.data(), esvKeyValue);
-        });
-      } catch (error) {
-        Alert.alert('Error', 'Error retrieving reading plan');
-        console.log('Error: ' + error);
-      }
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving reading plan');
+          console.log('Error: ' + error);
+        }
+      });
+
+      return () => {readingPlanObserver(); keyDocObserver();}
     }
 
     async function getMemorizationText(data, key) {
@@ -245,7 +283,41 @@ export default function HomeScreen({navigation}) {
       });
     }
 
-    getUpcomingEvents();
+    async function getAnnouncements() {
+      const announcementsQuery = await firestore()
+        .collection('announcements');
+        //.get();
+
+      const announcementsObserver = announcementsQuery.onSnapshot(announcementsSnapshot => {
+        if (announcementsSnapshot === null ||
+            announcementsSnapshot.size === 0 ||
+            announcementsSnapshot.empty) {
+          setNoAnnouncements(true);
+          return null;
+        }
+
+        try {
+          const tempAnnouncements = [];
+          var count = 0;
+          announcementsSnapshot.forEach((doc) => {
+            tempAnnouncements.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
+          });
+          setAnnouncements(tempAnnouncements);
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving announcements');
+        }
+      });
+
+      return () => announcementsObserver();
+    }
+
+    getAnnouncements();
+    //getUpcomingEvents();
     getReadingPlan();
     getPodcastData();
   }, []);
@@ -278,6 +350,7 @@ export default function HomeScreen({navigation}) {
                 <Text style={styles.readingPlanText}>
                   {readingPlan.data.reading}
                 </Text>
+
               )}
               {noReadingPlan && (
                 <Text style={styles.readingPlanText}>
@@ -285,31 +358,42 @@ export default function HomeScreen({navigation}) {
                 </Text>
               )}
             </View>
+            <Icon
+              name="keyboard-arrow-right"
+              type="material"
+              color={summitBlue}
+              style={{marginLeft: 10, }}
+              size={35}
+            />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.events}>
-          <Text style={styles.subheader}>{'UPCOMING EVENTS'}</Text>
+        <View style={styles.announcements}>
+          <Text style={styles.subheader}>{'ANNOUNCEMENTS'}</Text>
 
-          {!noUpcomingEvents && upcomingEvents[0] && upcomingEvents.size == 2 && (
-            <View>
-              <TouchableOpacity
-                style={[styles.itemContainer, styles.eventContainer]}
-                onPress={() => selectUpcomingEvent(upcomingEvents[0])}>
-                <UpcomingEvent title={upcomingEvents[0].data.title} />
-              </TouchableOpacity>
-              {upcomingEvents[1] && (
-              <TouchableOpacity
-                style={[styles.itemContainer, styles.eventContainer]}
-                onPress={() => selectUpcomingEvent(upcomingEvents[1])}>
-                <UpcomingEvent title={upcomingEvents[1].data.title} />
-              </TouchableOpacity>
+          {!noAnnouncements && (
+            <FlatList
+              style={styles.announcementsList}
+              data={announcements.sort((a, b) => {
+                let date1 = new Date(a.data.timestamp);
+                let date2 = new Date(b.data.timestamp);
+                return date1.getTime() - date2.getTime();
+              })}
+              renderItem={({item, index}) => (
+                <TouchableOpacity>
+                  <Announcement
+                    title={item.data.title}
+                    timestamp={item.data.timestamp}
+                    key={index}
+                  />
+                </TouchableOpacity>
               )}
-            </View>
+              keyExtractor={(item) => item.id.toString()}
+            />
           )}
-          {noUpcomingEvents && (
-            <Text style={styles.noUpcomingEventsText}>
-              No upcoming events found.
+          {noAnnouncements && (
+            <Text style={styles.noAnnouncementsText}>
+              No announcements found.
             </Text>
           )}
         </View>
@@ -384,7 +468,7 @@ const styles = StyleSheet.create({
   whiteButton: {},
   infoContainer: {
     textAlign: 'left',
-    width: 275,
+    width: 275, //250?
   },
   readingPlanText: {
     fontSize: 20,
@@ -397,11 +481,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    shadowOffset: {height: 5, width: 5},
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
+    //shadowOffset: {height: 5, width: 5},
+    //shadowOpacity: 0.15,
+    //shadowRadius: 5,
     backgroundColor: '#fff',
-    elevation: 2,
+    //elevation: 2,
     paddingHorizontal: 20,
 
     borderRadius: 8,
@@ -415,10 +499,11 @@ const styles = StyleSheet.create({
     height: 40,
   },
 
-  upcomingEventsList: {
+  announcementList: {
     backgroundColor: '#eee',
+    //padding: 10,
   },
-  noUpcomingEventsText: {
+  noAnnouncementsText: {
     alignSelf: 'center',
     marginTop: 10,
     fontSize: 24,

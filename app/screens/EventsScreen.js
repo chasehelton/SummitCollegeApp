@@ -31,43 +31,45 @@ export default function EventsScreen({navigation}) {
 
   useLayoutEffect(() => {
     async function getEvents() {
-      const querySnapshot = await firestore().collection('events').get();
-      if (
-        querySnapshot === null ||
-        querySnapshot.size === 0 ||
-        querySnapshot.empty
-      ) {
-        setNoEvents(true);
-        return null;
-      }
+      const eventsQuery = await firestore().collection('events');
+      const eventsObserver = eventsQuery.onSnapshot(eventsSnapshot => {
+        if (eventsSnapshot === null ||
+            eventsSnapshot.size === 0 ||
+            eventsSnapshot.empty) {
+          setNoEvents(true);
+          return null;
+        }
 
-      try {
-        const tempEvents = [];
-        const tempPastEvents = [];
-        var count = 0;
-        var countPast = 0;
-        querySnapshot.forEach(function (doc) {
-          if (doc.data().startDate >= formatDate(new Date())) {
-            tempEvents.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
-            });
-            count++;
-          } else {
-            tempPastEvents.push({
-              data: doc.data(),
-              id: countPast,
-              ref: doc.ref,
-            });
-            countPast++;
-          }
-        });
-        setEvents(tempEvents);
-        setPastEvents(tempPastEvents);
-      } catch (error) {
-        Alert.alert('Error', 'Error retrieving events');
-      }
+        try {
+          const tempEvents = [];
+          const tempPastEvents = [];
+          var count = 0;
+          var countPast = 0;
+          eventsSnapshot.forEach(function (doc) {
+            if (doc.data().startDate >= formatDate(new Date())) {
+              tempEvents.push({
+                data: doc.data(),
+                id: count,
+                ref: doc.ref,
+              });
+              count++;
+            } else {
+              tempPastEvents.push({
+                data: doc.data(),
+                id: countPast,
+                ref: doc.ref,
+              });
+              countPast++;
+            }
+          });
+          setEvents(tempEvents);
+          setPastEvents(tempPastEvents);
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving events');
+        }
+      });
+
+      return () => eventsObserver();
     }
     getEvents();
   }, []);

@@ -6,6 +6,8 @@ import {Icon} from 'react-native-elements';
 import {summitBlue} from '../assets/colors';
 
 export default function ChatGroupPreview({name, lastUpdated, photoURL, lastMessage, read}) {
+  console.log('Read in preview: ' + read);
+
   const getMonth = (date) => {
     let month = '';
     let m = new Date(date).getMonth() + 1;

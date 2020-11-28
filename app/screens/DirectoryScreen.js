@@ -51,40 +51,44 @@ export default function DirectoryScreen({route, navigation}) {
       else if (userType === TYPE_DIRECTOR) searchType = 'director';
 
       console.log('Search type: ' + searchType);
-      const querySnapshot = await firestore()
+      const userSearchQuery = await firestore()
         .collection('users')
-        .where('type', '==', searchType)
-        .get();
-      if (querySnapshot.empty) {
-        Alert.alert('Some error here for empty snapshot');
-        return null;
-      }
+        .where('type', '==', searchType);
+        //.get();
+      const userSearchObserver = userSearchQuery.onSnapshot(userSearchSnapshot => {
+        if (userSearchSnapshot.empty) {
+          Alert.alert('Some error here for empty snapshot');
+          return null;
+        }
 
-      console.log('Result size: ' + querySnapshot.size);
+        console.log('Result size: ' + userSearchSnapshot.size);
 
-      if (querySnapshot.size === 0) {
-        Alert.alert('No users found'); // with the email: ' + email);
-        return null;
-      }
-      if (querySnapshot == null) console.log('Snapshot is null');
+        if (userSearchSnapshot.size === 0) {
+          Alert.alert('No users found'); // with the email: ' + email);
+          return null;
+        }
+        if (userSearchSnapshot == null) console.log('Snapshot is null');
 
-      try {
-        const tempUsers = [];
-        var count = 0;
-        querySnapshot.forEach(function (doc) {
-          tempUsers.push({
-            data: doc.data(),
-            id: count,
-            ref: doc.ref,
+        try {
+          const tempUsers = [];
+          var count = 0;
+          userSearchSnapshot.forEach(function (doc) {
+            tempUsers.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
           });
-          count++;
-        });
-        console.log('Count: ' + count);
-        console.log('Actual-set user length: ' + tempUsers.length);
-        setUsers(tempUsers);
-      } catch (error) {
-        Alert.alert('Error', 'Some bad error here: ' + error);
-      }
+          console.log('Count: ' + count);
+          console.log('Actual-set user length: ' + tempUsers.length);
+          setUsers(tempUsers);
+        } catch (error) {
+          Alert.alert('Error', 'Some bad error here: ' + error);
+        }
+      });
+
+      return () => userSearchObserver();
     }
 
     if (!isLoaded) {
@@ -99,11 +103,13 @@ export default function DirectoryScreen({route, navigation}) {
 
   const selectPerson = (index) => {
     console.log('Person is selected, with index ' + index.toString());
-    navigation.navigate('Community', {
+    console.log('Number of users: ' + users.length);
+    navigation.navigate(isAdmin ? 'Admin' : 'Community', {
       screen: 'Person',
       params: {
         header: header,
         person: users[index],
+        isAdmin: isAdmin,
       },
     });
   };
@@ -139,12 +145,15 @@ export default function DirectoryScreen({route, navigation}) {
       </View>
 
       <View style={[styles.searchContainer, isAdmin ? styles.grayBackground : styles.whiteBackground]}>
-        <Icon
-          name={searchIcon}
-          type="material"
-          color="black"
-          style={styles.searchIcon}
-        />
+        <View style={styles.searchIconBox}>
+          <Icon
+            name={searchIcon}
+            type="material"
+            color="black"
+            style={styles.searchIcon}
+          />
+        </View>
+
 
         <TextInput
           style={[styles.searchInput, isAdmin ? styles.whiteBackground : styles.grayBackground]}
@@ -204,10 +213,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginTop: 40,
-    //marginStart: 15,
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
   },
   userList: {
     height: '100%',
@@ -225,10 +231,19 @@ const styles = StyleSheet.create({
   empty: {
     flex: 1,
   },
-
+  searchIconBox: {
+    flex: 1,
+    //marginVertical: 25,
+  },
   searchIcon: {
-    marginRight: 10,
+    //marginRight: 10,
     backgroundColor: '#eee',
+    //paddingLeft: 30,
+    paddingTop: 13.8,
+    paddingBottom: 13.8,
+    //flex: 1,
+    borderBottomLeftRadius: 8,
+    borderTopLeftRadius: 8,
   },
   searchContainer: {
     justifyContent: 'center',
@@ -236,14 +251,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //backgroundColor: '#eee',
     flexDirection: 'row',
+    paddingHorizontal: 20,
   },
   searchInput: {
     //backgroundColor: 'white',
     width: 325,
     padding: 12,
-    borderRadius: 8,
+    paddingLeft: 0,
+    //borderRadius: 8,
+    borderBottomEndRadius: 8,
+    borderBottomRightRadius: 8,
+    borderTopRightRadius: 8,
     marginVertical: 25,
     fontFamily: 'OpenSans-Regular',
+    flex: 7,
 
   },
 

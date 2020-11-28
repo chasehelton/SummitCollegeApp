@@ -35,10 +35,8 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    marginTop: 45,
+    marginTop: 35,
     flex: 1,
-    //justifyContent: 'flex-start',
-    //alignItems: 'flex-start',
   },
   title: {
     flex: 4,
@@ -47,7 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
-    paddingEnd: 15, // not a good fix....
+    //paddingEnd: 15, // not a good fix....
   },
   empty: {
     flex: 1,

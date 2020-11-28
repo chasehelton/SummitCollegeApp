@@ -7,6 +7,8 @@ import {summitBlue} from '../assets/colors';
 
 import storage from '@react-native-firebase/storage';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Header from '../components/Header';
 import ChatMessage from '../components/ChatMessage';
 import ChatGroupPreview from '../components/ChatGroupPreview';
@@ -16,15 +18,23 @@ import * as Constants from '../constants/userTypeConstants';
 export default function CommunityScreen({navigation}) {
 
   const [rooms, setRooms] = useState([]);
+  const readReceiptPrefix = '@roomReadRec-';
 
-
-
+  const [selectedId, setSelectedId] = useState(null);
 
   useLayoutEffect(() => {
     async function getRooms() {
       // Create a reference with an initial file path and name
       //var storage = firebase.storage();
 
+      let storageKeys = [];
+      try {
+        storageKeys = await AsyncStorage.getAllKeys();
+        console.log('Storage keys: ' + storageKeys);
+      } catch(e) {
+        // read key error
+        console.log('Error reading AsyncStorage keys: ' + e);
+      }
 
       const roomsQuery = await firestore()
         .collection('rooms')
@@ -50,18 +60,32 @@ export default function CommunityScreen({navigation}) {
               // Handle any errors
               console.log("Error getting download url: " + error);
             });*/
+            console.log('Read?: ' + storageKeys.includes(readReceiptPrefix + doc.ref.id));
 
             tempRooms.push({
               data: doc.data(),
               id: count,
               ref: doc.ref,
+              read: storageKeys.includes(readReceiptPrefix + doc.ref.id),
             });
+
             count++;
 
 
           });
           console.log('Count: ' + count);
           console.log('Actual-set rooms length: ' + tempRooms.length);
+
+          // before setting the room, check AsyncStorage to see if each room has been read before or not...
+          /*for (var i = 0; i < tempRooms.length; i++) {
+            var path = readReceiptPrefix + tempRooms[i].ref.id;
+            var readReceipt =  AsyncStorage.getItem(path);
+            if (readReceipt) {
+              tempRooms[i].read = true;
+              console.log("Found one that was previously read!: " + readReceipt);
+            }
+          }*/
+
           setRooms(tempRooms);
 
         } catch (error) {
@@ -70,6 +94,8 @@ export default function CommunityScreen({navigation}) {
       }, err => {
         console.log('Encountered error: ' + err);
       });
+
+      return () => roomsObserver();
 
       /*const messagesObserver = query.onSnapshot(querySnapshot => {
         console.log('Received query snapshot of size ' + querySnapshot.size);
@@ -146,6 +172,24 @@ export default function CommunityScreen({navigation}) {
     }
   };
 
+  const selectRoom = async (index) => {
+    console.log('Room clicked, index: ' + index);
+    const clickedRoom = rooms[index];
+
+    var path = readReceiptPrefix + rooms[index].ref.id;
+    var readReceipt = await AsyncStorage.getItem(path);
+    if (!readReceipt) {
+      console.log('This has not been read before...');
+      await AsyncStorage.setItem(path, 'y');
+      rooms[index].read = true;
+      setSelectedId(rooms[index].id)
+    }
+    else {
+      console.log('This has been read before!');
+    }
+
+  };
+
   /*const sendMessage = async(e) => {
     e.preventDefault();
     const {uid, photoURL } = auth.currentUser;
@@ -196,15 +240,17 @@ export default function CommunityScreen({navigation}) {
         <FlatList
           style={styles.roomList}
           data={rooms}
+          extraData={selectedId}
           renderItem={({item, index}) => (
             <TouchableOpacity
               style={styles.roomContainer}
+              onPress={() => selectRoom(index)}
               >
               <ChatGroupPreview name={item.data.name}
                lastUpdated={displayTime(item.data.lastUpdated.toDate())}
                photoURL={item.data.photoURL}
                lastMessage={'This is a preview of the last message!'}
-               read={false}
+               read={item.read}
                key={item.id} />
             </TouchableOpacity>
           )}
