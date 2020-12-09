@@ -155,11 +155,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 13,
   },
-  monthText: {
-    fontSize: 15,
-    fontWeight: '300',
-    color: 'darkgray',
-  },
   eventText: {
     fontSize: 16,
     //fontWeight: '300',
@@ -192,6 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 32,
     marginBottom: 5,
+    fontFamily: 'OpenSans-Bold',
   },
   eventDesc: {
     fontSize: 18,

@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   backButton: {
-    marginTop: 40,
+    marginTop: 35,
     flex: 1,
   },
   userList: {
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 4,
-    marginTop: 40,
+    marginTop: 35,
     //marginBottom: 25,
     fontSize: 22,
     fontWeight: '600',

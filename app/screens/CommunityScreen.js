@@ -319,20 +319,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   leftHeaderButton: {
-    marginTop: 45,
+    marginTop: 35,
     flex: 1,
     //justifyContent: 'center',
     //alignItems: 'flex-start',
   },
   rightHeaderButton: {
-    marginTop: 45,
+    marginTop: 35,
     flex: 1,
     //justifyContent: 'flex-end',
     //alignItems: 'flex-end',
   },
   title: {
     flex: 4,
-    marginTop: 45,
+    marginTop: 35,
     marginBottom: 25,
     fontSize: 22,
     fontWeight: '600',
