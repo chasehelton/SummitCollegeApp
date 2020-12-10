@@ -215,7 +215,7 @@ export default function CommunityScreen({navigation}) {
         <TouchableOpacity
           style={styles.leftHeaderButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="list" type="material" color={summitBlue} size={35} />
+          <Icon name="list" type="feather" color={summitBlue} size={30} />
         </TouchableOpacity>
         <Text style={styles.title}>{'Community'}</Text>
         <TouchableOpacity
@@ -224,11 +224,11 @@ export default function CommunityScreen({navigation}) {
                            screen: 'Directory',
                            params: {
                              header: 'Community',
-                             userType: Constants.TYPE_STUDENT,
+                             userType: Constants.TYPE_ALL,
                              isAdmin: false,
                            },
                          })}>
-          <Icon name="create" type="material" color={summitBlue} size={35} />
+          <Icon name="edit" type="feather" color={summitBlue} size={30} />
         </TouchableOpacity>
 
       </View>
@@ -299,9 +299,6 @@ const styles = StyleSheet.create({
     //height: 100,
     //marginBottom: 15,
   },
-  title: {
-    fontSize: 48,
-  },
   nonHeader: {
     flex: 1,
     justifyContent: 'center',
@@ -317,18 +314,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
+    paddingHorizontal: 25,
   },
   leftHeaderButton: {
     marginTop: 35,
     flex: 1,
     //justifyContent: 'center',
-    //alignItems: 'flex-start',
+    alignItems: 'flex-start',
   },
   rightHeaderButton: {
     marginTop: 35,
     flex: 1,
     //justifyContent: 'flex-end',
-    //alignItems: 'flex-end',
+    alignItems: 'flex-end',
   },
   title: {
     flex: 4,

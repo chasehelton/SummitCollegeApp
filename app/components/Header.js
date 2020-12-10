@@ -10,7 +10,7 @@ export default function Header({navigation, title, backButton, isAdmin}) {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}>
-            <Icon name="keyboard-arrow-left" type="material" size={35} />
+            <Icon name="chevron-left" type="feather" size={35} />
           </TouchableOpacity>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.empty} />

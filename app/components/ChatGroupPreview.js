@@ -79,7 +79,7 @@ export default function ChatGroupPreview({name, lastUpdated, photoURL, lastMessa
 const styles = StyleSheet.create({
   photoContainer: {
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 25,
     paddingRight: 15,
   },
   roomPicture: {
@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     textAlign: 'left',
-    paddingRight: 10,
+
+    paddingRight: 15,
     flex: 5,
     //borderWidth: 0.5,
     //width: 250,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'darkgray',
     //paddingTop: 5,
-    paddingRight: 20,
+    paddingRight: 25,
 
   },
 });

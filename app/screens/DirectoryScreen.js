@@ -21,6 +21,7 @@ const TYPE_STUDENT = 1;
 const TYPE_LEADER = 2;
 const TYPE_STAFF = 3;
 const TYPE_DIRECTOR = 4;
+const TYPE_ALL = 5;
 
 const Item = ({title, index, photoURL}) => (
   <>
@@ -49,12 +50,19 @@ export default function DirectoryScreen({route, navigation}) {
       else if (userType === TYPE_LEADER) searchType = 'studentLeader';
       else if (userType === TYPE_STAFF) searchType = 'staff';
       else if (userType === TYPE_DIRECTOR) searchType = 'director';
+      //else if (userType === TYPE_ALL) searchType
 
       console.log('Search type: ' + searchType);
-      const userSearchQuery = await firestore()
+      var userSearchQuery = null;
+      if (userType === TYPE_ALL)
+        userSearchQuery = await firestore().collection('users').orderBy('firstName');
+      else userSearchQuery = await firestore()
         .collection('users')
-        .where('type', '==', searchType);
+        .where('type', '==', searchType)
+        .orderBy('firstName');
         //.get();
+
+
       const userSearchObserver = userSearchQuery.onSnapshot(userSearchSnapshot => {
         if (userSearchSnapshot.empty) {
           Alert.alert('Some error here for empty snapshot');
@@ -148,7 +156,7 @@ export default function DirectoryScreen({route, navigation}) {
         <View style={styles.searchIconBox}>
           <Icon
             name={searchIcon}
-            type="material"
+            type="feather"
             color="black"
             style={styles.searchIcon}
           />

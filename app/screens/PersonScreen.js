@@ -152,7 +152,7 @@ export default function PersonScreen({route, navigation}) {
         <Text style={styles.personName}>{person.data.displayName}</Text>
 
         <Text style={styles.personInfo}>{writeUserType(userType)}</Text>
-        <Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>
+        {person.data.gradYear > 0 && (<Text style={styles.personInfo}>Class of {person.data.gradYear}</Text>)}
 
         {!isAdmin && (
           <TouchableOpacity

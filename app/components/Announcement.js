@@ -63,45 +63,31 @@ export default function Announcement({navigation, timestamp, title, body}) {
   }
 
   return (
-    <TouchableOpacity style={styles.announcementContainer}>
+    <>
       <View style={styles.infoContainer}>
-        <Text style={styles.announcementTitle}>{title}</Text>
+        <Text numberOfLines={1} style={styles.announcementTitle}>{title}</Text>
       </View>
-      {isToday(timestamp)
+      {/*isToday(timestamp)
         ? <View style={styles.dateContainer}>
           <Text style={styles.hourText}>{getHours(timestamp)}:{getMinutes(timestamp)}{getAMPM(timestamp)}</Text>
         </View>
         : <View style={styles.dateContainer}>
           <Text style={styles.monthText}>{getMonth(timestamp)} {getDate(timestamp)}</Text>
         </View>
-      }
+      */}
       <Icon
-        name="keyboard-arrow-right"
-        type="material"
+        name="chevron-right"
+        type="feather"
         color={summitBlue}
-        style={{marginLeft: 10}}
+        style={{flex: 1,}}
         size={35}
       />
-    </TouchableOpacity>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  announcementContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-    //shadowOffset: {height: 5, width: 5},
-    //shadowOpacity: 0.15,
-    //shadowRadius: 5,
-    backgroundColor: '#fff',
-    //elevation: 2,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 8,
-    height: 70,
-  },
+
   dateContainer: {
     alignItems: 'center',
     marginLeft: 13,
@@ -124,8 +110,11 @@ const styles = StyleSheet.create({
   infoContainer: {
     textAlign: 'left',
     width: 250,
+    flex: 5,
   },
   announcementTitle: {
     fontSize: 18,
+    fontFamily: 'OpenSans-SemiBold',
+    paddingRight: 30,
   },
 });

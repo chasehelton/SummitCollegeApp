@@ -95,6 +95,16 @@ export default function HomeScreen({navigation}) {
     });
   };
 
+  const selectAnnouncement = (param) => {
+    console.log('Announcement clicked, index: ' + param);
+    navigation.navigate('Home', {
+      screen: 'Announcement',
+      params: {
+        announcement: announcements[param],
+      },
+    });
+  };
+
   const handlePlayButton = () => {
     console.log('Start playing podcast somehow');
   };
@@ -359,10 +369,10 @@ export default function HomeScreen({navigation}) {
               )}
             </View>
             <Icon
-              name="keyboard-arrow-right"
-              type="material"
+              name="chevron-right"
+              type="feather"
               color={summitBlue}
-              style={{marginLeft: 10, }}
+              style={{flex: 1, borderWidth: 0, }}
               size={35}
             />
           </TouchableOpacity>
@@ -380,7 +390,10 @@ export default function HomeScreen({navigation}) {
                 return date1.getTime() - date2.getTime();
               })}
               renderItem={({item, index}) => (
-                <TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.announcementContainer}
+                  onPress={() => selectAnnouncement(index)}
+                >
                   <Announcement
                     title={item.data.title}
                     timestamp={item.data.timestamp}
@@ -469,9 +482,12 @@ const styles = StyleSheet.create({
   infoContainer: {
     textAlign: 'left',
     width: 275, //250?
+    //borderWidth: 1,
+    flex: 5,
   },
   readingPlanText: {
-    fontSize: 20,
+    fontSize: 18,
+    fontFamily: 'OpenSans-SemiBold',
   },
   eventText: {
     fontSize: 16,
@@ -540,7 +556,7 @@ const styles = StyleSheet.create({
   podcastImageContainer: {
     marginRight: 10,
     borderRadius: 20,
-    borderWidth: 0,
+    borderWidth: 0.5,
     borderColor: 'black',
     overflow: 'hidden',
     flex: .35,
@@ -554,7 +570,7 @@ const styles = StyleSheet.create({
   podcastTitle: {
     paddingTop: 5,
     fontFamily: 'OpenSans-SemiBold',
-    fontWeight: 'bold',
+    //fontWeight: 'bold',
     width: '100%',
     marginLeft: 0,
     textAlign: 'left',
@@ -581,7 +597,22 @@ const styles = StyleSheet.create({
     backgroundColor: summitBlue,
     paddingVertical: 5,
     borderRadius: 8,
-    width: '40%',
+    width: '45%',
     marginTop: 2,
+  },
+  announcementContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    //shadowOffset: {height: 5, width: 5},
+    //shadowOpacity: 0.15,
+    //shadowRadius: 5,
+    backgroundColor: '#fff',
+    //elevation: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 8,
+    height: 70,
   },
 });

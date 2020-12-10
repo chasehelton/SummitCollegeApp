@@ -4,6 +4,7 @@ import HomeScreen from './HomeScreen';
 import DirectoryScreen from './DirectoryScreen';
 import PersonScreen from './PersonScreen';
 import ReadingPlanScreen from './ReadingPlanScreen';
+import AnnouncementScreen from './AnnouncementScreen';
 
 const HomeNavStack = createStackNavigator();
 
@@ -14,6 +15,7 @@ export default function HomeStackScreen() {
       <HomeNavStack.Screen name="Directory" component={DirectoryScreen} />
       <HomeNavStack.Screen name="Person" component={PersonScreen} />
       <HomeNavStack.Screen name="ReadingPlan" component={ReadingPlanScreen} />
+      <HomeNavStack.Screen name="Announcement" component={AnnouncementScreen} />
     </HomeNavStack.Navigator>
   );
 }
