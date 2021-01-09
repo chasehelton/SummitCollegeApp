@@ -27,11 +27,7 @@ export default function ResourcesScreen() {
     <View style={styles.container}>
       <Header title={'Resources'} backButton={false} />
       <View style={styles.nonHeader}>
-        <Text style={styles.comingSoonText}>Coming Soon.</Text>
-        <Text style={styles.comingSoonSubtext}>
-          The Resources feature will arrive by Christmas.
-        </Text>
-        <Text style={styles.comingSoonSubtext}>Hey</Text>
+        <Text style={styles.comingSoonText}>Resources Coming Soon</Text>
       </View>
     </View>
   );

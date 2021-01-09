@@ -32,10 +32,12 @@ export default function EventsScreen({navigation}) {
   useLayoutEffect(() => {
     async function getEvents() {
       const eventsQuery = await firestore().collection('events');
-      const eventsObserver = eventsQuery.onSnapshot(eventsSnapshot => {
-        if (eventsSnapshot === null ||
-            eventsSnapshot.size === 0 ||
-            eventsSnapshot.empty) {
+      const eventsObserver = eventsQuery.onSnapshot((eventsSnapshot) => {
+        if (
+          eventsSnapshot === null ||
+          eventsSnapshot.size === 0 ||
+          eventsSnapshot.empty
+        ) {
           setNoEvents(true);
           return null;
         }
@@ -64,11 +66,11 @@ export default function EventsScreen({navigation}) {
           });
           setEvents(tempEvents);
           setPastEvents(tempPastEvents);
+          console.log(tempEvents.length);
         } catch (error) {
           Alert.alert('Error', 'Error retrieving events');
         }
       });
-
       return () => eventsObserver();
     }
     getEvents();
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     elevation: 2,
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 12,
     borderRadius: 8,
     height: 100,
     marginBottom: 15,
