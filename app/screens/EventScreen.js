@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     flex: 5,
     //borderWidth: 2,
     paddingLeft: 20,
+    paddingBottom: 20,
     textAlignVertical: 'center',
   },
   eventIcon: {

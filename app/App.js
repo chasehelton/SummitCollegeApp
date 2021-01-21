@@ -39,13 +39,13 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialPage, setInitialPage] = useState('Home');
 
-   const images = {
-     eventsImage: require('./assets/Icon-feather-calendar.png'),
-     communityImage: require('./assets/Icon-feather-users.png'),
-     homeImage: require('./assets/Icon-feather-home.png'),
-     resourcesImage: require('./assets/Icon-feather-folder.png'),
-     settingsImage: require('./assets/Icon-feather-settings.png'),
-   };
+  const images = {
+    eventsImage: require('./assets/Icon-feather-calendar.png'),
+    communityImage: require('./assets/Icon-feather-users.png'),
+    homeImage: require('./assets/Icon-feather-home.png'),
+    resourcesImage: require('./assets/Icon-feather-folder.png'),
+    settingsImage: require('./assets/Icon-feather-settings.png'),
+  };
 
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
@@ -101,26 +101,34 @@ export default function App() {
                     img = images.settingsImage;
                   } else if (route.name === 'Announcements') {
                     iconName = 'feedback';
-                    return (<View style={{height: 35, width: 35,}}><Icon
-                      name="feedback"
-                      type="material"
-                      size={35}
-                      color={color}
-
-                    /></View> );
+                    return (
+                      <View style={{height: 35, width: 35}}>
+                        <Icon
+                          name="feedback"
+                          type="material"
+                          size={35}
+                          color={color}
+                        />
+                      </View>
+                    );
                   } else if (route.name === 'Admin') {
                     return (
-                      <View style={{height: 35, width: 35,}}><Icon
-                        name="supervisor-account"
-                        type="material"
-                        size={35}
-                        color={color}
-
-                      /></View>
+                      <View style={{height: 35, width: 35}}>
+                        <Icon
+                          name="supervisor-account"
+                          type="material"
+                          size={35}
+                          color={color}
+                        />
+                      </View>
                     );
                   }
                   // You can return any component that you like here!
-                  return <View style={{height: 35, width: 35, }}><Image source={img} /></View>;
+                  return (
+                    <View style={{height: 35, width: 35}}>
+                      <Image source={img} />
+                    </View>
+                  );
                   /*return (
                     <Icon
                       name={iconName}
@@ -143,7 +151,7 @@ export default function App() {
                   backgroundColor: 'white',
                   paddingLeft: 30,
                   paddingRight: 30,
-                  height: 60,
+                  height: 80,
                 },
               }}>
               {isAdmin && (
@@ -155,7 +163,10 @@ export default function App() {
               {!isAdmin && (
                 <>
                   <Tab.Screen name="Events" component={EventsStackScreen} />
-                  <Tab.Screen name="Community" component={CommunityStackScreen} />
+                  <Tab.Screen
+                    name="Community"
+                    component={CommunityStackScreen}
+                  />
                   <Tab.Screen name="Home" component={HomeStackScreen} />
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />
