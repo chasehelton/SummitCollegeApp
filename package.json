@@ -34,6 +34,7 @@
     "react-native-screens": "^2.9.0",
     "react-native-vector-icons": "^7.1.0",
     "stream": "0.0.2",
+    "use-state-with-callback": "^2.0.3",
     "util": "^0.12.3"
   },
   "devDependencies": {

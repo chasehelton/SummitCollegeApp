@@ -21,33 +21,19 @@ import pod from '../assets/sc_podcast_logo.jpg';
 import UpcomingEvent from '../components/UpcomingEvent';
 import Announcement from '../components/Announcement';
 
+import { LogBox } from 'react-native';
+
+import AppContext from '../components/AppContext.js';
 
 
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 
-export default function HomeScreen({navigation}) {
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [noUpcomingEvents, setNoUpcomingEvents] = useState(false);
-
-  const [announcements, setAnnouncements] = useState([]);
-  const [noAnnouncements, setNoAnnouncements] = useState(false);
-
-  const [readingPlan, setReadingPlan] = useState(null);
-  const [noReadingPlan, setNoReadingPlan] = useState(false);
+export default function HomeScreen({route, navigation}) {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [memorizationText, setMemorizationText] = React.useState('');
-
-  const [podcastState, setPodcastState] = useState(
-    {
-      podcastTitle: "",
-      podcastDescription: "",
-      podcastDate: "",
-      podcastImageUrl: "",
-    }
-  );
+  const context = React.useContext(AppContext);
 
   const displayShortDate = (dateText) => {
     if (dateText == null || dateText == '') return;
@@ -71,15 +57,15 @@ export default function HomeScreen({navigation}) {
   };
 
   const selectReadingPlan = () => {
-    console.log(readingPlan);
-    if (noReadingPlan) Alert.alert('There is no reading plan');
+    console.log(context.readingPlan);
+    if (context.noReadingPlan) Alert.alert('There is no reading plan');
     else
       navigation.navigate('Home', {
         screen: 'ReadingPlan',
         params: {
           header: 'Reading Plan',
-          readingPlanObject: readingPlan,
-          memText: memorizationText,
+          readingPlanObject: context.readingPlan,
+          memText: context.memorizationText,
         },
       });
   };
@@ -100,7 +86,7 @@ export default function HomeScreen({navigation}) {
     navigation.navigate('Home', {
       screen: 'Announcement',
       params: {
-        announcement: announcements[param],
+        announcement: context.announcements[param],
       },
     });
   };
@@ -110,229 +96,14 @@ export default function HomeScreen({navigation}) {
   };
 
   useLayoutEffect(() => {
-    /*async function getUpcomingEvents() {
-      const eventsQuery = await firestore()
-        .collection('events')
-        .where('startDate', '>=', formatDate(new Date()))
-        .orderBy('startDate')
-        .limit(2);
-        //.get();
-      const eventsObserver = eventsQuery.onSnapshot(eventsSnapshot => {
-        if (eventsSnapshot === null ||
-          eventsSnapshot.size === 0 ||
-          eventsSnapshot.empty
-        ) {
-          setNoUpcomingEvents(true);
-          console.log('No upcoming events!');
-          return null;
-        }
 
-        try {
-          const tempUpcomingEvents = [];
-          var count = 0;
-          eventsSnapshot.forEach((doc) => {
-            tempUpcomingEvents.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
-            });
-            count++;
-          });
-          console.log('Count of upcoming events: ' + count);
-          setUpcomingEvents(tempUpcomingEvents);
-        } catch (error) {
-          Alert.alert('Error', 'Error retrieving upcoming events');
-          console.log('Error: ' + error);
-        }
-      });
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    console.log('i fire once');
 
-      return () => eventsObserver();
-    }*/
-
-    async function getReadingPlan() {
-      /*// first check to see if the api key exists locally
-      var esvKeyValue = await AsyncStorage.getItem('@esvKey');
-      if (esvKeyValue == null) {
-        console.log('ESV Key not found, now retrieve from database');
-        console.log('Storing data for api key');
-        const keyDocQuery = await firestore()
-          .collection('apiKeys')
-          .doc('esv_key');
-          //.get();
-        const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
-          if (!keyDocSnapshot.exists) {
-            console.log('ESV key does not exist in firestore');
-          } else {
-            try {
-              // TODO: figure out if I still need AsyncStorage if Firestore
-              // works offline
-              console.log('ESV key: ' + keyDocSnapshot.data().key);
-              await AsyncStorage.setItem('@esvKey', keyDocSnapshot.data().key);
-              esvKeyValue = keyDocSnapshot.data().key;
-            } catch (e) {
-              // saving error
-              console.log('Error trying to save esv key: ' + e);
-            }
-          }
-        }
-      } else console.log('ESV Key was found!');
-      console.log('ESV Key Value is now: ' + esvKeyValue);*/
-
-      // first check to see if the api key exists locally
-      var esvKeyValue;
-      const keyDocQuery = await firestore()
-        .collection('apiKeys')
-        .doc('esv_key');
-        //.get();
-      const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
-        if (!keyDocSnapshot.exists) {
-          console.log('ESV key does not exist in firestore');
-        } else {
-          try {
-            // TODO: figure out if I still need AsyncStorage if Firestore
-            // works offline
-            console.log('ESV key: ' + keyDocSnapshot.data().key);
-            esvKeyValue = keyDocSnapshot.data().key;
-          } catch (e) {
-            // saving error
-            console.log('Error trying to retrieve esv key: ' + e);
-          }
-        }
-      });
-
-      console.log('ESV Key Value is: ' + esvKeyValue);
-
-      // read the reading plan from firestore
-      const readingPlanQuery = await firestore()
-        .collection('readingPlan')
-        .where('date', '==', formatDate(new Date()));
-        //.get();
-
-      const readingPlanObserver = readingPlanQuery.onSnapshot(readingPlanSnapshot => {
-        if (readingPlanSnapshot === null ||
-          readingPlanSnapshot.size === 0 ||
-          readingPlanSnapshot.empty) {
-          setNoReadingPlan(true);
-          console.log('No reading plan!');
-          return null;
-        }
-
-        if (readingPlanSnapshot.size > 1) {
-          console.log('Too many reading plan entries for this day.');
-        }
-
-        try {
-          readingPlanSnapshot.forEach((doc) => {
-            console.log('Setting the reading plan!');
-            setReadingPlan({
-              data: doc.data(),
-              id: formatDate(new Date()),
-            });
-            getMemorizationText(doc.data(), esvKeyValue);
-          });
-        } catch (error) {
-          Alert.alert('Error', 'Error retrieving reading plan');
-          console.log('Error: ' + error);
-        }
-      });
-
-      return () => {readingPlanObserver(); keyDocObserver();}
-    }
-
-    async function getMemorizationText(data, key) {
-      let passageText = data.memorization.replace(/ /g, '+');
-      console.log('Passage text: ' + passageText);
-      await axios
-        .get('https://api.esv.org/v3/passage/text/?q=' + passageText, {
-          headers: {
-            Authorization: key,
-          },
-          params: {
-            include_passage_references: false,
-            include_verse_numbers: false,
-            include_first_verse_numbers: false,
-            include_footnotes: false,
-            include_headings: false,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          console.log(response.data.passages[0]);
-          setMemorizationText(response.data.passages[0].trim());
-        })
-        .catch((error) => {
-          console.log('Error: ' + error);
-          setMemorizationText('error!');
-        });
-    }
-
-    async function getPodcastData() {
-      const cheerio = require("cheerio");
-      const axios = require("axios");
-      const podcastUrl = 'https://anchor.fm/summitcollege';
-      await axios.get(podcastUrl).then((response) => {
-        const che = cheerio.load(response.data);
-        // This isn't the actual way to get the title, it was just easier to test with this.
-        podTitle = che("div.styles__episodeHeading___29q7v").first().text();
-        podDescription = che("div.styles__episodeDescription___C3oZg").first().text();
-        podDateFull = che("div.styles__episodeCreated___1zP5p").first().text();
-        podDate = podDateFull.match(/[a-zA-Z]+ \d+/g);
-        console.log(podDate);
-        podImageUrl = che("a.styles__episodeImage___tMifW").find('img').attr('src');
-        console.log("Image URL: " + podImageUrl);
-        setPodcastState(
-          {
-            podcastTitle: podTitle,
-            podcastDescription: podDescription,
-            podcastDate: podDate,
-            podcastImageUrl: podImageUrl,
-          }
-        );
-      }).catch((error) => {
-        console.log("Error: " + error);
-      });
-    }
-
-    async function getAnnouncements() {
-      const announcementsQuery = await firestore()
-        .collection('announcements');
-        //.get();
-
-      const announcementsObserver = announcementsQuery.onSnapshot(announcementsSnapshot => {
-        if (announcementsSnapshot === null ||
-            announcementsSnapshot.size === 0 ||
-            announcementsSnapshot.empty) {
-          setNoAnnouncements(true);
-          return null;
-        }
-
-        try {
-          const tempAnnouncements = [];
-          var count = 0;
-          announcementsSnapshot.forEach((doc) => {
-            tempAnnouncements.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
-            });
-            count++;
-          });
-          setAnnouncements(tempAnnouncements);
-        } catch (error) {
-          Alert.alert('Error', 'Error retrieving announcements');
-        }
-      });
-
-      return () => announcementsObserver();
-    }
-
-    getAnnouncements();
-    //getUpcomingEvents();
-    getReadingPlan();
-    getPodcastData();
   }, []);
 
   return (
+
     <View style={styles.container}>
       {/*<Header title={'Home'} backButton={false} />*/}
 
@@ -354,15 +125,15 @@ export default function HomeScreen({navigation}) {
           <Text style={styles.subheader}>{"TODAY'S READING"}</Text>
           <TouchableOpacity
             style={[styles.itemContainer, styles.readingPlanContainer]}
-            onPress={() => selectReadingPlan()}>
+            onPress={selectReadingPlan}>
             <View style={styles.infoContainer}>
-              {!noReadingPlan && readingPlan && (
+              {!context.noReadingPlan && context.readingPlan && (
                 <Text style={styles.readingPlanText}>
-                  {readingPlan.data.reading}
+                  {context.readingPlan.data.reading}
                 </Text>
 
               )}
-              {noReadingPlan && (
+              {context.noReadingPlan && (
                 <Text style={styles.readingPlanText}>
                   No reading plan found.
                 </Text>
@@ -381,10 +152,10 @@ export default function HomeScreen({navigation}) {
         <View style={styles.announcements}>
           <Text style={styles.subheader}>{'ANNOUNCEMENTS'}</Text>
 
-          {!noAnnouncements && (
+          {!context.noAnnouncements && (
             <FlatList
               style={styles.announcementsList}
-              data={announcements.sort((a, b) => {
+              data={context.announcements.sort((a, b) => {
                 let date1 = new Date(a.data.timestamp);
                 let date2 = new Date(b.data.timestamp);
                 return date1.getTime() - date2.getTime();
@@ -404,7 +175,7 @@ export default function HomeScreen({navigation}) {
               keyExtractor={(item) => item.id.toString()}
             />
           )}
-          {noAnnouncements && (
+          {context.noAnnouncements && (
             <Text style={styles.noAnnouncementsText}>
               No announcements found.
             </Text>
@@ -420,7 +191,7 @@ export default function HomeScreen({navigation}) {
               <View style={styles.podcastImageContainer}>
                 <Image
 
-                  source={{ uri: podcastState.podcastImageUrl }}
+                  source={{ uri: context.podcastState.podcastImageUrl }}
                   style={styles.podcastImage}
                   resizeMode='contain'
                 />
@@ -428,15 +199,15 @@ export default function HomeScreen({navigation}) {
               <View style={{flex: .65, /*flexDirection: 'column',
                                                           alignItems: 'flex-start',*/}}>
                 <View style={{borderWidth: 0}}>
-                  <Text style={styles.podcastDateText}>{displayShortDate(podcastState.podcastDate)}</Text>
+                  <Text style={styles.podcastDateText}>{displayShortDate(context.podcastState.podcastDate)}</Text>
                 </View>
                 <View style={{borderWidth: 0}}>
-                  <Text numberOfLines={2} style={styles.podcastTitle}>{podcastState.podcastTitle}</Text>
+                  <Text numberOfLines={2} style={styles.podcastTitle}>{context.podcastState.podcastTitle}</Text>
                 </View>
                 <View style={{borderWidth: 0}}>
                   <TouchableOpacity
                     style={styles.playButton}
-                    onPress={() => handlePlayButton()}>
+                    onPress={handlePlayButton}>
                     <Text style={styles.playButtonText}>PLAY</Text>
                   </TouchableOpacity>
                 </View>
@@ -445,7 +216,7 @@ export default function HomeScreen({navigation}) {
               </View>
             </View>
             <View style={styles.bottomHalfContainer}>
-              <Text style={styles.podcastText} numberOfLines={4} >{podcastState.podcastDescription}</Text>
+              <Text style={styles.podcastText} numberOfLines={4} >{context.podcastState.podcastDescription}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -563,8 +334,6 @@ const styles = StyleSheet.create({
   },
   podcastImage: {
     height: '100%',
-
-
   },
 
   podcastTitle: {

@@ -45,14 +45,15 @@ export default function ChatMessage({message}) {
   };*/
 
   const text = message.msg; // check firebase?
+
   const uid = message.uid;
 
-  const messageStyle = uid === auth().currentUser.uid ? 'sent' : 'received';
+  //const messageStyle = uid === auth().currentUser.uid ? 'sent' : 'received';
 
   return (
     <>
       <View>
-        <Text>{text} sent?: {messageStyle}</Text>
+        <Text>{text}</Text>
       </View>
       {/*<>
             <View style={styles.dateContainer} key="dateView">

@@ -188,6 +188,14 @@ export default function CommunityScreen({navigation}) {
       console.log('This has been read before!');
     }
 
+    // now navigate
+    navigation.navigate('Community', {
+      screen: 'ChatScreen',
+      params: {
+        header: rooms[index].name,
+        userType: Constants.TYPE_ALL,
+      },
+    });
   };
 
   /*const sendMessage = async(e) => {

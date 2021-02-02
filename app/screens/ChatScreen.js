@@ -1,5 +1,5 @@
 import React, {useLayoutEffect, useEffect, useState} from 'react';
-import {StyleSheet, View, Text, FlatList, TouchableOpacity, Alert, TextInput} from 'react-native';
+import {StyleSheet, Image, View, Text, FlatList, TouchableOpacity, Alert, TextInput} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
@@ -106,6 +106,12 @@ export default function CommunityScreen() {
     getMessages();
   }, []);
 
+  const getUser = (uid) => {
+    // go through the users list?? if that exists?
+    var photoURL = '';
+    return photoURL;
+  };
+
   /*const sendMessage = async(e) => {
     e.preventDefault();
     const {uid, photoURL } = auth.currentUser;
@@ -126,18 +132,28 @@ export default function CommunityScreen() {
     <View style={styles.container}>
       <Header title={'Community'} backButton={false} />
       <View style={styles.nonHeader}>
-        <Text style={styles.comingSoonText}>Coming Soon.</Text>
-        <Text style={styles.comingSoonSubtext}>The Community feature will arrive by Christmas.</Text>
 
         <FlatList
           style={styles.userList}
           data={messages}
           renderItem={({item, index}) => (
-            <TouchableOpacity
-              style={styles.item}
-              >
-              <ChatMessage message={item.data} key={item.id} />
-            </TouchableOpacity>
+            <>
+            <View style={styles.chatPersonImageContainer}>
+              <Image
+                source={{ uri: getUser(item.data.uid) }}
+                style={styles.chatPersonImage}
+                resizeMode='contain'/>
+            </View>
+            <View style={{marginVertical: 5, }}>
+              <Text>Author</Text>
+              <TouchableOpacity
+
+                style={[styles.messageContainer, item.data.uid === auth().currentUser.uid ? styles.sentContainer : styles.receivedContainer]}
+                >
+                <ChatMessage message={item.data} key={item.id} />
+              </TouchableOpacity>
+            </View>
+            </>
           )}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -176,10 +192,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  comingSoonText: {
-    fontSize: 20,
+  messageContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    //shadowOffset: {height: 5, width: 5},
+    //shadowOpacity: 0.15,
+    //shadowRadius: 5,
+    backgroundColor: '#fff',
+    //elevation: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+
+    borderRadius: 8,
   },
-  comingSoonSubtext: {
-    fontSize: 12,
+  sentContainer: {
+    backgroundColor: 'white',
+  },
+  receivedContainer: {
+    backgroundColor: '#3d8ccc',
+  },
+  chatPersonImageContainer: {
+    marginRight: 10,
+    borderRadius: 20,
+    //borderWidth: 0.5,
+    //borderColor: 'black',
+    overflow: 'hidden',
+    flex: .35,
+  },
+  chatPersonImage: {
+    height: '100%',
   },
 });

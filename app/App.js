@@ -5,7 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import {Icon} from 'react-native-elements';
-import {Image, View} from 'react-native';
+import {Image, View, Alert} from 'react-native';
 
 // Included to prevent warnings from displaying, comment out for debugging
 import {LogBox} from 'react-native';
@@ -27,17 +27,37 @@ import LoginScreen from './screens/LoginScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import SplashScreen from './screens/SplashScreen';
 import {summitBlue} from './assets/colors';
+import AppContext from './components/AppContext.js';
+import axios from 'axios';
 
 const Tab = createBottomTabNavigator();
 const Auth = createStackNavigator();
+
 
 import firestore from '@react-native-firebase/firestore';
 
 export default function App() {
   const [currentUser, setUser] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialPage, setInitialPage] = useState('Home');
+
+  const [announcements, setAnnouncements] = useState(null);
+  const [noAnnouncements, setNoAnnouncements] = useState(false);
+
+  const [readingPlan, setReadingPlan] = useState(null);
+  const [noReadingPlan, setNoReadingPlan] = useState(false);
+
+  const [memorizationText, setMemorizationText] = React.useState('');
+
+  const [podcastState, setPodcastState] = useState(
+    {
+      podcastTitle: "",
+      podcastDescription: "",
+      podcastDate: "",
+      podcastImageUrl: "https://via.placeholder.com/300",
+    }
+  );
 
   const images = {
     eventsImage: require('./assets/Icon-feather-calendar.png'),
@@ -47,26 +67,218 @@ export default function App() {
     settingsImage: require('./assets/Icon-feather-settings.png'),
   };
 
+  const formatDate = (date) => {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
+
   useEffect(() => {
     let isMounted = true; // note this flag denote mount status
+    global.homeLoads = 0;
+      console.log('Homeloads in App.js: ' + global.homeLoads);
     //if (isMounted) storeData();
+
+    async function getAnnouncements() {
+      const announcementsQuery = await firestore()
+        .collection('announcements');
+        //.get();
+
+      const announcementsObserver = announcementsQuery.onSnapshot(announcementsSnapshot => {
+        if (announcementsSnapshot === null ||
+            announcementsSnapshot.size === 0 ||
+            announcementsSnapshot.empty) {
+          setNoAnnouncements(true);
+          global.homeLoads++;
+          return null;
+        }
+
+        try {
+          const tempAnnouncements = [];
+          var count = 0;
+          announcementsSnapshot.forEach((doc) => {
+            tempAnnouncements.push({
+              data: doc.data(),
+              id: count,
+              ref: doc.ref,
+            });
+            count++;
+          });
+          setAnnouncements(tempAnnouncements);
+          global.homeLoads++;
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving announcements');
+          console.log('Error retrieving announcements: ' + error);
+        }
+      });
+
+      return () => announcementsObserver();
+    }
+
+    async function getReadingPlan() {
+      // first check to see if the api key exists locally
+      var esvKeyValue;
+      const keyDocQuery = await firestore()
+        .collection('apiKeys')
+        .doc('esv_key');
+        //.get();
+      const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
+        if (!keyDocSnapshot.exists) {
+          console.log('ESV key does not exist in firestore');
+        } else {
+          try {
+            console.log('ESV key: ' + keyDocSnapshot.data().key);
+            esvKeyValue = keyDocSnapshot.data().key;
+            var source = keyDocSnapshot.metadata.fromCache ? "local cache" : "server";
+            console.log("ESV key data came from " + source);
+          } catch (e) {
+            // saving error
+            console.log('Error trying to retrieve esv key: ' + e);
+          }
+        }
+      });
+
+      console.log('ESV Key Value is: ' + esvKeyValue);
+
+      // read the reading plan from firestore
+      const readingPlanQuery = await firestore()
+        .collection('readingPlan')
+        .where('date', '==', formatDate(new Date()));
+        //.get();
+
+      const readingPlanObserver = readingPlanQuery.onSnapshot(readingPlanSnapshot => {
+        var source = readingPlanSnapshot.metadata.fromCache ? "local cache" : "server";
+        console.log("Reading plan data came from " + source);
+        if (readingPlanSnapshot === null ||
+          readingPlanSnapshot.size === 0 ||
+          readingPlanSnapshot.empty) {
+          setNoReadingPlan(true);
+          global.noReadingPlan = true;
+          console.log('No reading plan!');
+          return null;
+        }
+
+        if (readingPlanSnapshot.size > 1) {
+          console.log('Too many reading plan entries for this day.');
+        }
+
+        try {
+          readingPlanSnapshot.forEach((doc) => {
+            console.log('Setting the reading plan!');
+            setReadingPlan({
+              data: doc.data(),
+              id: formatDate(new Date()),
+            });
+            getMemorizationText(doc.data(), esvKeyValue);
+          });
+        } catch (error) {
+          Alert.alert('Error', 'Error retrieving reading plan');
+          console.log('Error retrieving reading plan: ' + error);
+        }
+      });
+
+      return () => {readingPlanObserver(); keyDocObserver();}
+    }
+
+    async function getPodcastData() {
+      const cheerio = require("cheerio");
+      const axios = require("axios");
+      const podcastUrl = 'https://anchor.fm/summitcollege';
+      await axios.get(podcastUrl).then((response) => {
+        const che = cheerio.load(response.data);
+        // This isn't the actual way to get the title, it was just easier to test with this.
+        var podTitle = che("div.styles__episodeHeading___29q7v").first().text();
+        var podDescription = che("div.styles__episodeDescription___C3oZg").first().text();
+        var podDateFull = che("div.styles__episodeCreated___1zP5p").first().text();
+        var podDate = podDateFull.match(/[a-zA-Z]+ \d+/g);
+        console.log(podDate);
+        console.log('podTitle in method: ' + podTitle);
+        var podImageUrl = che("a.styles__episodeImage___tMifW").find('img').attr('src');
+        console.log("Image URL: " + podImageUrl);
+
+        setPodcastState({
+                                  podcastTitle: podTitle,
+                                  podcastDescription: podDescription,
+                                  podcastDate: podDate,
+                                  podcastImageUrl: podImageUrl,
+                                }
+
+        );
+
+      }).catch((error) => {
+        console.log("Error getting podcast data: " + error);
+      });
+    }
+
+    async function getMemorizationText(data, key) {
+      let passageText = data.memorization.replace(/ /g, '+');
+      console.log('Passage text: ' + passageText);
+      await axios
+        .get('https://api.esv.org/v3/passage/text/?q=' + passageText, {
+          headers: {
+            Authorization: key,
+          },
+          params: {
+            include_passage_references: false,
+            include_verse_numbers: false,
+            include_first_verse_numbers: false,
+            include_footnotes: false,
+            include_headings: false,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          console.log(response.data.passages[0]);
+          setMemorizationText(response.data.passages[0].trim());
+        })
+        .catch((error) => {
+          console.log('Error getting memorization text: ' + error);
+          setMemorizationText('error!');
+        });
+    }
+
+    async function getNecessaryData(user) {
+      getPodcastData();
+      setUser(user);
+
+      getReadingPlan();
+      getAnnouncements();
+
+      /*global.announcements = announcements;
+      global.noAnnouncements = noAnnouncements;
+      global.readingPlan = readingPlan;
+      global.noReadingPlan = noReadingPlan;
+      global.podcastState = podcastState;*/
+
+      if (user.email === 'scappadmin@summitrdu.com') {
+        setIsAdmin(true);
+        setInitialPage('Admin');
+      } else {
+        setIsAdmin(false);
+        setInitialPage('Home');
+      }
+
+    }
+
+
     auth().onAuthStateChanged((user) => {
       if (isMounted) {
         if (user) {
-          setIsLoading(true);
-          setUser(user);
-          setIsLoading(false);
+          //setIsLoading(true);
+          getNecessaryData(user);
+          //setUser(user);
+          //setIsLoading(false);
 
-          if (user.email === 'scappadmin@summitrdu.com') {
-            setIsAdmin(true);
-            setInitialPage('Admin');
-          } else {
-            setIsAdmin(false);
-            setInitialPage('Home');
-          }
+
         } else {
           setUser(null);
           setIsAdmin(false);
+          setIsLoading(false);
         }
       }
     });
@@ -74,8 +286,13 @@ export default function App() {
   }, []);
   return (
     <>
-      {isLoading && <SplashScreen />}
-      {!isLoading && (
+      <AppContext.Provider value = {{ readingPlan: readingPlan, announcements: announcements,
+        noAnnouncements: noAnnouncements, noReadingPlan: noReadingPlan, podcastState: podcastState,
+        memorizationText: memorizationText}}>
+      {(podcastState.podcastTitle == '' || !readingPlan
+        || !announcements) && <SplashScreen />}
+      {(podcastState.podcastTitle != '' && readingPlan
+               && announcements) && (
         <NavigationContainer>
           {currentUser && (
             <Tab.Navigator
@@ -167,7 +384,7 @@ export default function App() {
                     name="Community"
                     component={CommunityStackScreen}
                   />
-                  <Tab.Screen name="Home" component={HomeStackScreen} />
+                  <Tab.Screen name="Home" component={HomeStackScreen}/>
                   <Tab.Screen name="Resources" component={ResourcesScreen} />
                   <Tab.Screen name="Settings" component={SettingsScreen} />
                   {/*<Tab.Screen
@@ -190,6 +407,7 @@ export default function App() {
           )}
         </NavigationContainer>
       )}
+      </AppContext.Provider>
     </>
   );
 }
