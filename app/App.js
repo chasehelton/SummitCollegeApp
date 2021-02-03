@@ -37,7 +37,9 @@ const Auth = createStackNavigator();
 import firestore from '@react-native-firebase/firestore';
 
 export default function App() {
-  const [currentUser, setUser] = useState({});
+  const [currentUser, setUser] = useState({}); // Auth object
+  const [userDoc, setUserDoc] = useState({});
+
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialPage, setInitialPage] = useState('Home');
@@ -242,9 +244,36 @@ export default function App() {
         });
     }
 
+    async function getUserObject(uid) {
+      console.log('My uid is: ' + uid + 'END');
+      const userSnapshot = await firestore()
+        .collection('users')
+        //.where('displayName', '==', 'Richard Marshall')
+        .where('uid', '==', uid)
+        .get();
+
+      if (userSnapshot.empty) console.log('Empty snapshot!');
+      else {
+        userSnapshot.forEach(doc => {
+          console.log(doc.id, '=>', doc.data());
+          setUserDoc(doc.data());
+          //should only be one so return
+          return;
+        });
+      }
+      /*if (!userObj.exists) {
+        console.log('No such document!');
+      } else {
+        console.log('Document data:', userObj.data());
+        setUserDoc(userObj.data());
+      }*/
+
+    }
+
     async function getNecessaryData(user) {
       getPodcastData();
       setUser(user);
+      getUserObject(user.uid);
 
       getReadingPlan();
       getAnnouncements();
@@ -288,7 +317,7 @@ export default function App() {
     <>
       <AppContext.Provider value = {{ readingPlan: readingPlan, announcements: announcements,
         noAnnouncements: noAnnouncements, noReadingPlan: noReadingPlan, podcastState: podcastState,
-        memorizationText: memorizationText}}>
+        memorizationText: memorizationText, userDoc: userDoc}}>
       {(podcastState.podcastTitle == '' || !readingPlan
         || !announcements) && <SplashScreen />}
       {(podcastState.podcastTitle != '' && readingPlan

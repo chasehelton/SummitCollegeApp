@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
 import ChatMessage from '../components/ChatMessage';
 import ChatGroupPreview from '../components/ChatGroupPreview';
+import AppContext from '../components/AppContext.js';
 
 import * as Constants from '../constants/userTypeConstants';
 
@@ -19,6 +20,8 @@ export default function CommunityScreen({navigation}) {
 
   const [rooms, setRooms] = useState([]);
   const readReceiptPrefix = '@roomReadRec-';
+
+  const context = React.useContext(AppContext);
 
   const [selectedId, setSelectedId] = useState(null);
 
@@ -36,9 +39,13 @@ export default function CommunityScreen({navigation}) {
         console.log('Error reading AsyncStorage keys: ' + e);
       }
 
+      console.log('You are in this many rooms: ' + context.userDoc.rooms); // TODO : FROM HERE
+
       const roomsQuery = await firestore()
         .collection('rooms')
-        .orderBy('lastUpdated');
+        // this MAY not work with more than 10 rooms....
+        .where(firestore.FieldPath.documentId(), 'in', context.userDoc.rooms)
+        //.orderBy('lastUpdated');
         //.get();
         //.doc('C08P2GCtlOrcKDTYjdQD')
         //.collection('messages')
@@ -176,6 +183,41 @@ export default function CommunityScreen({navigation}) {
     console.log('Room clicked, index: ' + index);
     const clickedRoom = rooms[index];
 
+    // go ahead and get all the users associated with this room?
+    console.log('First member of this room: ' + rooms[index].data.members[0]);
+    console.log('All members: ' + rooms[index].data.members);
+    const userSearchSnapshot = await firestore()
+            .collection('users')
+            .where('uid', 'in', rooms[index].data.members)
+            .orderBy('firstName')
+            .get();
+
+    if (userSearchSnapshot.empty) {
+      Alert.alert('Empty snapshot');
+      //return null;
+    }
+
+    console.log('Result size FROM USER SEARCH SNAPSHOT: ' + userSearchSnapshot.size);
+
+    if (userSearchSnapshot.size === 0) {
+      Alert.alert('No users found in this group'); // with the email: ' + email);
+      //return null;
+    }
+
+    const tempUsers = [];
+    var count = 0;
+    userSearchSnapshot.forEach(function (doc) {
+      tempUsers.push({
+        data: doc.data(),
+        id: count,
+        ref: doc.ref,
+      });
+      count++;
+    });
+    console.log('Count: ' + count);
+    rooms[index].data.memberObjects = tempUsers;
+    console.log('Member objects?: ' + rooms[index].data.memberObjects);
+
     var path = readReceiptPrefix + rooms[index].ref.id;
     var readReceipt = await AsyncStorage.getItem(path);
     if (!readReceipt) {
@@ -189,11 +231,14 @@ export default function CommunityScreen({navigation}) {
     }
 
     // now navigate
+    console.log('Header text is: ' + rooms[index].data.name);
     navigation.navigate('Community', {
       screen: 'ChatScreen',
       params: {
-        header: rooms[index].name,
-        userType: Constants.TYPE_ALL,
+        headerText: rooms[index].data.name,
+        //userType: Constants.TYPE_ALL,
+        roomObject: rooms[index],
+        roomRef: rooms[index].ref,
       },
     });
   };
