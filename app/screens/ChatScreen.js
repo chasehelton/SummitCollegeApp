@@ -9,10 +9,10 @@ import Header from '../components/Header';
 import ChatMessage from '../components/ChatMessage';
 import {summitBlue} from '../assets/colors';
 
-export default function ChatScreen({route, navigation}) {
+export default function ChatScreen({route, navigation, props}) {
 
   // TODO:
-  // 1. make a function that scrolls to the bottom on submit
+  // 1. make a function that scrolls to the bottom on submit - won't work :(
   // 2. remove the image if you are the one who sent the message
   //    and left-align the date
   // 3. curve the bottom right corner if you sent it
@@ -49,8 +49,10 @@ export default function ChatScreen({route, navigation}) {
       });
     console.log('Added document with ID: ', res.id);
 
+    // SCROLLING DOES NOT WORK
     //messageListRef.scrollToEnd({animated: true});
-    this.refs['messageList'].scrollToEnd({animated: true});
+    //this.refs['messageList'].scrollToEnd({animated: true});
+    //messageListRef.scrollToEnd({animated: true});
   };
 
   const focusTextInput = () => {
@@ -97,24 +99,6 @@ export default function ChatScreen({route, navigation}) {
     getMessages();
   }, []);
 
-
-
-  /*const sendMessage = async(e) => {
-    e.preventDefault();
-    const {uid, photoURL } = auth.currentUser;
-
-    await someRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL
-    });
-
-    setFormValue('');
-
-    // find a way to scroll into view
-  }*/
-
   return (
     <View style={styles.container}>
 
@@ -137,13 +121,12 @@ export default function ChatScreen({route, navigation}) {
       <View style={styles.nonHeader}>
 
         <FlatList
-          ref={React.useRef('messageList')}
-
+          ref={messsageListRef}
           initialScrollIndex={0}
           style={styles.userList}
           data={messages}
           renderItem={({item, index}) => (
-            <ChatMessage message={item.data} key={item.id} members={roomMembers} />
+            <ChatMessage message={item.data} nextMessage={messages[index + 1]} key={item.id} members={roomMembers} />
 
           )}
           keyExtractor={(item) => item.id.toString()}
