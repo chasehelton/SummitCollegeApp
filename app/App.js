@@ -49,6 +49,7 @@ export default function App() {
 
   const [readingPlan, setReadingPlan] = useState(null);
   const [noReadingPlan, setNoReadingPlan] = useState(false);
+  const [readingPlanAttempted, setReadingPlanAttempted] = useState(false);
 
   const [memorizationText, setMemorizationText] = React.useState('');
 
@@ -156,11 +157,11 @@ export default function App() {
       const readingPlanObserver = readingPlanQuery.onSnapshot(readingPlanSnapshot => {
         var source = readingPlanSnapshot.metadata.fromCache ? "local cache" : "server";
         console.log("Reading plan data came from " + source);
+        setReadingPlanAttempted(true);
         if (readingPlanSnapshot === null ||
           readingPlanSnapshot.size === 0 ||
           readingPlanSnapshot.empty) {
           setNoReadingPlan(true);
-          global.noReadingPlan = true;
           console.log('No reading plan!');
           return null;
         }
@@ -278,12 +279,6 @@ export default function App() {
       getReadingPlan();
       getAnnouncements();
 
-      /*global.announcements = announcements;
-      global.noAnnouncements = noAnnouncements;
-      global.readingPlan = readingPlan;
-      global.noReadingPlan = noReadingPlan;
-      global.podcastState = podcastState;*/
-
       if (user.email === 'scappadmin@summitrdu.com') {
         setIsAdmin(true);
         setInitialPage('Admin');
@@ -313,14 +308,27 @@ export default function App() {
     });
     return () => (isMounted = false); // use effect cleanup to set flag false, if unmounted
   }, []);
+
+  const getTabBarVisibility = (route) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : '';
+
+    if (routeName === 'ChatScreen') {
+      return false;
+    }
+
+    return true;
+  }
+
   return (
     <>
       <AppContext.Provider value = {{ readingPlan: readingPlan, announcements: announcements,
         noAnnouncements: noAnnouncements, noReadingPlan: noReadingPlan, podcastState: podcastState,
         memorizationText: memorizationText, userDoc: userDoc}}>
-      {(podcastState.podcastTitle == '' || !readingPlan
+      {(podcastState.podcastTitle == '' || !readingPlanAttempted
         || !announcements) && <SplashScreen />}
-      {(podcastState.podcastTitle != '' && readingPlan
+      {(podcastState.podcastTitle != '' && readingPlanAttempted
                && announcements) && (
         <NavigationContainer>
           {currentUser && (
@@ -412,6 +420,9 @@ export default function App() {
                   <Tab.Screen
                     name="Community"
                     component={CommunityStackScreen}
+                    options={({ route }) => ({
+                            tabBarVisible: getTabBarVisibility(route)
+                          })}
                   />
                   <Tab.Screen name="Home" component={HomeStackScreen}/>
                   <Tab.Screen name="Resources" component={ResourcesScreen} />

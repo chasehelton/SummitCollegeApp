@@ -21,6 +21,9 @@ export default function ChatScreen({route, navigation}) {
   // 6. try and stretch/fill images that are weird sizes (like the fish)
   // 7. implement the image sending functionality
 
+  //navigation.setOptions({tabBarVisible: false});
+
+
   const [formValue, setFormValue] = useState('');
   const [testMessage, setTestMessage] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -33,6 +36,8 @@ export default function ChatScreen({route, navigation}) {
 
   const [sendMessageText, onChangeText] = useState('Send a message...');
 
+  const messsageListRef = React.useRef(null);
+
   const sendMessage = async () => {
     console.log('Room reference: ' + roomObject.ref);
     const res = await roomObject.ref.collection('messages')
@@ -43,6 +48,9 @@ export default function ChatScreen({route, navigation}) {
 
       });
     console.log('Added document with ID: ', res.id);
+
+    //messageListRef.scrollToEnd({animated: true});
+    this.refs['messageList'].scrollToEnd({animated: true});
   };
 
   const focusTextInput = () => {
@@ -129,6 +137,9 @@ export default function ChatScreen({route, navigation}) {
       <View style={styles.nonHeader}>
 
         <FlatList
+          ref={React.useRef('messageList')}
+
+          initialScrollIndex={0}
           style={styles.userList}
           data={messages}
           renderItem={({item, index}) => (
