@@ -7,7 +7,9 @@ import {summitBlue} from '../assets/colors';
 
 import auth from '@react-native-firebase/auth';
 
-export default function ChatMessage({message, nextMessage, members}) {
+import LinearGradient from 'react-native-linear-gradient';
+
+export default function ChatMessage({message, nextMessage, previousMessage, members}) {
 
   const formatTimestamp = (timestamp) => {
     var month = getMonth(timestamp);
@@ -85,16 +87,13 @@ export default function ChatMessage({message, nextMessage, members}) {
   }, []);
 
   const shouldDisplayTime = () => {
-    // if not the same user
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log('Checking if should display for message at ' + message.formattedTimestamp);
+    // if there is no next message, display time
     if (nextMessage == null) {
-      console.log('Yes, no next message');
       return true;
     }
 
+    // if not the same user, display time
     if (message.uid != nextMessage.data.uid) {
-      console.log('Yes, next message is different user');
       return true;
     }
     nextMessage.dateObject = new Date(nextMessage.data.createdAt.toDate());
@@ -105,10 +104,32 @@ export default function ChatMessage({message, nextMessage, members}) {
       && (message.dateObject.getMonth() == nextMessage.dateObject.getMonth())
       && (Math.abs(nextMessage.dateObject - message.dateObject) < 300000) //300000ms is 5 minutes
     ) {
-      console.log('No, same day and within 5 minutes');
       return false;
     }
-    console.log('No');
+    return true;
+  };
+
+  const shouldRoundTopCorner = () => {
+    // if no previous message, round top corner
+    if (previousMessage == null) {
+      return true;
+    }
+
+    // if not the same user, round top corner
+    if (message.uid != previousMessage.data.uid) {
+      return true;
+    }
+    previousMessage.dateObject = new Date(previousMessage.data.createdAt.toDate());
+
+    // if same day AND month, AND b/t 5 minutes -> do not round
+    if (
+        (message.dateObject.getDate() == previousMessage.dateObject.getDate())
+        && (message.dateObject.getMonth() == previousMessage.dateObject.getMonth())
+        && (Math.abs(message.dateObject - previousMessage.dateObject) < 300000) //300000ms is 5 minutes
+    ) {
+      return false;
+    }
+
     return true;
   };
 
@@ -139,29 +160,58 @@ export default function ChatMessage({message, nextMessage, members}) {
 
   return (
     <>
-      <View style={styles.rowContainer}>
+      <View style={[shouldDisplayTime(message.dateObject) ? styles.spacedRow : styles.rowContainer]}>
         <View style={styles.chatPersonImageContainer}>
           {!isThisSender &&  (
             <Image
               source={{ uri: sendingUser.photoURL }}
               style={styles.chatPersonImage}
-              resizeMode='contain'/>
+              />
             )
           }
         </View>
         <View style={styles.rightSide}>
+          <View>
           {!isThisSender && (
             <Text style={styles.authorStyle}>{sendingUser.displayName}</Text>
             )
           }
-          <TouchableOpacity
-            style={[styles.messageContainer, isThisSender ? styles.sentContainer : styles.receivedContainer]}>
-            <Text style={[styles.chatText, isThisSender ? styles.sentChatText : styles.receivedChatText]}>{message.msg}</Text>
-          </TouchableOpacity>
+          {isThisSender && (<LinearGradient
+            colors={['#4d79ff', '#1ac6ff']}
+            style={[styles.linearGradient,
+                  isThisSender ? styles.sentContainer : styles.receivedContainer,
+                  shouldRoundTopCorner() ? styles.roundedTopRight : styles.flatTopRight]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+          >
+            <TouchableOpacity
+              >
+              <Text style={[styles.chatText, isThisSender ? styles.sentChatText : styles.receivedChatText]}>{message.msg}</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          )}
 
+          {!isThisSender && (
+            <TouchableOpacity
+              style={[styles.messageContainer, styles.receivedContainer]}>
+              <Text style={[styles.chatText,
+                      isThisSender ? styles.sentChatText : styles.receivedChatText,
+                      shouldRoundTopCorner() ? styles.roundedTopLeft : styles.flatTopLeft]}>{message.msg}</Text>
+            </TouchableOpacity>
+          )}
+
+          </View>
+          {shouldDisplayTime(message.dateObject) && (
+            <Text style={[styles.messageDate,
+              isThisSender ? styles.sentDate : styles.receivedDate]}>
+              {message.formattedTimestamp}
+            </Text>)
+          }
         </View>
+
       </View>
-      {shouldDisplayTime(message.dateObject) && (<Text style={styles.messageDate}>{message.formattedTimestamp}</Text>)}
+
+
     </>
 
 
@@ -179,9 +229,21 @@ const styles = StyleSheet.create({
     //elevation: 2,
     paddingHorizontal: 20,
     paddingVertical: 10,
+    backgroundColor: 'white',
 
+    borderRadius: 20,
+    maxWidth: 300,
 
-    borderRadius: 8,
+  },
+  linearGradient: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    //borderRadius: 5,
+    //height: 200,
+    //width: 350,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
     maxWidth: 300,
   },
   authorStyle: {
@@ -189,20 +251,33 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     color: 'gray',
+    marginBottom: 5,
   },
   rowContainer: {
     flexDirection: 'row',
     //alignItems: 'flex-end',
-    //justifyContent: 'flex-start',
+    //justifyContent: 'flex-end',
     //borderWidth: 0.2,
     //borderColor: 'red',
-    marginVertical: 5,
+
+    //marginVertical: 5,
+    marginRight: 30,
+    marginBottom: 2,
+  },
+  spacedRow: {
+    flexDirection: 'row',
+    //alignItems: 'flex-end',
+    //justifyContent: 'flex-end',
+    //borderWidth: 0.2,
+    //borderColor: 'red',
+
+    marginBottom: 5,
     marginRight: 30,
   },
   chatPersonImageContainer: {
-    borderWidth: 0.5,
+    //borderWidth: 0.5,
     borderColor: 'black',
-    //flex: 1,
+    flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center', //horizontal
     //paddingLeft: 40,
@@ -215,6 +290,8 @@ const styles = StyleSheet.create({
     //borderWidth: 0.5,
     borderRadius: 250,
     borderColor: 'black',
+    marginBottom: 20,
+
   },
   chatText: {
     fontFamily: 'OpenSans-Regular',
@@ -230,27 +307,52 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     //marginVertical: 5,
-    //flex: 4,
+    flex: 4,
     //borderWidth: 0.5,
-    //borderColor: 'black',
+    borderColor: 'red',
     //display: 'flex',
     //flexDirection: 'row',
-    //alignSelf: 'flex-end',
+    alignSelf: 'flex-end',
+
+
   },
 
   sentContainer: {
-    backgroundColor: '#3d8ccc',
-
+    //backgroundColor: '#3d8ccc',
+    alignSelf: 'flex-end',
+    borderBottomRightRadius: 0,
   },
   receivedContainer: {
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
+    alignSelf: 'flex-start',
+    borderBottomLeftRadius: 0,
   },
   messageDate: {
     fontFamily: 'OpenSans-Regular',
     fontSize: 13,
-    textAlign: 'right',
-    marginTop: 0,
-    marginRight: 30,
+    //textAlign: 'right',
+    marginTop: 5,
+    //marginRight: 30,
     color: 'gray',
   },
+  sentDate: {
+    textAlign: 'right'
+  },
+  receivedDate: {
+    textAlign: 'left',
+  },
+  roundedTopRight: {
+    borderTopRightRadius: 20,
+  },
+  flatTopRight: {
+    borderTopRightRadius: 0,
+  },
+
+  roundedTopLeft: {
+    borderTopLeftRadius: 20,
+  },
+  flatTopLeft: {
+    borderTopLeftRadius: 0,
+  },
+
 });

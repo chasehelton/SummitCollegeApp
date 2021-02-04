@@ -39,6 +39,7 @@ import firestore from '@react-native-firebase/firestore';
 export default function App() {
   const [currentUser, setUser] = useState({}); // Auth object
   const [userDoc, setUserDoc] = useState({});
+  const [signInNeeded, setSignInNeeded] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -286,6 +287,7 @@ export default function App() {
         setIsAdmin(false);
         setInitialPage('Home');
       }
+      setSignInNeeded(false);
 
     }
 
@@ -300,10 +302,18 @@ export default function App() {
 
 
         } else {
+          console.log('User is null!');
           setUser(null);
+          setSignInNeeded(true);
           setIsAdmin(false);
           setIsLoading(false);
         }
+      }
+      if (!isMounted && signInNeeded) {
+        console.log('Already loaded once but need to do it cuz of new sign in?');
+        console.log('RELOADING');
+        DevSettings.reload();
+        getNecessaryData();
       }
     });
     return () => (isMounted = false); // use effect cleanup to set flag false, if unmounted
@@ -326,10 +336,10 @@ export default function App() {
       <AppContext.Provider value = {{ readingPlan: readingPlan, announcements: announcements,
         noAnnouncements: noAnnouncements, noReadingPlan: noReadingPlan, podcastState: podcastState,
         memorizationText: memorizationText, userDoc: userDoc}}>
-      {(podcastState.podcastTitle == '' || !readingPlanAttempted
-        || !announcements) && <SplashScreen />}
-      {(podcastState.podcastTitle != '' && readingPlanAttempted
-               && announcements) && (
+      {((podcastState.podcastTitle == '' || !readingPlanAttempted
+        || !announcements) && !signInNeeded) && <SplashScreen />}
+      {((podcastState.podcastTitle != '' && readingPlanAttempted
+               && announcements) || (signInNeeded && !readingPlanAttempted)) && (
         <NavigationContainer>
           {currentUser && (
             <Tab.Navigator

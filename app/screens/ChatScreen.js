@@ -13,8 +13,6 @@ export default function ChatScreen({route, navigation, props}) {
 
   // TODO:
   // 1. make a function that scrolls to the bottom on submit - won't work :(
-  // 2. remove the image if you are the one who sent the message
-  //    and left-align the date
   // 3. curve the bottom right corner if you sent it
   // 4. curve the bottom left corner if you did not send it
   // 5. try and do the gradient
@@ -48,6 +46,9 @@ export default function ChatScreen({route, navigation, props}) {
 
       });
     console.log('Added document with ID: ', res.id);
+
+    onChangeText('Send a message...');
+    Keyboard.dismiss(); // will this work?
 
     // SCROLLING DOES NOT WORK
     //messageListRef.scrollToEnd({animated: true});
@@ -126,7 +127,9 @@ export default function ChatScreen({route, navigation, props}) {
           style={styles.userList}
           data={messages}
           renderItem={({item, index}) => (
-            <ChatMessage message={item.data} nextMessage={messages[index + 1]} key={item.id} members={roomMembers} />
+            <ChatMessage message={item.data}
+              nextMessage={messages[index + 1]} previousMessage={messages[index - 1]}
+              key={item.id} members={roomMembers} />
 
           )}
           keyExtractor={(item) => item.id.toString()}
