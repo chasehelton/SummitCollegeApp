@@ -48,7 +48,7 @@ export default function ChatScreen({route, navigation, props}) {
     console.log('Added document with ID: ', res.id);
 
     onChangeText('Send a message...');
-    Keyboard.dismiss(); // will this work?
+    //Keyboard.dismiss(); // will this work?
 
     // SCROLLING DOES NOT WORK
     //messageListRef.scrollToEnd({animated: true});

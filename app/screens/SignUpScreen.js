@@ -86,7 +86,8 @@ export default function SignUpScreen({navigation}) {
   const createUserData = async () => {
     await firestore()
       .collection('users')
-      .add({
+      .doc(auth().currentUser.uid)
+      .set({
         firstName: first,
         lastName: last,
         email: email,
@@ -97,7 +98,7 @@ export default function SignUpScreen({navigation}) {
         displayName: first + ' ' + last,
         createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
         uid: auth().currentUser.uid,
-        photoURL: '',
+        photoURL: 'https://www.pngitem.com/pimgs/m/517-5177724_vector-transparent-stock-icon-svg-profile-user-profile.png',
         gender: gender,
       })
       .then(console.log('Successfully added the user to the database'))

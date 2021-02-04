@@ -11,6 +11,9 @@ import {
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import Header from '../components/Header';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import AppContext from '../components/AppContext.js';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -47,6 +50,8 @@ export default function PersonScreen({route, navigation}) {
 
   const downArrow = 'keyboard-arrow-down';
   const upArrow = 'keyboard-arrow-up';
+
+  const context = React.useContext(AppContext);
 
   const toggleManageAccount = () => {
     setManageAccountVisible(!manageAccountVisible);
@@ -138,8 +143,42 @@ export default function PersonScreen({route, navigation}) {
     }
   };
 
-  const createNewChat = () => {
+  const createNewChat = async () => {
     console.log('Creating new chat');
+    // create new chat between logged in user and the person here
+    // first, get uid's of both
+    var currentUser = auth().currentUser.uid;
+    var selectedUser = person.data.uid;
+    console.log("Selected user's uid: " + person.data.uid);
+
+    // create a new room with lastUpdated, name, photoURL, and add both uid's to the members array
+    const roomObj = {
+                          lastUpdated: firestore.Timestamp.fromDate(new Date()),
+                          name: 'Need Name here',
+                          photoURL: 'https://pbs.twimg.com/profile_images/607638188052480000/wlFtAOhB.png',
+                          members: [
+                            currentUser,
+                            selectedUser,
+                          ],
+                        };
+    const newRoom = await firestore().collection('rooms').add(roomObj);
+    context.userDoc.rooms.push(roomObj);
+
+    console.log('Added new room with ID: ', newRoom.id);
+
+    // save the new room's id and add this id to each user's rooms array
+    firestore().collection('users').doc(currentUser)
+      .update({
+        rooms: /*admin.*/firestore.FieldValue.arrayUnion(newRoom.id)
+      });
+    firestore().collection('users').doc(selectedUser)
+      .update({
+        rooms: /*admin.*/firestore.FieldValue.arrayUnion(newRoom.id)
+      });
+
+    // now navigate to that room?
+    // for now, navigate back to the community page and see what happens
+    navigation.pop(2);
   };
 
   return (

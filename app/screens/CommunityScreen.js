@@ -184,12 +184,14 @@ export default function CommunityScreen({navigation}) {
     const clickedRoom = rooms[index];
 
     // go ahead and get all the users associated with this room?
+
     console.log('First member of this room: ' + rooms[index].data.members[0]);
     console.log('All members: ' + rooms[index].data.members);
+
     const userSearchSnapshot = await firestore()
             .collection('users')
-            .where('uid', 'in', rooms[index].data.members)
-            .orderBy('firstName')
+            .where(firestore.FieldPath.documentId(), 'in', rooms[index].data.members)
+            //.orderBy('firstName')
             .get();
 
     if (userSearchSnapshot.empty) {
