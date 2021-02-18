@@ -15,7 +15,6 @@ export default function ChatScreen({route, navigation, props}) {
   // 1. make a function that scrolls to the bottom on submit - won't work :(
   // 3. curve the bottom right corner if you sent it
   // 4. curve the bottom left corner if you did not send it
-  // 5. try and do the gradient
   // 6. try and stretch/fill images that are weird sizes (like the fish)
   // 7. implement the image sending functionality
 
@@ -47,8 +46,14 @@ export default function ChatScreen({route, navigation, props}) {
       });
     console.log('Added document with ID: ', res.id);
 
+    // update the room's lastUpdated
+
     onChangeText('Send a message...');
     //Keyboard.dismiss(); // will this work?
+    await roomObject.ref.update({
+      createdAt: firestore.Timestamp.fromDate(new Date()),
+      // consider changing to FieldValue.serverTimestamp() b/c of timezone differences?
+    });
 
     // SCROLLING DOES NOT WORK
     //messageListRef.scrollToEnd({animated: true});
@@ -120,11 +125,14 @@ export default function ChatScreen({route, navigation, props}) {
 
 
       <View style={styles.nonHeader}>
+        {messages.length == 0 && (
+          <Text style={styles.noMessages}>{'No messages yet!'}</Text>
+        )}
 
         <FlatList
           ref={messsageListRef}
           initialScrollIndex={0}
-          style={styles.userList}
+          style={styles.messagesList}
           data={messages}
           renderItem={({item, index}) => (
             <ChatMessage message={item.data}
@@ -192,6 +200,7 @@ const styles = StyleSheet.create({
   nonHeader: {
     flex: 1,
     justifyContent: 'center',
+    marginTop: 20,
     //alignItems: 'center',
   },
   leftHeaderButton: {
@@ -237,6 +246,12 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     borderRadius: 5,
+  },
+  noMessages: {
+    marginTop: 30,
+    textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
+
   },
 
 });

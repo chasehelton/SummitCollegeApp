@@ -30,6 +30,7 @@ export default function AdminHomeScreen({navigation, route}) {
                 header: 'Students',
                 userType: TYPE_STUDENT,
                 isAdmin: true,
+                fromCommunity: false,
               },
             })
           }
@@ -45,6 +46,7 @@ export default function AdminHomeScreen({navigation, route}) {
                 header: 'Student Leaders',
                 userType: TYPE_LEADER,
                 isAdmin: true,
+                fromCommunity: false,
               },
             })
           }
@@ -60,6 +62,7 @@ export default function AdminHomeScreen({navigation, route}) {
                 header: 'Staff',
                 userType: TYPE_STAFF,
                 isAdmin: true,
+                fromCommunity: false,
               },
             })
           }
@@ -75,6 +78,7 @@ export default function AdminHomeScreen({navigation, route}) {
                 header: 'Directors',
                 userType: TYPE_DIRECTOR,
                 isAdmin: true,
+                fromCommunity: false,
               },
             })
           }

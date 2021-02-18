@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useState, useEffect} from 'react';
@@ -320,9 +320,11 @@ export default function App() {
   }, []);
 
   const getTabBarVisibility = (route) => {
-    const routeName = route.state
+    /*const routeName = route.state
       ? route.state.routes[route.state.index].name
-      : '';
+      : '';*/
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
+    console.log('Route name: ' + routeName);
 
     if (routeName === 'ChatScreen') {
       return false;

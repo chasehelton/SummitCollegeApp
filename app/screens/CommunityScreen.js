@@ -25,8 +25,13 @@ export default function CommunityScreen({navigation}) {
 
   const [selectedId, setSelectedId] = useState(null);
 
+  useEffect(() => {
+    setUpMemberObjects();
+  }, [rooms]);
+
   useLayoutEffect(() => {
     async function getRooms() {
+      setSelectedId('blank');
       // Create a reference with an initial file path and name
       //var storage = firebase.storage();
 
@@ -82,6 +87,12 @@ export default function CommunityScreen({navigation}) {
           });
           console.log('Count: ' + count);
           console.log('Actual-set rooms length: ' + tempRooms.length);
+
+          // go ahead and set the member objects up?
+
+          // ugh can't do this because need to call a firestore query, which requires
+          // await, and this part of this function is not asynchronous so it wouldn't work
+          // maybe try calling a separate new async function?
 
           // before setting the room, check AsyncStorage to see if each room has been read before or not...
           /*for (var i = 0; i < tempRooms.length; i++) {
@@ -188,7 +199,7 @@ export default function CommunityScreen({navigation}) {
     console.log('First member of this room: ' + rooms[index].data.members[0]);
     console.log('All members: ' + rooms[index].data.members);
 
-    const userSearchSnapshot = await firestore()
+    /*const userSearchSnapshot = await firestore()
             .collection('users')
             .where(firestore.FieldPath.documentId(), 'in', rooms[index].data.members)
             //.orderBy('firstName')
@@ -215,10 +226,28 @@ export default function CommunityScreen({navigation}) {
         ref: doc.ref,
       });
       count++;
-    });
-    console.log('Count: ' + count);
+    });*/
+
+    /*const tempUsers = [];
+    for (var i = 0; i < rooms[index].data.members.length; i++) {
+      const doc = await firestore()
+                  .collection('users')
+                  .doc(rooms[index].data.members)
+                  .get();
+      if (!doc.exists) {
+        console.log('Could not find user with uid: ' + rooms[index].data.members);
+      } else {
+        //console.log('Document data:', doc.data());
+        tempUsers.push({
+          data: doc.data(),
+          id: i,
+          ref: doc.ref,
+        });
+      }
+    }
+    //console.log('Count: ' + count);
     rooms[index].data.memberObjects = tempUsers;
-    console.log('Member objects?: ' + rooms[index].data.memberObjects);
+    console.log('Member objects?: ' + rooms[index].data.memberObjects);*/
 
     var path = readReceiptPrefix + rooms[index].ref.id;
     var readReceipt = await AsyncStorage.getItem(path);
@@ -226,7 +255,7 @@ export default function CommunityScreen({navigation}) {
       console.log('This has not been read before...');
       await AsyncStorage.setItem(path, 'y');
       rooms[index].read = true;
-      setSelectedId(rooms[index].id)
+      setSelectedId(rooms[index].id);
     }
     else {
       console.log('This has been read before!');
@@ -243,6 +272,34 @@ export default function CommunityScreen({navigation}) {
         roomRef: rooms[index].ref,
       },
     });
+  };
+
+  // TODO: reduce number of reads here - it is also slow to get each user one by one
+  const setUpMemberObjects = async () => {
+    if (rooms == null || rooms.length == 0) return;
+    for (var roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
+      const tempUsers = [];
+      for (var i = 0; i < rooms[roomIndex].data.members.length; i++) {
+        const doc = await firestore()
+                    .collection('users')
+                    .doc(rooms[roomIndex].data.members[i])
+                    .get();
+        if (!doc.exists) {
+          console.log('Could not find user with uid: ' + rooms[roomIndex].data.members[i]);
+        } else {
+          //console.log('Document data:', doc.data());
+          tempUsers.push({
+            data: doc.data(),
+            id: i,
+            ref: doc.ref,
+          });
+        }
+      }
+      rooms[roomIndex].data.memberObjects = tempUsers;
+      console.log('Member objects?: ' + rooms[roomIndex].data.memberObjects);
+    }
+    //console.log('Count: ' + count);
+
   };
 
   /*const sendMessage = async(e) => {
@@ -281,6 +338,7 @@ export default function CommunityScreen({navigation}) {
                              header: 'Community',
                              userType: Constants.TYPE_ALL,
                              isAdmin: false,
+                             fromCommunity: true,
                            },
                          })}>
           <Icon name="edit" type="feather" color={summitBlue} size={30} />

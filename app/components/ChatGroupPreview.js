@@ -51,8 +51,8 @@ export default function ChatGroupPreview({name, lastUpdated, photoURL, lastMessa
             style = {styles.roomPicture} />
       </View>
       <View style={styles.infoContainer} key="infoView">
-        {read && (<Text style={styles.groupName}>{name}</Text>)}
-        {!read && (<Text style={styles.groupNameUnread}>{name}</Text>)}
+        {read && (<Text numberOfLines={1} style={styles.groupName}>{name}</Text>)}
+        {!read && (<Text numberOfLines={1} style={styles.groupNameUnread}>{name}</Text>)}
         <Text numberOfLines={1} style={styles.groupText}>
           {lastMessage}
         </Text>
