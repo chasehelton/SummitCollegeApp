@@ -18,6 +18,7 @@ import {Icon} from 'react-native-elements';
 import CheckBox from '@react-native-community/checkbox';
 import {summitBlue} from '../assets/colors';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 import AppContext from '../components/AppContext.js';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
@@ -215,15 +216,24 @@ export default function DirectoryScreen({route, navigation}) {
       console.log('Adding selected user id: ' + selectedUsers[i].data.uid);
     }
 
+    // add this picture to the Firebase Storage
+    // Create a root reference
+    const reference = storage().ref('/group_pictures/' + response.fileName);
+
+    // uploads file
+    await reference.putFile(response.uri);
+    const url = await reference.getDownloadURL();
+
     // create a new room with lastUpdated, name, photoURL, and add both uid's to the members array
     const roomObj = {
       lastUpdated: firestore.Timestamp.fromDate(new Date()),
       name: newGroupName,
-      photoURL: 'https://pbs.twimg.com/profile_images/607638188052480000/wlFtAOhB.png',
+      photoURL: url, //'https://pbs.twimg.com/profile_images/607638188052480000/wlFtAOhB.png',
       members: userArray,
+      admin: auth().currentUser.uid,
     };
     const newRoom = await firestore().collection('rooms').add(roomObj);
-    context.userDoc.rooms.push(roomObj);
+    context.userDoc.rooms.push(newRoom.id);
 
     console.log('Added new room with ID: ', newRoom.id);
 
@@ -244,7 +254,7 @@ export default function DirectoryScreen({route, navigation}) {
   };
 
   const selectPicture = async () => {
-    ImagePicker.launchImageLibrary(
+    launchImageLibrary(
       {
         mediaType: 'photo',
         includeBase64: false,
@@ -587,7 +597,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     marginVertical: 25,
     fontFamily: 'OpenSans-Regular',
-
   },
   changePictureButton: {
     marginVertical: 30,

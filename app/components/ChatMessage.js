@@ -60,6 +60,8 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
 
   const text = message.msg; // check firebase?
 
+  const img = message.img;
+
   const uid = message.uid;
   message.formattedTimestamp = formatTimestamp(new Date(message.createdAt.toDate()));
   message.dateObject = new Date(message.createdAt.toDate());
@@ -186,7 +188,13 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
           >
             <TouchableOpacity
               >
-              <Text style={[styles.chatText, isThisSender ? styles.sentChatText : styles.receivedChatText]}>{message.msg}</Text>
+              {message.img && (
+                <Image style={styles.chatMessageImg} source={{uri: message.img}} />
+              )}
+              {message.msg && (
+                <Text style={[styles.chatText, isThisSender ? styles.sentChatText : styles.receivedChatText]}>{message.msg}</Text>
+              )}
+
             </TouchableOpacity>
           </LinearGradient>
           )}
@@ -194,9 +202,14 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
           {!isThisSender && (
             <TouchableOpacity
               style={[styles.messageContainer, styles.receivedContainer]}>
-              <Text style={[styles.chatText,
+              {message.img && (
+                <Image style={styles.chatMessageImg} source={{uri: message.img}} />
+              )}
+              {message.msg && (
+                <Text style={[styles.chatText,
                       isThisSender ? styles.sentChatText : styles.receivedChatText,
                       shouldRoundTopCorner() ? styles.roundedTopLeft : styles.flatTopLeft]}>{message.msg}</Text>
+              )}
             </TouchableOpacity>
           )}
 
@@ -353,6 +366,11 @@ const styles = StyleSheet.create({
   },
   flatTopLeft: {
     borderTopLeftRadius: 0,
+  },
+  chatMessageImg: {
+    width: 200,
+    height: 200,
+    padding: 25,
   },
 
 });

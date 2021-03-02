@@ -140,7 +140,7 @@ export default function CommunityScreen({navigation}) {
       });*/
     }
     getRooms();
-  }, []);
+  }, [context.userDoc.rooms]);
 
   const getMonth = (m) => {
     let month = '';
