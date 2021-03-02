@@ -37,23 +37,45 @@ const Auth = createStackNavigator();
 import firestore from '@react-native-firebase/firestore';
 
 export default function App() {
+  /** Authentication objects */
+
+  /** Current user object set from firebase's authentication */
   const [currentUser, setUser] = useState({}); // Auth object
+
+  /** Current user document object set from firebase's firestore */
   const [userDoc, setUserDoc] = useState({});
+
+  /** Flag indicating if user needs to sign in or not */
   const [signInNeeded, setSignInNeeded] = useState(false);
 
+  /** Flag indicating if initial load operations are still running */
   const [isLoading, setIsLoading] = useState(true);
+
+  /** Flag indicating if signed in user is an admin */
   const [isAdmin, setIsAdmin] = useState(false);
+
+  /** Name of the initial page */
   const [initialPage, setInitialPage] = useState('Home');
 
+  /** Array of announcements objects from firestore */
   const [announcements, setAnnouncements] = useState(null);
+
+  /** Flag indicating if there are no announcements */
   const [noAnnouncements, setNoAnnouncements] = useState(false);
 
+  /** Reading plan object downloaded from firebase */
   const [readingPlan, setReadingPlan] = useState(null);
+
+  /** Flag indicating if this no reading plan found for today in firestore */
   const [noReadingPlan, setNoReadingPlan] = useState(false);
+
+  /** Flag indicating if the app has tried to get the reading plan */
   const [readingPlanAttempted, setReadingPlanAttempted] = useState(false);
 
+  /** Memorization text for the reading plan, retrieved using the ESV API */
   const [memorizationText, setMemorizationText] = React.useState('');
 
+  /** Placeholder object for storing the javascript */
   const [podcastState, setPodcastState] = useState(
     {
       podcastTitle: "",
@@ -63,6 +85,7 @@ export default function App() {
     }
   );
 
+  /** Tab navigation icons */
   const images = {
     eventsImage: require('./assets/Icon-feather-calendar.png'),
     communityImage: require('./assets/Icon-feather-users.png'),
@@ -71,6 +94,10 @@ export default function App() {
     settingsImage: require('./assets/Icon-feather-settings.png'),
   };
 
+  /**
+   * Helper function to format date to YYYY-MM-DD
+   * @param date Date object
+  */
   const formatDate = (date) => {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
@@ -86,12 +113,10 @@ export default function App() {
     let isMounted = true; // note this flag denote mount status
     global.homeLoads = 0;
       console.log('Homeloads in App.js: ' + global.homeLoads);
-    //if (isMounted) storeData();
 
     async function getAnnouncements() {
       const announcementsQuery = await firestore()
         .collection('announcements');
-        //.get();
 
       const announcementsObserver = announcementsQuery.onSnapshot(announcementsSnapshot => {
         if (announcementsSnapshot === null ||
@@ -130,7 +155,6 @@ export default function App() {
       const keyDocQuery = await firestore()
         .collection('apiKeys')
         .doc('esv_key');
-        //.get();
       const keyDocObserver = keyDocQuery.onSnapshot(keyDocSnapshot => {
         if (!keyDocSnapshot.exists) {
           console.log('ESV key does not exist in firestore');
@@ -153,7 +177,6 @@ export default function App() {
       const readingPlanQuery = await firestore()
         .collection('readingPlan')
         .where('date', '==', formatDate(new Date()));
-        //.get();
 
       const readingPlanObserver = readingPlanQuery.onSnapshot(readingPlanSnapshot => {
         var source = readingPlanSnapshot.metadata.fromCache ? "local cache" : "server";
@@ -189,6 +212,7 @@ export default function App() {
       return () => {readingPlanObserver(); keyDocObserver();}
     }
 
+    // gets the podcast data through web scraping
     async function getPodcastData() {
       const cheerio = require("cheerio");
       const axios = require("axios");
