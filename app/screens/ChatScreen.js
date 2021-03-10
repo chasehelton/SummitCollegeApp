@@ -13,7 +13,7 @@ import {summitBlue} from '../assets/colors';
 
 export default function ChatScreen({route, navigation, props}) {
 
-  // TODO:
+  // TODO: add random thing here
   // 1. make a function that scrolls to the bottom on submit - won't work :(
   // 3. curve the bottom right corner if you sent it
   // 4. curve the bottom left corner if you did not send it
