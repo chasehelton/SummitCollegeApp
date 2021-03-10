@@ -76,11 +76,11 @@ export default function Announcement({navigation, timestamp, title, body}) {
         </View>
       */}
       <Icon
-        name="chevron-right"
+        name="trash-2"
         type="feather"
         color={summitBlue}
         style={{flex: 1,}}
-        size={35}
+        size={28}
       />
     </>
   );
