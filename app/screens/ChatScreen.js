@@ -1,18 +1,26 @@
 import React, {useLayoutEffect, useEffect, useState} from 'react';
-import {StyleSheet, Modal, Image, View, Text, FlatList, TouchableOpacity, Alert, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  Modal,
+  Image,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import {Icon} from 'react-native-elements';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-
 import Header from '../components/Header';
 import ChatMessage from '../components/ChatMessage';
 import {summitBlue} from '../assets/colors';
 
 export default function ChatScreen({route, navigation, props}) {
-
   // TODO: add random thing here
   // 1. make a function that scrolls to the bottom on submit - won't work :(
   // 3. curve the bottom right corner if you sent it
@@ -31,7 +39,6 @@ export default function ChatScreen({route, navigation, props}) {
   // 4. Leave a group
   // 5. Creator of the group designated as admin (admin attribute in table?)
   //
-
 
   const [formValue, setFormValue] = useState('');
   const [testMessage, setTestMessage] = useState(null);
@@ -52,13 +59,11 @@ export default function ChatScreen({route, navigation, props}) {
 
   const sendMessage = async () => {
     console.log('Room reference: ' + roomObject.ref);
-    const res = await roomObject.ref.collection('messages')
-      .add({
-        msg: sendMessageText,
-        createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
-        uid: auth().currentUser.uid,
-
-      });
+    const res = await roomObject.ref.collection('messages').add({
+      msg: sendMessageText,
+      createdAt: /*admin.*/ firestore.Timestamp.fromDate(new Date()),
+      uid: auth().currentUser.uid,
+    });
     console.log('Added document with ID: ', res.id);
 
     // update the room's lastUpdated
@@ -88,12 +93,10 @@ export default function ChatScreen({route, navigation, props}) {
         console.log('Did user cancel?: ' + response.didCancel);
         console.log('Response error message: ' + response.errorMessage);
         if (!response.didCancel) {
-
           console.log('Response uri: ' + response.uri);
           setResponse(response);
           setModalVisible(true);
         }
-
       },
     );
   };
@@ -103,13 +106,11 @@ export default function ChatScreen({route, navigation, props}) {
     await reference.putFile(response.uri);
     const url = await reference.getDownloadURL();
 
-    const res = await roomObject.ref.collection('messages')
-      .add({
-        img: url,
-        createdAt: /*admin.*/firestore.Timestamp.fromDate(new Date()),
-        uid: auth().currentUser.uid,
-
-      });
+    const res = await roomObject.ref.collection('messages').add({
+      img: url,
+      createdAt: /*admin.*/ firestore.Timestamp.fromDate(new Date()),
+      uid: auth().currentUser.uid,
+    });
     console.log('Added document with ID: ', res.id);
 
     // update the room's lastUpdated
@@ -129,67 +130,69 @@ export default function ChatScreen({route, navigation, props}) {
   };
 
   const focusTextInput = () => {
-    if (sendMessageText == 'Send a message...')
+    if (sendMessageText == 'Send a message...') {
       onChangeText('');
+    }
   };
 
   // CONSIDER USING FIREBASE HOOKS: https://github.com/csfrequency/react-firebase-hooks/tree/048dcb4553e7aecab5b8bf2a586d4349bb28998f/firestore
 
   useLayoutEffect(() => {
     async function getMessages() {
-      console.log("Selected room id: " + roomObject.ref.id);
+      console.log('Selected room id: ' + roomObject.ref.id);
       const query = await firestore()
         .collection('rooms')
         //.doc('C08P2GCtlOrcKDTYjdQD')
         .doc(roomObject.ref.id)
         .collection('messages')
         .orderBy('createdAt');
-        //.get();
-      const messagesObserver = query.onSnapshot(querySnapshot => {
-        console.log('Received query snapshot of size ' + querySnapshot.size);
-        try {
-          const tempMessages = [];
-          var count = 0;
-          querySnapshot.forEach(function (doc) {
-            console.log('Message: ' + doc.data().msg);
-            tempMessages.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
+      //.get();
+      const messagesObserver = query.onSnapshot(
+        (querySnapshot) => {
+          console.log('Received query snapshot of size ' + querySnapshot.size);
+          try {
+            const tempMessages = [];
+            var count = 0;
+            querySnapshot.forEach(function (doc) {
+              console.log('Message: ' + doc.data().msg);
+              tempMessages.push({
+                data: doc.data(),
+                id: count,
+                ref: doc.ref,
+              });
+              count++;
             });
-            count++;
-          });
-          console.log('Count: ' + count);
-          console.log('Actual-set messages length: ' + tempMessages.length);
-          setMessages(tempMessages);
-        } catch (error) {
-          Alert.alert('Error', 'Some bad error here: ' + error);
-        }
-      }, err => {
-        console.log('Encountered error: ' + err);
-      });
+            console.log('Count: ' + count);
+            console.log('Actual-set messages length: ' + tempMessages.length);
+            setMessages(tempMessages);
+          } catch (error) {
+            Alert.alert('Error', 'Some bad error here: ' + error);
+          }
+        },
+        (err) => {
+          console.log('Encountered error: ' + err);
+        },
+      );
     }
     getMessages();
   }, []);
 
   return (
     <View style={styles.container}>
-
       <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.leftHeaderButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="chevron-left" type="feather" color='black' size={35} />
+          <Icon name="chevron-left" type="feather" color="black" size={35} />
         </TouchableOpacity>
         <Text style={styles.title}>{headerText}</Text>
-        <TouchableOpacity
-          style={styles.rightHeaderButton}
-          >
-          <Image style={styles.groupPicture} source={{uri: roomObject.data.photoURL}} />
+        <TouchableOpacity style={styles.rightHeaderButton}>
+          <Image
+            style={styles.groupPicture}
+            source={{uri: roomObject.data.photoURL}}
+          />
         </TouchableOpacity>
-
       </View>
-
 
       <View style={styles.nonHeader}>
         {messages.length == 0 && (
@@ -202,10 +205,13 @@ export default function ChatScreen({route, navigation, props}) {
           style={styles.messagesList}
           data={messages}
           renderItem={({item, index}) => (
-            <ChatMessage message={item.data}
-              nextMessage={messages[index + 1]} previousMessage={messages[index - 1]}
-              key={item.id} members={roomMembers} />
-
+            <ChatMessage
+              message={item.data}
+              nextMessage={messages[index + 1]}
+              previousMessage={messages[index - 1]}
+              key={item.id}
+              members={roomMembers}
+            />
           )}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -213,16 +219,13 @@ export default function ChatScreen({route, navigation, props}) {
         <View style={styles.bottomBar}>
           <TouchableOpacity
             style={styles.multimediaButton}
-            onPress={() =>
-              selectImage()
-            }
-            >
+            onPress={() => selectImage()}>
             <Icon name="image" type="feather" color={summitBlue} size={30} />
           </TouchableOpacity>
 
           <TextInput
             style={styles.chatInput}
-            onChangeText={text => onChangeText(text)}
+            onChangeText={(text) => onChangeText(text)}
             value={sendMessageText}
             //clearTextOnFocus={true}
             multiline={true}
@@ -230,14 +233,10 @@ export default function ChatScreen({route, navigation, props}) {
           />
 
           <TouchableOpacity
-            onPress={() =>
-              sendMessage()
-            }
+            onPress={() => sendMessage()}
             style={styles.sendButton}>
-
             <Icon name="send" type="feather" color={summitBlue} size={30} />
           </TouchableOpacity>
-
         </View>
 
         <Modal
@@ -247,8 +246,7 @@ export default function ChatScreen({route, navigation, props}) {
           onRequestClose={() => {
             console.log('Modal has been closed.');
             setModalVisible(!modalVisible);
-          }}
-        >
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>{'Image:'}</Text>
@@ -259,35 +257,28 @@ export default function ChatScreen({route, navigation, props}) {
 
               <TouchableOpacity
                 style={styles.changePictureButton}
-                onPress={() => selectPicture()}
-              >
+                onPress={() => selectPicture()}>
                 <Text style={styles.modalText}>{'Change Picture'}</Text>
               </TouchableOpacity>
 
               <View style={styles.bottomRowModal}>
-
-                  <TouchableOpacity
-                    style={[styles.modalButton,
-                      styles.sendImageButton]}
-                    onPress={() => sendImageMessage()}
-                  >
-                    <Text style={styles.modalButtonText}>{'Send Image'}</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.sendImageButton]}
+                  onPress={() => sendImageMessage()}>
+                  <Text style={styles.modalButtonText}>{'Send Image'}</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.modalButton, styles.buttonClose]}
-                  onPress={() => setModalVisible(false)}
-                >
+                  onPress={() => setModalVisible(false)}>
                   <Text style={styles.modalButtonText}>{'Cancel'}</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </Modal>
-
       </View>
     </View>
-
   );
 }
 
@@ -332,7 +323,7 @@ const styles = StyleSheet.create({
   },
 
   bottomBar: {
-    //height: 50,
+    height: 85,
     width: '100%',
     backgroundColor: 'white',
     flexDirection: 'row',
@@ -366,26 +357,24 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
-
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
-
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     borderWidth: 2,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
   },
   bottomRowModal: {
@@ -405,14 +394,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   modalButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
     fontFamily: 'OpenSans-Bold',
   },
   groupNameInput: {
@@ -437,5 +426,4 @@ const styles = StyleSheet.create({
     height: 200,
     marginHorizontal: 50,
   },
-
 });

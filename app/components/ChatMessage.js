@@ -9,13 +9,17 @@ import auth from '@react-native-firebase/auth';
 
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function ChatMessage({message, nextMessage, previousMessage, members}) {
-
+export default function ChatMessage({
+  message,
+  nextMessage,
+  previousMessage,
+  members,
+}) {
   const formatTimestamp = (timestamp) => {
     var month = getMonth(timestamp);
     var day = getDay(timestamp);
     var time = getTime(timestamp);
-    var date =  month + ' ' + day;
+    var date = month + ' ' + day;
 
     return date + ', ' + time;
   };
@@ -45,7 +49,7 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
 
   const getTime = (date) => {
     var newDate = new Date(date);
-    var timeString = newDate.toTimeString().substr(0,6);
+    var timeString = newDate.toTimeString().substr(0, 6);
     var timeArray = timeString.split(':');
     var hours = Number(timeArray[0]);
     var minutes = Number(timeArray[1]);
@@ -63,9 +67,10 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
   const img = message.img;
 
   const uid = message.uid;
-  message.formattedTimestamp = formatTimestamp(new Date(message.createdAt.toDate()));
+  message.formattedTimestamp = formatTimestamp(
+    new Date(message.createdAt.toDate()),
+  );
   message.dateObject = new Date(message.createdAt.toDate());
-
 
   const isThisSender = message.uid === auth().currentUser.uid;
 
@@ -85,7 +90,6 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
     }
 
     getUser();
-
   }, []);
 
   const shouldDisplayTime = () => {
@@ -102,9 +106,9 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
 
     // if the same day AND month, see if between 5 minutes
     if (
-      (message.dateObject.getDate() == nextMessage.dateObject.getDate())
-      && (message.dateObject.getMonth() == nextMessage.dateObject.getMonth())
-      && (Math.abs(nextMessage.dateObject - message.dateObject) < 300000) //300000ms is 5 minutes
+      message.dateObject.getDate() == nextMessage.dateObject.getDate() &&
+      message.dateObject.getMonth() == nextMessage.dateObject.getMonth() &&
+      Math.abs(nextMessage.dateObject - message.dateObject) < 300000 //300000ms is 5 minutes
     ) {
       return false;
     }
@@ -121,13 +125,15 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
     if (message.uid != previousMessage.data.uid) {
       return true;
     }
-    previousMessage.dateObject = new Date(previousMessage.data.createdAt.toDate());
+    previousMessage.dateObject = new Date(
+      previousMessage.data.createdAt.toDate(),
+    );
 
     // if same day AND month, AND b/t 5 minutes -> do not round
     if (
-        (message.dateObject.getDate() == previousMessage.dateObject.getDate())
-        && (message.dateObject.getMonth() == previousMessage.dateObject.getMonth())
-        && (Math.abs(message.dateObject - previousMessage.dateObject) < 300000) //300000ms is 5 minutes
+      message.dateObject.getDate() == previousMessage.dateObject.getDate() &&
+      message.dateObject.getMonth() == previousMessage.dateObject.getMonth() &&
+      Math.abs(message.dateObject - previousMessage.dateObject) < 300000 //300000ms is 5 minutes
     ) {
       return false;
     }
@@ -162,78 +168,104 @@ export default function ChatMessage({message, nextMessage, previousMessage, memb
 
   return (
     <>
-      <View style={[shouldDisplayTime(message.dateObject) ? styles.spacedRow : styles.rowContainer]}>
+      <View
+        style={[
+          shouldDisplayTime(message.dateObject)
+            ? styles.spacedRow
+            : styles.rowContainer,
+        ]}>
         <View style={styles.chatPersonImageContainer}>
-          {!isThisSender &&  (
+          {!isThisSender && (
             <Image
-              source={{ uri: sendingUser.photoURL }}
+              source={{uri: sendingUser.photoURL}}
               style={styles.chatPersonImage}
-              />
-            )
-          }
+            />
+          )}
         </View>
         <View style={styles.rightSide}>
           <View>
-          {!isThisSender && (
-            <Text style={styles.authorStyle}>{sendingUser.displayName}</Text>
-            )
-          }
-          {isThisSender && (<LinearGradient
-            colors={['#4d79ff', '#1ac6ff']}
-            style={[styles.linearGradient,
-                  isThisSender ? styles.sentContainer : styles.receivedContainer,
-                  shouldRoundTopCorner() ? styles.roundedTopRight : styles.flatTopRight]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
-          >
-            <TouchableOpacity
-              >
-              {message.img && (
-                <Image style={styles.chatMessageImg} source={{uri: message.img}} />
-              )}
-              {message.msg && (
-                <Text style={[styles.chatText, isThisSender ? styles.sentChatText : styles.receivedChatText]}>{message.msg}</Text>
-              )}
+            {!isThisSender && (
+              <Text style={styles.authorStyle}>{sendingUser.displayName}</Text>
+            )}
+            {isThisSender && (
+              <LinearGradient
+                colors={['#4d79ff', '#1ac6ff']}
+                style={[
+                  styles.linearGradient,
+                  isThisSender
+                    ? styles.sentContainer
+                    : styles.receivedContainer,
+                  shouldRoundTopCorner()
+                    ? styles.roundedTopRight
+                    : styles.flatTopRight,
+                ]}
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}>
+                <TouchableOpacity>
+                  {message.img && (
+                    <Image
+                      style={styles.chatMessageImg}
+                      source={{uri: message.img}}
+                    />
+                  )}
+                  {message.msg && (
+                    <Text
+                      style={[
+                        styles.chatText,
+                        isThisSender
+                          ? styles.sentChatText
+                          : styles.receivedChatText,
+                      ]}>
+                      {message.msg}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </LinearGradient>
+            )}
 
-            </TouchableOpacity>
-          </LinearGradient>
-          )}
-
-          {!isThisSender && (
-            <TouchableOpacity
-              style={[styles.messageContainer, styles.receivedContainer]}>
-              {message.img && (
-                <Image style={styles.chatMessageImg} source={{uri: message.img}} />
-              )}
-              {message.msg && (
-                <Text style={[styles.chatText,
-                      isThisSender ? styles.sentChatText : styles.receivedChatText,
-                      shouldRoundTopCorner() ? styles.roundedTopLeft : styles.flatTopLeft]}>{message.msg}</Text>
-              )}
-            </TouchableOpacity>
-          )}
-
+            {!isThisSender && (
+              <TouchableOpacity
+                style={[styles.messageContainer, styles.receivedContainer]}>
+                {message.img && (
+                  <Image
+                    style={styles.chatMessageImg}
+                    source={{uri: message.img}}
+                  />
+                )}
+                {message.msg && (
+                  <Text
+                    style={[
+                      styles.chatText,
+                      isThisSender
+                        ? styles.sentChatText
+                        : styles.receivedChatText,
+                      shouldRoundTopCorner()
+                        ? styles.roundedTopLeft
+                        : styles.flatTopLeft,
+                    ]}>
+                    {message.msg}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            )}
           </View>
           {shouldDisplayTime(message.dateObject) && (
-            <Text style={[styles.messageDate,
-              isThisSender ? styles.sentDate : styles.receivedDate]}>
+            <Text
+              style={[
+                styles.messageDate,
+                isThisSender ? styles.sentDate : styles.receivedDate,
+              ]}>
               {message.formattedTimestamp}
-            </Text>)
-          }
+            </Text>
+          )}
         </View>
-
       </View>
-
-
     </>
-
-
   );
 }
 
 const styles = StyleSheet.create({
   messageContainer: {
-
     //marginTop: 10,
     //shadowOffset: {height: 5, width: 5},
     //shadowOpacity: 0.15,
@@ -246,7 +278,6 @@ const styles = StyleSheet.create({
 
     borderRadius: 20,
     maxWidth: 300,
-
   },
   linearGradient: {
     alignItems: 'center',
@@ -304,7 +335,6 @@ const styles = StyleSheet.create({
     borderRadius: 250,
     borderColor: 'black',
     marginBottom: 20,
-
   },
   chatText: {
     fontFamily: 'OpenSans-Regular',
@@ -326,8 +356,6 @@ const styles = StyleSheet.create({
     //display: 'flex',
     //flexDirection: 'row',
     alignSelf: 'flex-end',
-
-
   },
 
   sentContainer: {
@@ -349,7 +377,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   sentDate: {
-    textAlign: 'right'
+    textAlign: 'right',
   },
   receivedDate: {
     textAlign: 'left',
@@ -372,5 +400,4 @@ const styles = StyleSheet.create({
     height: 200,
     padding: 25,
   },
-
 });

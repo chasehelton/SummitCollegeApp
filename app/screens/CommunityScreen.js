@@ -1,32 +1,36 @@
+/* eslint-disable curly */
 import React, {useLayoutEffect, useEffect, useState} from 'react';
-import {Image, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import {summitBlue} from '../assets/colors';
 
 import storage from '@react-native-firebase/storage';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Header from '../components/Header';
-import ChatMessage from '../components/ChatMessage';
 import ChatGroupPreview from '../components/ChatGroupPreview';
 import AppContext from '../components/AppContext.js';
 
 import * as Constants from '../constants/userTypeConstants';
 
 export default function CommunityScreen({navigation}) {
-
+  const context = React.useContext(AppContext);
   const [rooms, setRooms] = useState([]);
   const readReceiptPrefix = '@roomReadRec-';
-
-  const context = React.useContext(AppContext);
 
   const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     setUpMemberObjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rooms]);
 
   useLayoutEffect(() => {
@@ -39,7 +43,7 @@ export default function CommunityScreen({navigation}) {
       try {
         storageKeys = await AsyncStorage.getAllKeys();
         console.log('Storage keys: ' + storageKeys);
-      } catch(e) {
+      } catch (e) {
         // read key error
         console.log('Error reading AsyncStorage keys: ' + e);
       }
@@ -49,53 +53,54 @@ export default function CommunityScreen({navigation}) {
       const roomsQuery = await firestore()
         .collection('rooms')
         // this MAY not work with more than 10 rooms....
-        .where(firestore.FieldPath.documentId(), 'in', context.userDoc.rooms)
-        //.orderBy('lastUpdated');
-        //.get();
-        //.doc('C08P2GCtlOrcKDTYjdQD')
-        //.collection('messages')
-        //.orderBy('createdAt');
-        //.get();
-      const roomsObserver = roomsQuery.onSnapshot(roomsSnapshot => {
-        console.log('Received room snapshot of size ' + roomsSnapshot.size);
-        try {
-          const tempRooms = [];
-          var count = 0;
-          var storageRef = storage();
-          roomsSnapshot.forEach(function (doc) {
-            console.log('Room: ' + doc.data().name);
-            console.log('Last updated: ' + doc.data().lastUpdated.toDate());
-            // Create a reference from a Google Cloud Storage URI
-            //var gsReference = storageRef.refFromURL(doc.data().photoURL);
-            //var newURL = /*await*/ gsReference.getDownloadURL().then(function(url) {
-            /*}).catch(function(error) {
+        .where(firestore.FieldPath.documentId(), 'in', context.userDoc.rooms);
+      //.orderBy('lastUpdated');
+      //.get();
+      //.doc('C08P2GCtlOrcKDTYjdQD')
+      //.collection('messages')
+      //.orderBy('createdAt');
+      //.get();
+      const roomsObserver = roomsQuery.onSnapshot(
+        (roomsSnapshot) => {
+          console.log('Received room snapshot of size ' + roomsSnapshot.size);
+          try {
+            const tempRooms = [];
+            var count = 0;
+            roomsSnapshot.forEach(function (doc) {
+              console.log('Room: ' + doc.data().name);
+              console.log('Last updated: ' + doc.data().lastUpdated.toDate());
+              // Create a reference from a Google Cloud Storage URI
+              //var gsReference = storageRef.refFromURL(doc.data().photoURL);
+              //var newURL = /*await*/ gsReference.getDownloadURL().then(function(url) {
+              /*}).catch(function(error) {
               // Handle any errors
               console.log("Error getting download url: " + error);
             });*/
-            console.log('Read?: ' + storageKeys.includes(readReceiptPrefix + doc.ref.id));
+              console.log(
+                'Read?: ' +
+                  storageKeys.includes(readReceiptPrefix + doc.ref.id),
+              );
 
-            tempRooms.push({
-              data: doc.data(),
-              id: count,
-              ref: doc.ref,
-              read: storageKeys.includes(readReceiptPrefix + doc.ref.id),
+              tempRooms.push({
+                data: doc.data(),
+                id: count,
+                ref: doc.ref,
+                read: storageKeys.includes(readReceiptPrefix + doc.ref.id),
+              });
+
+              count++;
             });
+            console.log('Count: ' + count);
+            console.log('Actual-set rooms length: ' + tempRooms.length);
 
-            count++;
+            // go ahead and set the member objects up?
 
+            // ugh can't do this because need to call a firestore query, which requires
+            // await, and this part of this function is not asynchronous so it wouldn't work
+            // maybe try calling a separate new async function?
 
-          });
-          console.log('Count: ' + count);
-          console.log('Actual-set rooms length: ' + tempRooms.length);
-
-          // go ahead and set the member objects up?
-
-          // ugh can't do this because need to call a firestore query, which requires
-          // await, and this part of this function is not asynchronous so it wouldn't work
-          // maybe try calling a separate new async function?
-
-          // before setting the room, check AsyncStorage to see if each room has been read before or not...
-          /*for (var i = 0; i < tempRooms.length; i++) {
+            // before setting the room, check AsyncStorage to see if each room has been read before or not...
+            /*for (var i = 0; i < tempRooms.length; i++) {
             var path = readReceiptPrefix + tempRooms[i].ref.id;
             var readReceipt =  AsyncStorage.getItem(path);
             if (readReceipt) {
@@ -104,14 +109,15 @@ export default function CommunityScreen({navigation}) {
             }
           }*/
 
-          setRooms(tempRooms);
-
-        } catch (error) {
-          Alert.alert('Error', 'Some bad error here: ' + error);
-        }
-      }, err => {
-        console.log('Encountered error: ' + err);
-      });
+            setRooms(tempRooms);
+          } catch (error) {
+            Alert.alert('Error', 'Some bad error here: ' + error);
+          }
+        },
+        (err) => {
+          console.log('Encountered error: ' + err);
+        },
+      );
 
       return () => roomsObserver();
 
@@ -163,9 +169,9 @@ export default function CommunityScreen({navigation}) {
   // 'date' is a JS date object
   const displayTime = (date) => {
     var today = new Date();
-    var sameYear = today.getFullYear() == date.getFullYear();
-    var sameMonth = today.getMonth() == date.getMonth();
-    var sameDayOfMonth = today.getDate() == date.getDate();
+    var sameYear = today.getFullYear() === date.getFullYear();
+    var sameMonth = today.getMonth() === date.getMonth();
+    var sameDayOfMonth = today.getDate() === date.getDate();
     if (sameYear && sameMonth && sameDayOfMonth) {
       // this is the same day!
       // so return the time like '11:05 AM'
@@ -178,21 +184,23 @@ export default function CommunityScreen({navigation}) {
       timeValue += minutes < 10 ? ':0' + minutes : ':' + minutes;
       timeValue += hours >= 12 ? ' PM' : ' AM';
       return timeValue;
-    }
-    else if (sameYear) {
+    } else if (sameYear) {
       //so just display the Month and Day
       return getMonth(date.getMonth() + 1) + ' ' + date.getDate();
-    }
-    else {
+    } else {
       // display month day and year
-      return getMonth(date.getMonth() + 1) + ' ' + date.getDate()
-        + ', ' + date.getFullYear();
+      return (
+        getMonth(date.getMonth() + 1) +
+        ' ' +
+        date.getDate() +
+        ', ' +
+        date.getFullYear()
+      );
     }
   };
 
   const selectRoom = async (index) => {
     console.log('Room clicked, index: ' + index);
-    const clickedRoom = rooms[index];
 
     // go ahead and get all the users associated with this room?
 
@@ -256,8 +264,7 @@ export default function CommunityScreen({navigation}) {
       await AsyncStorage.setItem(path, 'y');
       rooms[index].read = true;
       setSelectedId(rooms[index].id);
-    }
-    else {
+    } else {
       console.log('This has been read before!');
     }
 
@@ -276,16 +283,18 @@ export default function CommunityScreen({navigation}) {
 
   // TODO: reduce number of reads here - it is also slow to get each user one by one
   const setUpMemberObjects = async () => {
-    if (rooms == null || rooms.length == 0) return;
+    if (rooms == null || rooms.length === 0) return;
     for (var roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
       const tempUsers = [];
       for (var i = 0; i < rooms[roomIndex].data.members.length; i++) {
         const doc = await firestore()
-                    .collection('users')
-                    .doc(rooms[roomIndex].data.members[i])
-                    .get();
+          .collection('users')
+          .doc(rooms[roomIndex].data.members[i])
+          .get();
         if (!doc.exists) {
-          console.log('Could not find user with uid: ' + rooms[roomIndex].data.members[i]);
+          console.log(
+            'Could not find user with uid: ' + rooms[roomIndex].data.members[i],
+          );
         } else {
           //console.log('Document data:', doc.data());
           tempUsers.push({
@@ -299,7 +308,6 @@ export default function CommunityScreen({navigation}) {
       console.log('Member objects?: ' + rooms[roomIndex].data.memberObjects);
     }
     //console.log('Count: ' + count);
-
   };
 
   /*const sendMessage = async(e) => {
@@ -320,30 +328,30 @@ export default function CommunityScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-
-
       <View style={styles.headerContainer}>
-
         <TouchableOpacity
           style={styles.leftHeaderButton}
-          onPress={() => navigation.goBack()}>
+          onPress={() => {
+            console.log('display list');
+          }}>
           <Icon name="list" type="feather" color={summitBlue} size={30} />
         </TouchableOpacity>
         <Text style={styles.title}>{'Community'}</Text>
         <TouchableOpacity
           style={styles.rightHeaderButton}
-          onPress={() => navigation.navigate('Community', {
-                           screen: 'Directory',
-                           params: {
-                             header: 'Community',
-                             userType: Constants.TYPE_ALL,
-                             isAdmin: false,
-                             fromCommunity: true,
-                           },
-                         })}>
+          onPress={() =>
+            navigation.navigate('Community', {
+              screen: 'Directory',
+              params: {
+                header: 'Community',
+                userType: Constants.TYPE_ALL,
+                isAdmin: false,
+                fromCommunity: true,
+              },
+            })
+          }>
           <Icon name="edit" type="feather" color={summitBlue} size={30} />
         </TouchableOpacity>
-
       </View>
 
       <View style={styles.nonHeader}>
@@ -357,19 +365,19 @@ export default function CommunityScreen({navigation}) {
           renderItem={({item, index}) => (
             <TouchableOpacity
               style={styles.roomContainer}
-              onPress={() => selectRoom(index)}
-              >
-              <ChatGroupPreview name={item.data.name}
-               lastUpdated={displayTime(item.data.lastUpdated.toDate())}
-               photoURL={item.data.photoURL}
-               lastMessage={'This is a preview of the last message!'}
-               read={item.read}
-               key={item.id} />
+              onPress={() => selectRoom(index)}>
+              <ChatGroupPreview
+                name={item.data.name}
+                lastUpdated={displayTime(item.data.lastUpdated.toDate())}
+                photoURL={item.data.photoURL}
+                lastMessage={'This is a preview of the last message!'}
+                read={item.read}
+                key={item.id}
+              />
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id.toString()}
         />
-
       </View>
     </View>
   );

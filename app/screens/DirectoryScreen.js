@@ -33,15 +33,14 @@ const TYPE_ALL = 5;
 
 const Item = ({title, index, photoURL}) => (
   <>
-  <View style={styles.photoContainer} key="photoView">
-    <Image source = {{uri: photoURL}}
-        style = {styles.userPicture} />
-  </View>
-  <View style={{ flex: 6, }}>
-    <Text key={index} style={styles.itemText}>
-      {title}
-    </Text>
-  </View>
+    <View style={styles.photoContainer} key="photoView">
+      <Image source={{uri: photoURL}} style={styles.userPicture} />
+    </View>
+    <View style={{flex: 6}}>
+      <Text key={index} style={styles.itemText}>
+        {title}
+      </Text>
+    </View>
   </>
 );
 
@@ -58,7 +57,9 @@ export default function DirectoryScreen({route, navigation}) {
   const [selectedFlag, setSelectedFlag] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
-  const [newGroupPicLink, setNewGroupPicLink] = useState('https://pbs.twimg.com/profile_images/607638188052480000/wlFtAOhB.png');
+  const [newGroupPicLink, setNewGroupPicLink] = useState(
+    'https://pbs.twimg.com/profile_images/607638188052480000/wlFtAOhB.png',
+  );
   const [response, setResponse] = React.useState(null);
 
   const context = React.useContext(AppContext);
@@ -75,56 +76,59 @@ export default function DirectoryScreen({route, navigation}) {
       console.log('Search type: ' + searchType);
       var userSearchQuery = null;
       if (userType === TYPE_ALL)
-        userSearchQuery = await firestore().collection('users').orderBy('firstName');
-      else userSearchQuery = await firestore()
-        .collection('users')
-        .where('type', '==', searchType)
-        .orderBy('firstName');
-        //.get();
+        userSearchQuery = await firestore()
+          .collection('users')
+          .orderBy('firstName');
+      else
+        userSearchQuery = await firestore()
+          .collection('users')
+          .where('type', '==', searchType)
+          .orderBy('firstName');
+      //.get();
 
+      const userSearchObserver = userSearchQuery.onSnapshot(
+        (userSearchSnapshot) => {
+          if (userSearchSnapshot.empty) {
+            Alert.alert('Some error here for empty snapshot');
+            return null;
+          }
 
-      const userSearchObserver = userSearchQuery.onSnapshot(userSearchSnapshot => {
-        if (userSearchSnapshot.empty) {
-          Alert.alert('Some error here for empty snapshot');
-          return null;
-        }
+          console.log('Result size: ' + userSearchSnapshot.size);
 
-        console.log('Result size: ' + userSearchSnapshot.size);
+          if (userSearchSnapshot.size === 0) {
+            Alert.alert('No users found'); // with the email: ' + email);
+            return null;
+          }
+          if (userSearchSnapshot == null) console.log('Snapshot is null');
 
-        if (userSearchSnapshot.size === 0) {
-          Alert.alert('No users found'); // with the email: ' + email);
-          return null;
-        }
-        if (userSearchSnapshot == null) console.log('Snapshot is null');
-
-        try {
-          const tempUsers = [];
-          const tempCheckboxes = [];
-          var count = 0;
-          userSearchSnapshot.forEach(function (doc) {
-            // if this is me, don't add?
-            if (doc.id != auth().currentUser.uid) {
-              tempUsers.push({
-                data: doc.data(),
-                id: count,
-                ref: doc.ref,
-                checked: false,
-              });
-              count++;
-              tempCheckboxes.push(false);
-            }
-            else {
-              console.log('Found the existing user in the users DB');
-            }
-          });
-          console.log('Count: ' + count);
-          console.log('Actual-set user length: ' + tempUsers.length);
-          setUsers(tempUsers);
-          setCheckBoxStateArray(tempCheckboxes);
-        } catch (error) {
-          Alert.alert('Error', 'Some bad error here: ' + error);
-        }
-      });
+          try {
+            const tempUsers = [];
+            const tempCheckboxes = [];
+            var count = 0;
+            userSearchSnapshot.forEach(function (doc) {
+              // if this is me, don't add?
+              if (doc.id != auth().currentUser.uid) {
+                tempUsers.push({
+                  data: doc.data(),
+                  id: count,
+                  ref: doc.ref,
+                  checked: false,
+                });
+                count++;
+                tempCheckboxes.push(false);
+              } else {
+                console.log('Found the existing user in the users DB');
+              }
+            });
+            console.log('Count: ' + count);
+            console.log('Actual-set user length: ' + tempUsers.length);
+            setUsers(tempUsers);
+            setCheckBoxStateArray(tempCheckboxes);
+          } catch (error) {
+            Alert.alert('Error', 'Some bad error here: ' + error);
+          }
+        },
+      );
 
       return () => userSearchObserver();
     }
@@ -150,8 +154,7 @@ export default function DirectoryScreen({route, navigation}) {
       var index = selectedUsers.indexOf(item);
       console.log('Index: ' + index);
       var tempSelectedUsers = selectedUsers;
-      if (index == -1)
-        tempSelectedUsers.push(item);
+      if (index == -1) tempSelectedUsers.push(item);
       else tempSelectedUsers.splice(index, 1);
       setSelectedUsers(tempSelectedUsers);
       setSelectedFlag(!selectedFlag);
@@ -193,15 +196,12 @@ export default function DirectoryScreen({route, navigation}) {
   const checkPhotoURL = (url) => {
     if (url == null || url == '') {
       return 'https://www.pngitem.com/pimgs/m/517-5177724_vector-transparent-stock-icon-svg-profile-user-profile.png';
-    }
-    else return url;
+    } else return url;
   };
 
   // TODO: add this as a button at the top of the page that only appears if fromCommunity is true!
   const createNewChat = async () => {
-
-    if (newGroupName == '' || newGroupName == 'Group Name')
-      return;
+    if (newGroupName == '' || newGroupName == 'Group Name') return;
 
     console.log('Creating new chat');
 
@@ -233,24 +233,28 @@ export default function DirectoryScreen({route, navigation}) {
       admin: auth().currentUser.uid,
     };
     const newRoom = await firestore().collection('rooms').add(roomObj);
+    if (!context.userDoc.rooms) context.userDoc.rooms = [];
     context.userDoc.rooms.push(newRoom.id);
 
     console.log('Added new room with ID: ', newRoom.id);
 
     // save the new room's id and add this id to each user's rooms array
     for (var i = 0; i < userArray.length; i++) {
-      firestore().collection('users').doc(userArray[i])
+      firestore()
+        .collection('users')
+        .doc(userArray[i])
         .update({
-          rooms: /*admin.*/firestore.FieldValue.arrayUnion(newRoom.id)
+          rooms: /*admin.*/ firestore.FieldValue.arrayUnion(newRoom.id),
         });
     }
     setModalVisible(false);
 
-
     // now navigate to that room?
     // for now, navigate back to the community page and see what happens
     navigation.pop(1);
-    console.log('SEE IF THIS GETS RAN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    console.log(
+      'SEE IF THIS GETS RAN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+    );
   };
 
   const selectPicture = async () => {
@@ -265,18 +269,20 @@ export default function DirectoryScreen({route, navigation}) {
         console.log('Did user cancel?: ' + response.didCancel);
         console.log('Response error message: ' + response.errorMessage);
         if (!response.didCancel) {
-
           console.log('Response uri: ' + response.uri);
           setResponse(response);
         }
-
       },
     );
   };
 
   return (
     <View contentContainerstyle={styles.container}>
-      <View style={[styles.headerContainer, isAdmin ? styles.grayBackground : styles.whiteBackground]}>
+      <View
+        style={[
+          styles.headerContainer,
+          isAdmin ? styles.grayBackground : styles.whiteBackground,
+        ]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -285,13 +291,9 @@ export default function DirectoryScreen({route, navigation}) {
         <Text numberOfLines={1} style={styles.title}>
           {header}
         </Text>
-        {!fromCommunity && (
-          <Text style={styles.empty} />
-        )}
+        {!fromCommunity && <Text style={styles.empty} />}
         {fromCommunity && selectedUsers.length == 0 && (
-          <TouchableOpacity
-            style={styles.rightHeaderButton}
-            >
+          <TouchableOpacity style={styles.rightHeaderButton}>
             <Icon name="plus" type="feather" size={35} />
           </TouchableOpacity>
         )}
@@ -304,7 +306,11 @@ export default function DirectoryScreen({route, navigation}) {
         )}
       </View>
 
-      <View style={[styles.searchContainer, isAdmin ? styles.grayBackground : styles.whiteBackground]}>
+      <View
+        style={[
+          styles.searchContainer,
+          isAdmin ? styles.grayBackground : styles.whiteBackground,
+        ]}>
         <View style={styles.searchIconBox}>
           <Icon
             name={searchIcon}
@@ -314,9 +320,11 @@ export default function DirectoryScreen({route, navigation}) {
           />
         </View>
 
-
         <TextInput
-          style={[styles.searchInput, isAdmin ? styles.whiteBackground : styles.grayBackground]}
+          style={[
+            styles.searchInput,
+            isAdmin ? styles.whiteBackground : styles.grayBackground,
+          ]}
           placeholder="Search"
           autoCorrect={false}
           onChangeText={(text) => searchFilterFunc(text)}
@@ -329,23 +337,28 @@ export default function DirectoryScreen({route, navigation}) {
                        />*/}
 
       <FlatList
-        style={[styles.userList, isAdmin ? styles.whiteBackground : styles.grayBackground]}
+        style={[
+          styles.userList,
+          isAdmin ? styles.whiteBackground : styles.grayBackground,
+        ]}
         data={searchUsers}
         extraData={selectedFlag}
         renderItem={({item, index}) => (
           <TouchableOpacity
-                style={[styles.item, selectedUsers.indexOf(item) != -1 ? styles.blueBackground : styles.whiteBackground]}
-                onPress={() => selectPerson(item.id.toString(), item)}>
-
-                <Item title={item.data.displayName} key={index}
-                  photoURL=
-                  {checkPhotoURL(item.data.photoURL)}
-                  />
-              </TouchableOpacity>
-            )
-
-
-        }
+            style={[
+              styles.item,
+              selectedUsers.indexOf(item) != -1
+                ? styles.blueBackground
+                : styles.whiteBackground,
+            ]}
+            onPress={() => selectPerson(item.id.toString(), item)}>
+            <Item
+              title={item.data.displayName}
+              key={index}
+              photoURL={checkPhotoURL(item.data.photoURL)}
+            />
+          </TouchableOpacity>
+        )}
         keyExtractor={(item) => item.id.toString()}
       />
       <Modal
@@ -356,8 +369,7 @@ export default function DirectoryScreen({route, navigation}) {
           //Alert.alert("Modal has been closed.");
           console.log('Modal has been closed.');
           setModalVisible(!modalVisible);
-        }}
-      >
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{'Type in the group name:'}</Text>
@@ -370,7 +382,10 @@ export default function DirectoryScreen({route, navigation}) {
             />
 
             {response == null && (
-              <Image source={{uri: newGroupPicLink}} style={styles.newGroupPic} />
+              <Image
+                source={{uri: newGroupPicLink}}
+                style={styles.newGroupPic}
+              />
             )}
             {response != null && (
               <Image source={{uri: response.uri}} style={styles.newGroupPic} />
@@ -378,26 +393,25 @@ export default function DirectoryScreen({route, navigation}) {
 
             <TouchableOpacity
               style={styles.changePictureButton}
-              onPress={() => selectPicture()}
-            >
+              onPress={() => selectPicture()}>
               <Text style={styles.modalText}>{'Change Group Picture'}</Text>
             </TouchableOpacity>
 
             <View style={styles.bottomRowModal}>
-
-                <TouchableOpacity
-                  style={[styles.modalButton,
-                    newGroupName != '' && newGroupName != 'Group Name' ? styles.createGroupButton
-                      : styles.createGroupButtonDisabled]}
-                  onPress={() => createNewChat()}
-                >
-                  <Text style={styles.modalButtonText}>{'Create Group'}</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.modalButton,
+                  newGroupName != '' && newGroupName != 'Group Name'
+                    ? styles.createGroupButton
+                    : styles.createGroupButtonDisabled,
+                ]}
+                onPress={() => createNewChat()}>
+                <Text style={styles.modalButtonText}>{'Create Group'}</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.modalButton, styles.buttonClose]}
-                onPress={() => setModalVisible(false)}
-              >
+                onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalButtonText}>{'Cancel'}</Text>
               </TouchableOpacity>
             </View>
@@ -500,7 +514,6 @@ const styles = StyleSheet.create({
     marginVertical: 25,
     fontFamily: 'OpenSans-Regular',
     flex: 7,
-
   },
 
   item: {
@@ -510,7 +523,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 8,
     width: '90%',
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -532,26 +545,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: 'hidden',
   },
-  noEffect: {
-  },
+  noEffect: {},
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
-
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     borderWidth: 2,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
   },
   bottomRowModal: {
@@ -574,14 +585,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   modalButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
     fontFamily: 'OpenSans-Bold',
   },
   groupNameInput: {
@@ -605,5 +616,5 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     marginHorizontal: 50,
-  }
+  },
 });

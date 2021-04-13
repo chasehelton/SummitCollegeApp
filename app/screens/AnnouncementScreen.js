@@ -4,9 +4,11 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Header from '../components/Header';
 import {summitBlue} from '../assets/colors';
 import {Icon} from 'react-native-elements';
+import AppContext from '../components/AppContext.js';
 
 export default function AnnouncementScreen({route, navigation}) {
   const {announcement} = route.params;
+  const context = React.useContext(AppContext);
   const formatDates = (startDate, endDate) => {
     var startMonth = getMonth(startDate);
     var endMonth = getMonth(endDate);
@@ -62,12 +64,14 @@ export default function AnnouncementScreen({route, navigation}) {
   
   return (
     <>
-      <Header title={'Announcements'} navigation={navigation} backButton={true} />
-      <Text style={styles.subheader}>{"ANNOUNCEMENT"}</Text>
+      <Header
+        title={'Announcements'}
+        navigation={navigation}
+        backButton={true}
+      />
+      <Text style={styles.subheader}>{'ANNOUNCEMENT'}</Text>
       <View style={styles.announcementContainer}>
-
         <Text style={styles.announcementTitle}>{announcement.data.title}</Text>
-
         <View style={styles.infoContainer} key="descriptionView">
           <Icon
             name="edit"
@@ -78,6 +82,7 @@ export default function AnnouncementScreen({route, navigation}) {
           />
           <Text style={styles.announcementText}>{announcement.data.body}</Text>
         </View>
+        
       </View>
       <View styles={styles.empty}></View>
     </>

@@ -9,14 +9,15 @@ import ChatScreen from './ChatScreen';
 const CommunityNavStack = createStackNavigator();
 
 export default function CommunityStackScreen({route, navigation}) {
-
   return (
     <CommunityNavStack.Navigator screenOptions={{headerShown: false}}>
-      <CommunityNavStack.Screen name="CommunityScreen" component={CommunityScreen} />
+      <CommunityNavStack.Screen
+        name="CommunityScreen"
+        component={CommunityScreen}
+      />
       <CommunityNavStack.Screen name="Directory" component={DirectoryScreen} />
       <CommunityNavStack.Screen name="Person" component={PersonScreen} />
-      <CommunityNavStack.Screen name="ChatScreen" component={ChatScreen}
-         />
+      <CommunityNavStack.Screen name="ChatScreen" component={ChatScreen} />
     </CommunityNavStack.Navigator>
   );
 }

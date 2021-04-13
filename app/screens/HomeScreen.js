@@ -11,6 +11,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import firestore from '@react-native-firebase/firestore';
 import axios from 'axios';
 
@@ -21,16 +22,13 @@ import pod from '../assets/sc_podcast_logo.jpg';
 import UpcomingEvent from '../components/UpcomingEvent';
 import Announcement from '../components/Announcement';
 
-import { LogBox } from 'react-native';
+import {LogBox} from 'react-native';
 
 import AppContext from '../components/AppContext.js';
 
-
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
-
 export default function HomeScreen({route, navigation}) {
-
   const [isLoaded, setIsLoaded] = useState(false);
 
   const context = React.useContext(AppContext);
@@ -38,12 +36,14 @@ export default function HomeScreen({route, navigation}) {
   const displayShortDate = (dateText) => {
     if (dateText == null || dateText == '') return;
     var numberPattern = /\d+/g;
-    console.log("Date text: " + dateText.toString());
+    console.log('Date text: ' + dateText.toString());
 
-    return dateText.toString().substring(0, 3).toUpperCase()
-      + ' ' + dateText.toString().match( numberPattern )[0];
+    return (
+      dateText.toString().substring(0, 3).toUpperCase() +
+      ' ' +
+      dateText.toString().match(numberPattern)[0]
+    );
   };
-
 
   const formatDate = (date) => {
     var d = new Date(date),
@@ -96,14 +96,11 @@ export default function HomeScreen({route, navigation}) {
   };
 
   useLayoutEffect(() => {
-
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
     console.log('i fire once');
-
   }, []);
 
   return (
-
     <View style={styles.container}>
       {/*<Header title={'Home'} backButton={false} />*/}
 
@@ -131,7 +128,6 @@ export default function HomeScreen({route, navigation}) {
                 <Text style={styles.readingPlanText}>
                   {context.readingPlan.data.reading}
                 </Text>
-
               )}
               {context.noReadingPlan && (
                 <Text style={styles.readingPlanText}>
@@ -143,7 +139,7 @@ export default function HomeScreen({route, navigation}) {
               name="chevron-right"
               type="feather"
               color={summitBlue}
-              style={{flex: 1, borderWidth: 0, }}
+              style={{flex: 1, borderWidth: 0}}
               size={35}
             />
           </TouchableOpacity>
@@ -163,12 +159,12 @@ export default function HomeScreen({route, navigation}) {
               renderItem={({item, index}) => (
                 <TouchableOpacity
                   style={styles.announcementContainer}
-                  onPress={() => selectAnnouncement(index)}
-                >
+                  onPress={() => selectAnnouncement(index)}>
                   <Announcement
                     title={item.data.title}
                     timestamp={item.data.timestamp}
                     key={index}
+                    hidden={false}
                   />
                 </TouchableOpacity>
               )}
@@ -185,24 +181,29 @@ export default function HomeScreen({route, navigation}) {
         <View style={styles.podcast}>
           <Text style={styles.subheader}>{'PODCAST'}</Text>
           <TouchableOpacity
-            style={[styles.itemContainer, styles.podcastContainer]}
-            >
+            style={[styles.itemContainer, styles.podcastContainer]}>
             <View style={styles.topHalfContainer}>
               <View style={styles.podcastImageContainer}>
                 <Image
-
-                  source={{ uri: context.podcastState.podcastImageUrl }}
+                  source={{uri: context.podcastState.podcastImageUrl}}
                   style={styles.podcastImage}
-                  resizeMode='contain'
+                  resizeMode="contain"
                 />
               </View>
-              <View style={{flex: .65, /*flexDirection: 'column',
-                                                          alignItems: 'flex-start',*/}}>
+              <View
+                style={{
+                  flex: 0.65 /*flexDirection: 'column',
+                                                          alignItems: 'flex-start',*/,
+                }}>
                 <View style={{borderWidth: 0}}>
-                  <Text style={styles.podcastDateText}>{displayShortDate(context.podcastState.podcastDate)}</Text>
+                  <Text style={styles.podcastDateText}>
+                    {displayShortDate(context.podcastState.podcastDate)}
+                  </Text>
                 </View>
                 <View style={{borderWidth: 0}}>
-                  <Text numberOfLines={2} style={styles.podcastTitle}>{context.podcastState.podcastTitle}</Text>
+                  <Text numberOfLines={2} style={styles.podcastTitle}>
+                    {context.podcastState.podcastTitle}
+                  </Text>
                 </View>
                 <View style={{borderWidth: 0}}>
                   <TouchableOpacity
@@ -211,12 +212,12 @@ export default function HomeScreen({route, navigation}) {
                     <Text style={styles.playButtonText}>PLAY</Text>
                   </TouchableOpacity>
                 </View>
-
-
               </View>
             </View>
             <View style={styles.bottomHalfContainer}>
-              <Text style={styles.podcastText} numberOfLines={4} >{context.podcastState.podcastDescription}</Text>
+              <Text style={styles.podcastText} numberOfLines={4}>
+                {context.podcastState.podcastDescription}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -307,9 +308,9 @@ const styles = StyleSheet.create({
     height: 125,
     //borderWidth: 1,
     borderColor: 'red',
-    flexDirection:"row",
-    alignItems:'flex-start',
-    justifyContent:'flex-start',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
   bottomHalfContainer: {
     marginTop: 10,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'black',
     overflow: 'hidden',
-    flex: .35,
+    flex: 0.35,
   },
   podcastImage: {
     height: '100%',
